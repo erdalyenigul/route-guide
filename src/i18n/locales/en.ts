@@ -26,7 +26,7 @@ export default {
   stop: {
     overview: 'Overview', whyVisit: 'Why visit', stay: 'Recommended stay', nightRange: 'Stay range', conditions: 'Conditions', essentials: 'Nearby essentials',
     campOptions: 'Where to stay', photography: 'Photography', safety: 'Safety notes', markVisited: 'Mark as visited',
-    markedVisited: 'Visited', favorite: 'Add to favorites', unfavorite: 'Remove from favorites', fromPrevious: 'from previous stop',
+    markedVisited: 'Visited', stageComplete: 'Leg complete', stageCompleteHint: 'Include this stop in shared trip progress', favorite: 'Add to favorites', unfavorite: 'Remove from favorites', fromPrevious: 'from previous stop',
     water: 'Water refill', dumpStation: 'Dump station', shower: 'Shower', wc: 'WC', wasteBins: 'Waste bins', municipality: 'Municipality facilities', market: 'Market', fuel: 'Fuel',
     internet: 'Internet', mobileCoverage: 'Mobile coverage', roadSafety: 'Road safety', ducatoAccess: 'Ducato access',
     seaScore: 'Sea score', silenceScore: 'Silence score', safetyScore: 'Safety score', solar: 'Solar', shade: 'Shade', crowd: 'Crowd', sunrise: 'Best sunrise', sunset: 'Best sunset', drone: 'Drone',
