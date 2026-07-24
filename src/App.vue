@@ -53,7 +53,7 @@ onUnmounted(() => { window.removeEventListener('online', updateOnlineStatus); wi
 
 <template>
   <v-app>
-    <v-app-bar class="app-bar" flat height="64">
+    <v-app-bar class="app-bar" :class="`theme-${preferences.theme}`" flat height="64">
       <router-link class="app-brand" to="/" :aria-label="t('app.name')"><img :src="logoUrl" :alt="t('app.name')" /></router-link>
       <template #append>
         <span v-if="!isOnline" class="sync-state"><i />{{ t('offline.status') }}</span>
@@ -79,6 +79,7 @@ onUnmounted(() => { window.removeEventListener('online', updateOnlineStatus); wi
                 link
                 @click="openAdminPanel"
               />
+              <v-list-item prepend-icon="mdi-cog-outline" append-icon="mdi-chevron-right" :title="t('nav.settings')" to="/settings" />
             </v-list>
             <v-divider />
             <v-card-actions>
@@ -111,7 +112,7 @@ onUnmounted(() => { window.removeEventListener('online', updateOnlineStatus); wi
 </template>
 
 <style scoped>
-.app-bar{border-bottom:1px solid rgba(var(--v-border-color),.1)!important;background:rgba(var(--v-theme-surface),.82)!important;box-shadow:0 8px 30px rgba(0,0,0,.08)!important;backdrop-filter:blur(24px) saturate(140%)}
+.app-bar{border-bottom:1px solid rgba(var(--v-border-color),.1)!important;box-shadow:0 8px 30px rgba(0,0,0,.08)!important}.app-bar.theme-dark{background:#1f1f1f!important}.app-bar.theme-light{background:#f9f8f4!important}
 .app-bar :deep(.v-toolbar__content){width:100%}
 .app-brand{display:flex;align-items:center;width:146px;height:52px;margin-left:24px;overflow:hidden;border-radius:10px;text-decoration:none}.app-brand img{display:block;width:100%;height:100%;object-fit:contain}
 .sync-state{display:flex;align-items:center;gap:8px;max-width:240px;margin-right:22px;color:rgba(var(--v-theme-on-surface),.64);font-size:.8rem;font-weight:620;text-transform:capitalize;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sync-state i{width:8px;height:8px;border-radius:50%;background:rgb(var(--v-theme-warning));box-shadow:0 0 0 4px rgba(var(--v-theme-warning),.12)}
