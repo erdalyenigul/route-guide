@@ -84,22 +84,38 @@ const detailGalleryTouch = {
   left: () => movePhoto(1),
   right: () => movePhoto(-1)
 }
+function handleGalleryKeydown(event: KeyboardEvent): void {
+  if (selectedPhotoIndex.value === null) return
+  if (event.key === 'ArrowLeft') {
+    event.preventDefault()
+    movePhoto(-1)
+  } else if (event.key === 'ArrowRight') {
+    event.preventDefault()
+    movePhoto(1)
+  }
+}
 onMounted(async () => {
   updateDetailColumnCount()
   window.addEventListener('resize', updateDetailColumnCount)
+  window.addEventListener('keydown', handleGalleryKeydown)
   try {
     isEditor.value = Boolean(await adminContentService.currentUser())
   } catch {
     isEditor.value = false
   }
 })
-onUnmounted(() => window.removeEventListener('resize', updateDetailColumnCount))
+onUnmounted(() => {
+  window.removeEventListener('resize', updateDetailColumnCount)
+  window.removeEventListener('keydown', handleGalleryKeydown)
+})
 </script>
 
 <template>
   <main v-if="stop" class="stop-detail">
     <section class="cover">
-      <img v-if="stop.photos[0]" :src="stop.photos[0].url" :alt="stop.photos[0].caption || t(stop.photos[0].alt)" />
+      <button v-if="stop.photos[0]" class="cover-photo-trigger" type="button" :aria-label="t('gallery.openPhoto')" @click="selectedPhotoIndex=0">
+        <img :src="stop.photos[0].url" :alt="stop.photos[0].caption || t(stop.photos[0].alt)" />
+      </button>
       <div v-else class="cover-placeholder"><v-icon icon="mdi-image-outline" size="48" /></div>
       <div class="cover-shade" />
       <v-btn
@@ -226,4 +242,5 @@ onUnmounted(() => window.removeEventListener('resize', updateDetailColumnCount))
 @media(min-width:700px){.detail-panels{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}.detail-column{gap:14px;overflow:visible;border:0;border-radius:0;box-shadow:none}.detail-column :deep(.v-expansion-panel){align-self:start;overflow:hidden;border:1px solid rgba(var(--v-border-color),.1)!important;border-radius:var(--app-radius-md)!important;box-shadow:0 12px 36px rgba(0,0,0,.07)!important}}
 .photo-viewer{touch-action:pan-y}.detail-photo-window{width:100%;height:100%;background:transparent!important}.detail-photo-window :deep(.v-window__container),.detail-photo-window :deep(.v-window-item){height:100%}.detail-photo-slide{display:grid;width:100%;height:100%;place-items:center}.detail-photo-slide img{width:100%;height:100%;max-height:100dvh;object-fit:contain;user-select:none;-webkit-user-drag:none}.photo-viewer>.v-btn{position:fixed!important;z-index:20;top:auto;right:auto;min-width:50px;min-height:50px;color:#fff!important;background:#090a0d!important;border:1px solid rgba(255,255,255,.16);box-shadow:0 10px 28px rgba(0,0,0,.4)!important}.photo-viewer>.viewer-close{top:max(18px,env(safe-area-inset-top));right:18px}.photo-viewer>.viewer-previous,.photo-viewer>.viewer-next{top:50%;transform:translateY(-50%)}.photo-viewer>.viewer-previous{left:14px}.photo-viewer>.viewer-next{right:14px}
 .stage-completion{display:grid;max-width:820px;grid-template-columns:auto minmax(0,1fr) auto;align-items:center}.stage-completion-copy{min-width:0}.stage-completion>.v-chip{flex:none}.stage-completion :deep(.v-selection-control){min-height:44px}@media(max-width:520px){.stage-completion{grid-template-columns:auto minmax(0,1fr);padding:14px}.stage-completion>.v-chip{grid-column:2;justify-self:start;margin-top:4px}}
+.cover-photo-trigger{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;padding:0;border:0;background:transparent;cursor:zoom-in}.cover-photo-trigger img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .35s ease}.cover-photo-trigger:hover img{transform:scale(1.015)}.cover-shade{z-index:1;pointer-events:none}.cover-copy,.back,.favorite{z-index:2}
 </style>
