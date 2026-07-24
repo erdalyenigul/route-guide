@@ -6,7 +6,7 @@ export default {
   nav: { today: 'Bugün', route: 'Rota', timeline: 'Rota', map: 'Harita', stops: 'Duraklar', gallery: 'Galeri', checklist: 'Kontrol listesi', favorites: 'Favoriler', settings: 'Ayarlar', back: 'Geri' },
   common: {
     nights: 'gece', night: 'gece', km: 'km', min: 'dk', yes: 'Var', no: 'Yok', free: 'Ücretsiz',
-    recommended: 'Önerilen', details: 'Detayları gör', close: 'Kapat', current: 'Şu an', planned: 'Planlandı',
+    recommended: 'Önerilen', details: 'Detay', close: 'Kapat', current: 'Şu an', planned: 'Planlandı',
     visited: 'Ziyaret edildi', skipped: 'Atlandı', save: 'Kaydet', done: 'Tamam', none: 'Yok', low: 'Düşük',
     medium: 'Orta', high: 'Yüksek', excellent: 'Mükemmel', caution: 'Dikkat', difficult: 'Zor', good: 'İyi',
     paid: 'Ücretli kamp', municipality: 'Belediye', freecamp: 'Ücretsiz kamp', unknown: 'Henüz eklenmedi', completed: 'Tamamlandı', next: 'Sıradaki', upcoming: 'Yaklaşan'
