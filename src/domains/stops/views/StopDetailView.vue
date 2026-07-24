@@ -3,7 +3,6 @@ import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import AppMap from '@/components/map/AppMap.vue'
-import type { PhotoAsset } from '@/content/types'
 import { adminContentService } from '@/domains/admin/services/adminContentService'
 import { mapService } from '@/services/mapService'
 import { useTripStore } from '@/stores/trip'
@@ -14,7 +13,8 @@ const campingSpots = computed(() => stop.value ? store.campingSpotsForStop(stop.
 const activities = computed(() => stop.value ? store.activitiesForStop(stop.value.id) : [])
 const notes = computed(() => activities.value.filter(item => item.type === 'note'))
 const hiddenPlaces = computed(() => activities.value.filter(item => item.type === 'hidden_place'))
-const selectedPhoto = ref<PhotoAsset>()
+const selectedPhotoIndex = ref<number | null>(null)
+const selectedPhoto = computed(() => selectedPhotoIndex.value === null ? undefined : stop.value?.photos[selectedPhotoIndex.value])
 const isEditor = ref(false)
 const detailColumnCount = ref(1)
 const routeStops = computed(() => stop.value ? store.stopsForRoute(stop.value.routeId) : [])
@@ -71,6 +71,15 @@ function level(value: string | null | undefined): string { return value ? t(`com
 function updateDetailColumnCount(): void {
   detailColumnCount.value = window.innerWidth >= 700 ? 2 : 1
 }
+function movePhoto(direction: number): void {
+  const photoCount = stop.value?.photos.length ?? 0
+  if (selectedPhotoIndex.value === null || photoCount < 2) return
+  selectedPhotoIndex.value = (selectedPhotoIndex.value + direction + photoCount) % photoCount
+}
+const detailGalleryTouch = {
+  left: () => movePhoto(1),
+  right: () => movePhoto(-1)
+}
 onMounted(async () => {
   updateDetailColumnCount()
   window.addEventListener('resize', updateDetailColumnCount)
@@ -105,7 +114,7 @@ onUnmounted(() => window.removeEventListener('resize', updateDetailColumnCount))
     </section>
 
     <div class="content">
-      <section v-if="stop.photos.length" class="photo-strip" :aria-label="t('gallery.title')"><button v-for="photo in stop.photos" :key="photo.id" type="button" @click="selectedPhoto=photo"><img :src="photo.url" :alt="photo.caption || t(photo.alt)" loading="lazy" /></button></section>
+      <section v-if="stop.photos.length" class="photo-strip" :aria-label="t('gallery.title')"><button v-for="(photo,index) in stop.photos" :key="photo.id" type="button" :aria-label="t('gallery.openPhoto')" @click="selectedPhotoIndex=index"><img :src="photo.url" :alt="photo.caption || t(photo.alt)" loading="lazy" /></button></section>
 
       <section class="intro">
         <p>{{ t(stop.overview) }}</p>
@@ -177,7 +186,19 @@ onUnmounted(() => window.removeEventListener('resize', updateDetailColumnCount))
     </div>
 
     <div class="navigation-bar"><v-btn block color="primary" size="x-large" prepend-icon="mdi-navigation-variant" :href="navigationUrl" target="_blank" rel="noopener" :disabled="!navigationUrl">{{ t('map.navigate') }}</v-btn></div>
-    <v-dialog :model-value="Boolean(selectedPhoto)" fullscreen transition="dialog-bottom-transition" @update:model-value="value=>{if(!value)selectedPhoto=undefined}"><v-card class="photo-viewer"><v-btn icon="mdi-close" :aria-label="t('common.close')" @click="selectedPhoto=undefined" /><img v-if="selectedPhoto" :src="selectedPhoto.url" :alt="selectedPhoto.caption || t(selectedPhoto.alt)" /><p v-if="selectedPhoto?.caption">{{ selectedPhoto.caption }}</p></v-card></v-dialog>
+    <v-dialog :model-value="selectedPhotoIndex!==null" fullscreen transition="dialog-bottom-transition" @update:model-value="value=>{if(!value)selectedPhotoIndex=null}">
+      <v-card class="photo-viewer">
+        <v-btn class="viewer-close" icon="mdi-close" :aria-label="t('common.close')" @click="selectedPhotoIndex=null" />
+        <v-btn v-if="stop.photos.length>1" class="viewer-previous" icon="mdi-chevron-left" :aria-label="t('gallery.previous')" @click="movePhoto(-1)" />
+        <v-window v-if="selectedPhotoIndex!==null" v-model="selectedPhotoIndex" class="detail-photo-window" continuous :touch="detailGalleryTouch">
+          <v-window-item v-for="(photo,index) in stop.photos" :key="photo.id" :value="index">
+            <div class="detail-photo-slide"><img :src="photo.url" :alt="photo.caption || t(photo.alt)" draggable="false" /></div>
+          </v-window-item>
+        </v-window>
+        <v-btn v-if="stop.photos.length>1" class="viewer-next" icon="mdi-chevron-right" :aria-label="t('gallery.next')" @click="movePhoto(1)" />
+        <p v-if="selectedPhoto?.caption">{{ selectedPhoto.caption }}</p>
+      </v-card>
+    </v-dialog>
   </main>
 </template>
 
@@ -194,4 +215,5 @@ onUnmounted(() => window.removeEventListener('resize', updateDetailColumnCount))
 .summary-row{max-width:960px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}.summary-row>div{display:grid;min-height:86px;grid-template-columns:34px minmax(0,1fr);grid-template-rows:auto auto;align-content:center;column-gap:12px;padding:15px 17px}.summary-row .v-icon{grid-row:1/3;align-self:center;margin:0}.summary-row strong,.summary-row span{grid-column:2;overflow:visible;text-overflow:clip;white-space:normal}.summary-row strong{align-self:end;font-size:1.05rem;line-height:1.3}.summary-row span{align-self:start;margin-top:2px;font-size:.8rem;line-height:1.35}.detail-panels:empty{display:none}@media(max-width:520px){.summary-row{grid-template-columns:1fr}.summary-row>div{min-height:78px}}
 .detail-panels{display:grid;grid-template-columns:1fr;align-items:start;gap:14px;overflow:visible;border:0;background:transparent;box-shadow:none}.detail-column{align-self:start;overflow:hidden;border:1px solid rgba(var(--v-border-color),.11);border-radius:var(--app-radius-md);box-shadow:0 14px 42px rgba(0,0,0,.08)}.detail-panels :deep(.v-expansion-panel-text__wrapper){padding:20px 20px 26px}
 @media(min-width:700px){.detail-panels{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}.detail-column{gap:14px;overflow:visible;border:0;border-radius:0;box-shadow:none}.detail-column :deep(.v-expansion-panel){align-self:start;overflow:hidden;border:1px solid rgba(var(--v-border-color),.1)!important;border-radius:var(--app-radius-md)!important;box-shadow:0 12px 36px rgba(0,0,0,.07)!important}}
+.photo-viewer{touch-action:pan-y}.detail-photo-window{width:100%;height:100%;background:transparent!important}.detail-photo-window :deep(.v-window__container),.detail-photo-window :deep(.v-window-item){height:100%}.detail-photo-slide{display:grid;width:100%;height:100%;place-items:center}.detail-photo-slide img{width:100%;height:100%;max-height:100dvh;object-fit:contain;user-select:none;-webkit-user-drag:none}.photo-viewer>.v-btn{position:fixed!important;z-index:20;top:auto;right:auto;min-width:50px;min-height:50px;color:#fff!important;background:#090a0d!important;border:1px solid rgba(255,255,255,.16);box-shadow:0 10px 28px rgba(0,0,0,.4)!important}.photo-viewer>.viewer-close{top:max(18px,env(safe-area-inset-top));right:18px}.photo-viewer>.viewer-previous,.photo-viewer>.viewer-next{top:50%;transform:translateY(-50%)}.photo-viewer>.viewer-previous{left:14px}.photo-viewer>.viewer-next{right:14px}
 </style>
