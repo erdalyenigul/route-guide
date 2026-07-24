@@ -57,11 +57,17 @@ onUnmounted(() => { window.removeEventListener('online', updateOnlineStatus); wi
       <router-link class="app-brand" to="/" :aria-label="t('app.name')"><img :src="logoUrl" :alt="t('app.name')" /></router-link>
       <template #append>
         <span v-if="!isOnline" class="sync-state"><i />{{ t('offline.status') }}</span>
-        <v-tooltip v-if="!adminUser" :text="t('admin.loginTitle')" location="bottom">
+        <v-menu v-if="!adminUser" location="bottom end">
           <template #activator="{ props }">
-            <v-btn v-bind="props" class="admin-entry" icon="mdi-account-lock-outline" to="/manage/login" :aria-label="t('admin.loginTitle')" />
+            <v-btn v-bind="props" class="admin-entry" icon="mdi-account-lock-outline" :aria-label="t('admin.accountMenu')" />
           </template>
-        </v-tooltip>
+          <v-card class="admin-menu" min-width="220">
+            <v-list>
+              <v-list-item prepend-icon="mdi-login" append-icon="mdi-chevron-right" :title="t('admin.loginTitle')" to="/manage/login" />
+              <v-list-item prepend-icon="mdi-cog-outline" append-icon="mdi-chevron-right" :title="t('nav.settings')" to="/settings" />
+            </v-list>
+          </v-card>
+        </v-menu>
         <v-menu v-else location="bottom end">
           <template #activator="{ props }">
             <v-btn v-bind="props" class="admin-avatar" icon :aria-label="t('admin.accountMenu')">
