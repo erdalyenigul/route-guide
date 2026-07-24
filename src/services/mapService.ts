@@ -49,6 +49,32 @@ export const mapService = {
 
   externalNavigationUrl(coordinate: MapCoordinate | null): string | undefined {
     if (!coordinate) return undefined
-    return `https://www.openstreetmap.org/directions?engine=fossgis_osrm_car&route=;${coordinate.latitude},${coordinate.longitude}`
+    const parameters = new URLSearchParams({
+      api: '1',
+      destination: `${coordinate.latitude},${coordinate.longitude}`,
+      travelmode: 'driving'
+    })
+    return `https://www.google.com/maps/dir/?${parameters.toString()}`
+  },
+
+  externalRouteUrl(coordinates: Array<MapCoordinate | null | undefined>): string | undefined {
+    const validCoordinates = coordinates.filter((coordinate): coordinate is MapCoordinate => coordinate !== null && coordinate !== undefined)
+    if (!validCoordinates.length) return undefined
+    if (validCoordinates.length === 1) return this.externalNavigationUrl(validCoordinates[0]!)
+
+    const origin = validCoordinates[0]!
+    const destination = validCoordinates[validCoordinates.length - 1]!
+    const remaining = validCoordinates.slice(1)
+    const waypoints = remaining.slice(0, -1)
+    const parameters = new URLSearchParams({
+      api: '1',
+      origin: `${origin.latitude},${origin.longitude}`,
+      destination: `${destination.latitude},${destination.longitude}`,
+      travelmode: 'driving'
+    })
+    if (waypoints.length) {
+      parameters.set('waypoints', waypoints.map((coordinate) => `${coordinate.latitude},${coordinate.longitude}`).join('|'))
+    }
+    return `https://www.google.com/maps/dir/?${parameters.toString()}`
   }
 }

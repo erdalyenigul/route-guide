@@ -16,8 +16,14 @@ const notes = computed(() => activities.value.filter(item => item.type === 'note
 const hiddenPlaces = computed(() => activities.value.filter(item => item.type === 'hidden_place'))
 const selectedPhoto = ref<PhotoAsset>()
 const isEditor = ref(false)
-const navigationUrl = computed(() => stop.value ? mapService.externalNavigationUrl(mapService.coordinate(stop.value.coordinates)) : undefined)
-const detailMapStops = computed(() => stop.value ? store.stopsForRoute(stop.value.routeId).map(item => ({ id: item.id, label: t(item.title), status: item.status, coordinate: mapService.coordinate(item.coordinates) })) : [])
+const routeStops = computed(() => stop.value ? store.stopsForRoute(stop.value.routeId) : [])
+const stopIndex = computed(() => routeStops.value.findIndex(item => item.id === stop.value?.id))
+const navigationUrl = computed(() => stop.value ? mapService.externalRouteUrl([
+  stopIndex.value > 0 ? mapService.coordinate(routeStops.value[stopIndex.value - 1]!.coordinates) : null,
+  mapService.coordinate(stop.value.coordinates),
+  stopIndex.value >= 0 && stopIndex.value < routeStops.value.length - 1 ? mapService.coordinate(routeStops.value[stopIndex.value + 1]!.coordinates) : null
+]) : undefined)
+const detailMapStops = computed(() => routeStops.value.map(item => ({ id: item.id, label: t(item.title), status: item.status, coordinate: mapService.coordinate(item.coordinates) })))
 const services = computed(() => stop.value ? [
   { key: 'water', icon: 'mdi-water-outline', value: stop.value.waterRefill },
   { key: 'dumpStation', icon: 'mdi-delete-empty-outline', value: stop.value.dumpStation },
