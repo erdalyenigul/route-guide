@@ -17,10 +17,8 @@ const languageOptions = computed(() => [
     <PageHeader :title="t('settings.title')" :subtitle="t('settings.subtitle')" />
     <v-card class="settings-card">
       <v-list lines="two">
-        <v-list-subheader>{{ t('settings.appearance') }}</v-list-subheader>
         <v-list-item prepend-icon="mdi-theme-light-dark" :title="t('settings.darkMode')"><template #append><v-switch :model-value="preferences.theme === 'dark'" color="primary" hide-details @update:model-value="preferences.toggleTheme()" /></template></v-list-item>
         <v-divider />
-        <v-list-subheader>{{ t('settings.language') }}</v-list-subheader>
         <v-list-item prepend-icon="mdi-translate" :title="t('settings.language')">
           <template #append>
             <v-select
@@ -38,11 +36,6 @@ const languageOptions = computed(() => [
           </template>
         </v-list-item>
         <v-divider />
-        <v-list-subheader>{{ t('settings.storage') }}</v-list-subheader>
-        <v-list-item prepend-icon="mdi-cloud-check-outline" :title="t('settings.offlineReady')" />
-        <v-list-item prepend-icon="mdi-database-lock-outline" :title="t('settings.localData')" />
-        <v-divider />
-        <v-list-subheader>{{ t('settings.management') }}</v-list-subheader>
         <v-list-item
           prepend-icon="mdi-shield-account-outline"
           :title="t('settings.managementTitle')"
