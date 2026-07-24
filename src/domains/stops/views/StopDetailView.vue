@@ -140,26 +140,27 @@ onUnmounted(() => {
       <section class="intro">
         <p>{{ t(stop.overview) }}</p>
         <div class="summary-row">
+          <div class="stage-completion" :class="{ completed: stop.status === 'visited' }">
+            <v-checkbox-btn
+              class="stage-checkbox"
+              :class="{ editable: isEditor }"
+              :model-value="stop.status === 'visited'"
+              color="primary"
+              true-icon="mdi-checkbox-marked"
+              false-icon="mdi-checkbox-blank-outline"
+              :readonly="!isEditor"
+              :aria-label="t('stop.stageComplete')"
+              :title="t(isEditor ? 'stop.stageCompleteEditableHint' : 'stop.stageCompleteReadOnlyHint')"
+              @update:model-value="updateStageCompletion"
+            />
+            <div class="stage-completion-copy">
+              <strong>{{ t('stop.stageComplete') }}</strong>
+              <span>{{ t(stop.status === 'visited' ? 'common.completed' : 'common.upcoming') }}</span>
+            </div>
+          </div>
           <div><v-icon icon="mdi-weather-night" /><strong>{{ stop.recommendedNights }}</strong><span>{{ t('common.nights') }}</span></div>
           <div v-if="stop.internetScore!==null"><v-icon icon="mdi-wifi" /><strong>{{ score(stop.internetScore) }}</strong><span>{{ t('stop.internet') }}</span></div>
           <div v-if="stop.ducatoAccessibility!==null"><v-icon icon="mdi-van-utility" /><strong>{{ level(stop.ducatoAccessibility) }}</strong><span>{{ t('stop.ducatoAccess') }}</span></div>
-        </div>
-        <div class="stage-completion" :class="{ completed: stop.status === 'visited' }">
-          <v-checkbox-btn
-            :model-value="stop.status === 'visited'"
-            color="primary"
-            :readonly="!isEditor"
-            :aria-label="t('stop.stageComplete')"
-            @update:model-value="updateStageCompletion"
-          />
-          <div class="stage-completion-copy">
-            <strong>{{ t('stop.stageComplete') }}</strong>
-            <span>{{ t(isEditor ? 'stop.stageCompleteEditableHint' : 'stop.stageCompleteReadOnlyHint') }}</span>
-          </div>
-          <v-chip :color="stop.status === 'visited' ? 'success' : undefined" variant="tonal">
-            <v-icon start :icon="stop.status === 'visited' ? 'mdi-check-circle' : 'mdi-clock-outline'" />
-            {{ t(stop.status === 'visited' ? 'common.completed' : 'common.upcoming') }}
-          </v-chip>
         </div>
       </section>
 
@@ -242,6 +243,6 @@ onUnmounted(() => {
 .detail-panels{display:grid;grid-template-columns:1fr;align-items:start;gap:14px;overflow:visible;border:0;background:transparent;box-shadow:none}.detail-column{align-self:start;overflow:hidden;border:1px solid rgba(var(--v-border-color),.11);border-radius:var(--app-radius-md);box-shadow:0 14px 42px rgba(0,0,0,.08)}.detail-panels :deep(.v-expansion-panel-text__wrapper){padding:20px 20px 26px}
 @media(min-width:700px){.detail-panels{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}.detail-column{gap:14px;overflow:visible;border:0;border-radius:0;box-shadow:none}.detail-column :deep(.v-expansion-panel){align-self:start;overflow:hidden;border:1px solid rgba(var(--v-border-color),.1)!important;border-radius:var(--app-radius-md)!important;box-shadow:0 12px 36px rgba(0,0,0,.07)!important}}
 .photo-viewer{touch-action:pan-y}.detail-photo-window{width:100%;height:100%;background:transparent!important}.detail-photo-window :deep(.v-window__container),.detail-photo-window :deep(.v-window-item){height:100%}.detail-photo-slide{display:grid;width:100%;height:100%;place-items:center}.detail-photo-slide img{width:100%;height:100%;max-height:100dvh;object-fit:contain;user-select:none;-webkit-user-drag:none}.photo-viewer>.v-btn{position:fixed!important;z-index:20;top:auto;right:auto;min-width:50px;min-height:50px;color:#fff!important;background:#090a0d!important;border:1px solid rgba(255,255,255,.16);box-shadow:0 10px 28px rgba(0,0,0,.4)!important}.photo-viewer>.viewer-close{top:max(18px,env(safe-area-inset-top));right:18px}.photo-viewer>.viewer-previous,.photo-viewer>.viewer-next{top:50%;transform:translateY(-50%)}.photo-viewer>.viewer-previous{left:14px}.photo-viewer>.viewer-next{right:14px}
-.stage-completion{display:grid;max-width:820px;grid-template-columns:auto minmax(0,1fr) auto;align-items:center}.stage-completion-copy{min-width:0}.stage-completion>.v-chip{flex:none}.stage-completion :deep(.v-selection-control){min-height:44px}@media(max-width:520px){.stage-completion{grid-template-columns:auto minmax(0,1fr);padding:14px}.stage-completion>.v-chip{grid-column:2;justify-self:start;margin-top:4px}}
+.summary-row>.stage-completion{display:grid;max-width:none;min-height:86px;grid-template-columns:58px minmax(0,1fr);grid-template-rows:auto auto;align-content:center;align-items:center;column-gap:14px;margin-top:0;padding:15px 17px}.stage-completion-copy{display:grid;min-width:0;grid-column:2;grid-row:1/3;align-content:center}.stage-checkbox{grid-column:1;grid-row:1/3;align-self:center;justify-self:start}.stage-checkbox.editable{cursor:pointer}.stage-checkbox :deep(.v-selection-control){min-height:52px}.stage-checkbox :deep(.v-selection-control__input){width:52px;height:52px;border-radius:16px;background:rgba(var(--v-theme-primary),.1)}.stage-checkbox :deep(.v-icon){font-size:2rem!important}.summary-row>.stage-completion.completed{border-color:rgba(var(--v-theme-primary),.52);background:linear-gradient(145deg,rgba(var(--v-theme-primary),.15),rgb(var(--v-theme-surface)))}@media(max-width:520px){.summary-row>.stage-completion{min-height:82px;padding:14px}}
 .cover-photo-trigger{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;padding:0;border:0;background:transparent;cursor:zoom-in}.cover-photo-trigger img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .35s ease}.cover-photo-trigger:hover img{transform:scale(1.015)}.cover-shade{z-index:1;pointer-events:none}.cover-copy,.back,.favorite{z-index:2}
 </style>
