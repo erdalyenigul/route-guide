@@ -4,13 +4,12 @@ import { useI18n } from 'vue-i18n'
 import type { StopViewModel } from '@/content/types'
 import { mapService } from '@/services/mapService'
 
-const props = defineProps<{ stop: StopViewModel; previousStop: StopViewModel | undefined; nextStop: StopViewModel | undefined }>()
+const props = defineProps<{ stop: StopViewModel; previousStop: StopViewModel | undefined }>()
 const { t } = useI18n()
 const coordinate = computed(() => mapService.coordinate(props.stop.coordinates))
 const routeUrl = computed(() => mapService.externalRouteUrl([
   props.previousStop ? mapService.coordinate(props.previousStop.coordinates) : null,
-  coordinate.value,
-  props.nextStop ? mapService.coordinate(props.nextStop.coordinates) : null
+  coordinate.value
 ]))
 </script>
 

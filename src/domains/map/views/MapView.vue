@@ -16,14 +16,13 @@ watch(stops, value => { if (!selectedId.value || !value.some(stop=>stop.id===sel
 const selected = computed(() => stops.value.find(stop => stop.id === selectedId.value))
 const selectedIndex = computed(() => stops.value.findIndex(stop => stop.id === selectedId.value))
 const previousStop = computed(() => selectedIndex.value > 0 ? stops.value[selectedIndex.value - 1] : undefined)
-const nextStop = computed(() => selectedIndex.value >= 0 ? stops.value[selectedIndex.value + 1] : undefined)
 </script>
 
 <template>
   <main class="map-screen">
     <AppMap ref="mapRef" :stops="mapStops" :selected-id="selectedId" @select="selectedId=$event" />
     <header class="map-topbar"><div><h1>{{ t('map.title') }}</h1><p>{{ t('map.subtitle') }}</p></div><v-btn icon="mdi-fit-to-page-outline" size="large" variant="tonal" :aria-label="t('map.fitRoute')" @click="mapRef?.fitRoute()" /></header>
-    <StopBottomSheet v-if="selected" :stop="selected" :previous-stop="previousStop" :next-stop="nextStop" />
+    <StopBottomSheet v-if="selected" :stop="selected" :previous-stop="previousStop" />
   </main>
 </template>
 

@@ -22,8 +22,7 @@ const routeStops = computed(() => stop.value ? store.stopsForRoute(stop.value.ro
 const stopIndex = computed(() => routeStops.value.findIndex(item => item.id === stop.value?.id))
 const navigationUrl = computed(() => stop.value ? mapService.externalRouteUrl([
   stopIndex.value > 0 ? mapService.coordinate(routeStops.value[stopIndex.value - 1]!.coordinates) : null,
-  mapService.coordinate(stop.value.coordinates),
-  stopIndex.value >= 0 && stopIndex.value < routeStops.value.length - 1 ? mapService.coordinate(routeStops.value[stopIndex.value + 1]!.coordinates) : null
+  mapService.coordinate(stop.value.coordinates)
 ]) : undefined)
 const detailMapStops = computed(() => routeStops.value.map(item => ({ id: item.id, label: t(item.title), status: item.status, coordinate: mapService.coordinate(item.coordinates) })))
 const services = computed(() => stop.value ? [
