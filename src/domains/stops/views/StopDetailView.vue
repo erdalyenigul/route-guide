@@ -74,7 +74,7 @@ function updateDetailColumnCount(): void {
 function movePhoto(direction: number): void {
   const photoCount = stop.value?.photos.length ?? 0
   if (selectedPhotoIndex.value === null || photoCount < 2) return
-  selectedPhotoIndex.value = (selectedPhotoIndex.value + direction + photoCount) % photoCount
+  selectedPhotoIndex.value = Math.min(Math.max(selectedPhotoIndex.value + direction, 0), photoCount - 1)
 }
 const detailGalleryTouch = {
   left: () => movePhoto(1),
@@ -189,13 +189,13 @@ onUnmounted(() => window.removeEventListener('resize', updateDetailColumnCount))
     <v-dialog :model-value="selectedPhotoIndex!==null" fullscreen transition="dialog-bottom-transition" @update:model-value="value=>{if(!value)selectedPhotoIndex=null}">
       <v-card class="photo-viewer">
         <v-btn class="viewer-close" icon="mdi-close" :aria-label="t('common.close')" @click="selectedPhotoIndex=null" />
-        <v-btn v-if="stop.photos.length>1" class="viewer-previous" icon="mdi-chevron-left" :aria-label="t('gallery.previous')" @click="movePhoto(-1)" />
-        <v-window v-if="selectedPhotoIndex!==null" v-model="selectedPhotoIndex" class="detail-photo-window" continuous :touch="detailGalleryTouch">
+        <v-btn v-if="stop.photos.length>1" class="viewer-previous" icon="mdi-chevron-left" :aria-label="t('gallery.previous')" :disabled="selectedPhotoIndex===0" @click="movePhoto(-1)" />
+        <v-window v-if="selectedPhotoIndex!==null" v-model="selectedPhotoIndex" class="detail-photo-window" :touch="detailGalleryTouch">
           <v-window-item v-for="(photo,index) in stop.photos" :key="photo.id" :value="index">
             <div class="detail-photo-slide"><img :src="photo.url" :alt="photo.caption || t(photo.alt)" draggable="false" /></div>
           </v-window-item>
         </v-window>
-        <v-btn v-if="stop.photos.length>1" class="viewer-next" icon="mdi-chevron-right" :aria-label="t('gallery.next')" @click="movePhoto(1)" />
+        <v-btn v-if="stop.photos.length>1" class="viewer-next" icon="mdi-chevron-right" :aria-label="t('gallery.next')" :disabled="selectedPhotoIndex===stop.photos.length-1" @click="movePhoto(1)" />
         <p v-if="selectedPhoto?.caption">{{ selectedPhoto.caption }}</p>
       </v-card>
     </v-dialog>

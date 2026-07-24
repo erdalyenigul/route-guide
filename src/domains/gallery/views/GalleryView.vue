@@ -24,7 +24,7 @@ function closeGroup(): void {
 }
 function move(direction: number): void {
   if (selectedIndex.value === null || photos.value.length < 2) return
-  selectedIndex.value = (selectedIndex.value + direction + photos.value.length) % photos.value.length
+  selectedIndex.value = Math.min(Math.max(selectedIndex.value + direction, 0), photos.value.length - 1)
 }
 const galleryTouch = {
   left: () => move(1),
@@ -74,13 +74,13 @@ const galleryTouch = {
     <v-dialog :model-value="selectedIndex!==null" fullscreen transition="dialog-bottom-transition" @update:model-value="value=>{if(!value)selectedIndex=null}">
       <v-card class="viewer">
         <v-btn class="close" icon="mdi-close" :aria-label="t('common.close')" @click="selectedIndex=null" />
-        <v-btn v-if="photos.length>1" class="previous" icon="mdi-chevron-left" :aria-label="t('gallery.previous')" @click="move(-1)" />
-        <v-window v-if="selectedIndex!==null" v-model="selectedIndex" class="viewer-window" continuous :touch="galleryTouch">
+        <v-btn v-if="photos.length>1" class="previous" icon="mdi-chevron-left" :aria-label="t('gallery.previous')" :disabled="selectedIndex===0" @click="move(-1)" />
+        <v-window v-if="selectedIndex!==null" v-model="selectedIndex" class="viewer-window" :touch="galleryTouch">
           <v-window-item v-for="(item,index) in photos" :key="item.photo.id" :value="index">
             <div class="viewer-slide"><img :src="item.photo.url" :alt="item.photo.caption || t(item.photo.alt)" draggable="false" /></div>
           </v-window-item>
         </v-window>
-        <v-btn v-if="photos.length>1" class="next" icon="mdi-chevron-right" :aria-label="t('gallery.next')" @click="move(1)" />
+        <v-btn v-if="photos.length>1" class="next" icon="mdi-chevron-right" :aria-label="t('gallery.next')" :disabled="selectedIndex===photos.length-1" @click="move(1)" />
         <p v-if="selected">{{ selected.photo.caption || t(selected.stopTitle) }}</p>
       </v-card>
     </v-dialog>
