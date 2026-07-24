@@ -6,8 +6,9 @@ import AppMap from '@/components/map/AppMap.vue'
 import { adminContentService } from '@/domains/admin/services/adminContentService'
 import { mapService } from '@/services/mapService'
 import { useTripStore } from '@/stores/trip'
+import { formatDateTime } from '@/utils/dateTime'
 
-const { t, d } = useI18n(); const route = useRoute(); const store = useTripStore()
+const { t } = useI18n(); const route = useRoute(); const store = useTripStore()
 const stop = computed(() => store.stopById(String(route.params.stopId)))
 const campingSpots = computed(() => stop.value ? store.campingSpotsForStop(stop.value.id) : [])
 const activities = computed(() => stop.value ? store.activitiesForStop(stop.value.id) : [])
@@ -198,7 +199,7 @@ onUnmounted(() => {
                   <v-icon icon="mdi-account-outline" />
                   {{ t('stop.experienceBy', {
                     name: stop.experience.authorName,
-                    date: d(new Date(stop.experience.updatedAt), { dateStyle: 'medium', timeStyle: 'short' })
+                    date: formatDateTime(stop.experience.updatedAt)
                   }) }}
                 </p>
               </template>

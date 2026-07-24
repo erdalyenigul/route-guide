@@ -5,11 +5,12 @@ import { useRoute } from 'vue-router'
 
 import PageHeader from '@/components/base/PageHeader.vue'
 import { useTripStore } from '@/stores/trip'
+import { formatDateTime } from '@/utils/dateTime'
 
 import { adminContentService, MAX_PHOTOS_PER_STOP } from '../services/adminContentService'
 import type { SharedStopEditorData, SharedStopPhoto } from '../types'
 
-const { t, d } = useI18n()
+const { t } = useI18n()
 const route = useRoute()
 const trip = useTripStore()
 const stopSlug = computed(() => String(route.params.stopId))
@@ -180,7 +181,7 @@ onUnmounted(() => window.removeEventListener('keydown', handleGalleryKeydown))
             <v-icon icon="mdi-account-edit-outline" />
             {{ t('admin.lastEditedBy', {
               name: editor.experience.authorName,
-              date: d(new Date(editor.experience.updatedAt), { dateStyle: 'medium', timeStyle: 'short' })
+              date: formatDateTime(editor.experience.updatedAt)
             }) }}
           </p>
           <v-btn color="primary" size="large" prepend-icon="mdi-content-save-outline" :loading="isSaving" @click="saveExperience">{{ t('common.save') }}</v-btn>
