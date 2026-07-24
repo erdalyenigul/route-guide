@@ -5,12 +5,9 @@ import { useRoute } from 'vue-router'
 import PageHeader from '@/components/base/PageHeader.vue'
 import { useTripStore } from '@/stores/trip'
 
-type WindowController = { next: () => void; prev: () => void }
-
 const { t } = useI18n(); const route = useRoute(); const store = useTripStore()
 const selectedIndex = ref<number | null>(null)
 const selectedStopId = ref<string | null>(null)
-const photoWindow = ref<WindowController>()
 const galleryGroups = computed(() => store.stopsForRoute(String(route.params.routeId))
   .map((stop, index) => ({ id: stop.id, index, title: stop.title, region: stop.region, photos: stop.photos }))
   .filter(group => group.photos.length > 0))
@@ -26,8 +23,12 @@ function closeGroup(): void {
   selectedIndex.value = null
 }
 function move(direction: number): void {
-  if (direction > 0) photoWindow.value?.next()
-  else photoWindow.value?.prev()
+  if (selectedIndex.value === null || photos.value.length < 2) return
+  selectedIndex.value = (selectedIndex.value + direction + photos.value.length) % photos.value.length
+}
+const galleryTouch = {
+  left: () => move(1),
+  right: () => move(-1)
 }
 </script>
 
@@ -74,9 +75,9 @@ function move(direction: number): void {
       <v-card class="viewer">
         <v-btn class="close" icon="mdi-close" :aria-label="t('common.close')" @click="selectedIndex=null" />
         <v-btn v-if="photos.length>1" class="previous" icon="mdi-chevron-left" :aria-label="t('gallery.previous')" @click="move(-1)" />
-        <v-window v-if="selectedIndex!==null" ref="photoWindow" v-model="selectedIndex" class="viewer-window" continuous touch>
+        <v-window v-if="selectedIndex!==null" v-model="selectedIndex" class="viewer-window" continuous :touch="galleryTouch">
           <v-window-item v-for="(item,index) in photos" :key="item.photo.id" :value="index">
-            <div class="viewer-slide"><img :src="item.photo.url" :alt="item.photo.caption || t(item.photo.alt)" /></div>
+            <div class="viewer-slide"><img :src="item.photo.url" :alt="item.photo.caption || t(item.photo.alt)" draggable="false" /></div>
           </v-window-item>
         </v-window>
         <v-btn v-if="photos.length>1" class="next" icon="mdi-chevron-right" :aria-label="t('gallery.next')" @click="move(1)" />
@@ -89,6 +90,6 @@ function move(direction: number): void {
 <style scoped>
 .gallery-groups{display:grid;grid-template-columns:1fr;gap:14px}.gallery-group{position:relative;min-height:220px;aspect-ratio:16/10;overflow:hidden;padding:0;border:1px solid rgba(var(--v-border-color),.12);border-radius:22px;color:#fff;text-align:left;background:rgb(var(--v-theme-surface));box-shadow:0 16px 42px rgba(0,0,0,.16);cursor:pointer}.gallery-group:after{content:'';position:absolute;inset:20% 0 0;background:linear-gradient(transparent,rgba(4,5,8,.94));pointer-events:none}.gallery-group>img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .35s ease}.gallery-group:hover>img{transform:scale(1.035)}.group-order{position:absolute;z-index:2;top:14px;left:14px;padding:7px 10px;border:1px solid rgba(255,255,255,.18);border-radius:10px;background:rgba(5,6,9,.68);font-size:.76rem;font-weight:800;backdrop-filter:blur(14px)}.group-overlay{position:absolute;z-index:2;right:16px;bottom:16px;left:16px;display:flex;align-items:end;justify-content:space-between;gap:16px}.group-overlay>span:first-child{display:grid;gap:4px;min-width:0}.group-overlay strong{overflow:hidden;font-size:1.22rem;letter-spacing:-.03em;text-overflow:ellipsis;white-space:nowrap}.group-overlay small{overflow:hidden;color:rgba(255,255,255,.7);font-size:.82rem;text-overflow:ellipsis;white-space:nowrap}.photo-count{display:flex;flex:none;align-items:center;gap:6px;padding:7px 10px;border:1px solid rgba(255,255,255,.14);border-radius:10px;background:rgba(5,6,9,.66);font-size:.76rem;font-weight:740;backdrop-filter:blur(14px)}.photo-count .v-icon{font-size:1rem}
 .group-header{display:flex;align-items:center;gap:18px;margin-bottom:22px}.group-header>div{display:grid;gap:3px}.group-header h2{font-size:clamp(1.35rem,2.4vw,1.9rem);letter-spacing:-.04em}.group-header p{color:rgba(var(--v-theme-on-background),.6);font-size:.84rem}
-.photo-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.photo-grid button{position:relative;aspect-ratio:1;border:1px solid rgba(var(--v-border-color),.1);border-radius:18px;overflow:hidden;padding:0;background:rgb(var(--v-theme-surface));box-shadow:0 12px 34px rgba(0,0,0,.1);cursor:pointer}.photo-grid button:after{content:'';position:absolute;inset:35% 0 0;background:linear-gradient(transparent,rgba(2,8,5,.74));pointer-events:none}.photo-grid img{width:100%;height:100%;object-fit:cover;transition:transform .3s}.photo-grid button:hover img{transform:scale(1.035)}.photo-grid button>span{position:absolute;z-index:1;left:12px;bottom:11px;max-width:calc(100% - 24px);overflow:hidden;padding:6px 9px;border:1px solid rgba(255,255,255,.1);border-radius:9px;color:white;background:rgba(0,0,0,.48);font-size:.8rem;font-weight:700;text-overflow:ellipsis;white-space:nowrap;backdrop-filter:blur(12px)}.empty{min-height:340px;display:grid;place-content:center;justify-items:center;gap:14px;color:rgba(var(--v-theme-on-background),.62);font-size:.95rem}.viewer{position:relative;display:grid;place-items:center;background:#090a0d!important;touch-action:pan-y}.viewer-window{width:100%;height:100%;background:transparent!important}.viewer-window :deep(.v-window__container),.viewer-window :deep(.v-window-item){height:100%}.viewer-slide{display:grid;width:100%;height:100%;place-items:center}.viewer-slide img{width:100%;height:100%;max-height:100dvh;object-fit:contain}.viewer p{position:absolute;z-index:2;bottom:max(28px,env(safe-area-inset-bottom));color:white;font-size:1rem}.viewer .v-btn{position:fixed!important;z-index:20;min-width:50px;min-height:50px;color:#fff!important;background:#090a0d!important;border:1px solid rgba(255,255,255,.16);box-shadow:0 10px 28px rgba(0,0,0,.4)!important}.close{top:max(18px,env(safe-area-inset-top));right:18px}.previous,.next{top:50%;transform:translateY(-50%)}.previous{left:14px}.next{right:14px}
+.photo-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.photo-grid button{position:relative;aspect-ratio:1;border:1px solid rgba(var(--v-border-color),.1);border-radius:18px;overflow:hidden;padding:0;background:rgb(var(--v-theme-surface));box-shadow:0 12px 34px rgba(0,0,0,.1);cursor:pointer}.photo-grid button:after{content:'';position:absolute;inset:35% 0 0;background:linear-gradient(transparent,rgba(2,8,5,.74));pointer-events:none}.photo-grid img{width:100%;height:100%;object-fit:cover;transition:transform .3s}.photo-grid button:hover img{transform:scale(1.035)}.photo-grid button>span{position:absolute;z-index:1;left:12px;bottom:11px;max-width:calc(100% - 24px);overflow:hidden;padding:6px 9px;border:1px solid rgba(255,255,255,.1);border-radius:9px;color:white;background:rgba(0,0,0,.48);font-size:.8rem;font-weight:700;text-overflow:ellipsis;white-space:nowrap;backdrop-filter:blur(12px)}.empty{min-height:340px;display:grid;place-content:center;justify-items:center;gap:14px;color:rgba(var(--v-theme-on-background),.62);font-size:.95rem}.viewer{position:relative;display:grid;place-items:center;background:#090a0d!important;touch-action:pan-y}.viewer-window{width:100%;height:100%;background:transparent!important}.viewer-window :deep(.v-window__container),.viewer-window :deep(.v-window-item){height:100%}.viewer-slide{display:grid;width:100%;height:100%;place-items:center}.viewer-slide img{width:100%;height:100%;max-height:100dvh;object-fit:contain;user-select:none;-webkit-user-drag:none}.viewer p{position:absolute;z-index:2;bottom:max(28px,env(safe-area-inset-bottom));color:white;font-size:1rem}.viewer .v-btn{position:fixed!important;z-index:20;min-width:50px;min-height:50px;color:#fff!important;background:#090a0d!important;border:1px solid rgba(255,255,255,.16);box-shadow:0 10px 28px rgba(0,0,0,.4)!important}.close{top:max(18px,env(safe-area-inset-top));right:18px}.previous,.next{top:50%;transform:translateY(-50%)}.previous{left:14px}.next{right:14px}
 @media(min-width:700px){.gallery-groups,.photo-grid{grid-template-columns:repeat(2,1fr);gap:14px}.photo-grid button{border-radius:22px}}@media(min-width:1100px){.gallery-groups{grid-template-columns:repeat(3,1fr)}}@media(min-width:1400px){.photo-grid{grid-template-columns:repeat(4,1fr)}}@media(max-width:600px){.group-header{align-items:flex-start;flex-direction:column;gap:12px}.group-header .v-btn{width:100%}}
 </style>
