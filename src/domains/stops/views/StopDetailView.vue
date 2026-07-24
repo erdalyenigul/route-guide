@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import AppMap from '@/components/map/AppMap.vue'
@@ -16,6 +16,7 @@ const notes = computed(() => activities.value.filter(item => item.type === 'note
 const hiddenPlaces = computed(() => activities.value.filter(item => item.type === 'hidden_place'))
 const selectedPhoto = ref<PhotoAsset>()
 const isEditor = ref(false)
+const detailColumnCount = ref(1)
 const routeStops = computed(() => stop.value ? store.stopsForRoute(stop.value.routeId) : [])
 const stopIndex = computed(() => routeStops.value.findIndex(item => item.id === stop.value?.id))
 const navigationUrl = computed(() => stop.value ? mapService.externalRouteUrl([
@@ -38,15 +39,48 @@ const conditionItems = computed(() => stop.value ? [
   stop.value.solarSuitability === null ? null : { key: 'solar', value: level(stop.value.solarSuitability) },
   stop.value.droneSuitability === null ? null : { key: 'drone', value: level(stop.value.droneSuitability) }
 ].filter((item): item is { key: string; value: string } => item !== null) : [])
+type DetailSectionKey = 'why' | 'camping' | 'essentials' | 'conditions' | 'warnings' | 'photography' | 'notes' | 'experience'
+interface DetailSection {
+  key: DetailSectionKey
+  icon: string
+  title: string
+  badge?: string | number
+  badgeColor?: string
+}
+const detailSections = computed<DetailSection[]>(() => {
+  if (!stop.value) return []
+  const sections: DetailSection[] = [{ key: 'why', icon: 'mdi-compass-outline', title: 'stop.whyVisit' }]
+  if (campingSpots.value.length) sections.push({ key: 'camping', icon: 'mdi-tent', title: 'stop.campOptions', badge: campingSpots.value.length })
+  if (hasEssentials.value) sections.push({ key: 'essentials', icon: 'mdi-shower', title: 'stop.essentials' })
+  if (conditionItems.value.length) sections.push({ key: 'conditions', icon: 'mdi-signal', title: 'stop.conditions' })
+  if (stop.value.roadWarnings.length) sections.push({ key: 'warnings', icon: 'mdi-alert-outline', title: 'stop.roadWarnings', badge: stop.value.roadWarnings.length, badgeColor: 'warning' })
+  sections.push({ key: 'photography', icon: 'mdi-camera-iris', title: 'stop.photography' })
+  if (notes.value.length) sections.push({ key: 'notes', icon: 'mdi-notebook-outline', title: 'stop.ourNotes' })
+  if (stop.value.experience?.isPublished && stop.value.experience.body) {
+    sections.push({ key: 'experience', icon: 'mdi-book-open-page-variant-outline', title: 'stop.ourExperience', badge: stop.value.experience.locale.toUpperCase() })
+  }
+  return sections
+})
+const detailColumns = computed(() => {
+  const columns = Array.from({ length: detailColumnCount.value }, () => [] as DetailSection[])
+  detailSections.value.forEach((section, index) => columns[index % detailColumnCount.value]?.push(section))
+  return columns
+})
 function score(value: number | null): string { return value === null ? t('common.unknown') : `${value}/5` }
 function level(value: string | null | undefined): string { return value ? t(`common.${value}`) : t('common.unknown') }
+function updateDetailColumnCount(): void {
+  detailColumnCount.value = window.innerWidth >= 700 ? 2 : 1
+}
 onMounted(async () => {
+  updateDetailColumnCount()
+  window.addEventListener('resize', updateDetailColumnCount)
   try {
     isEditor.value = Boolean(await adminContentService.currentUser())
   } catch {
     isEditor.value = false
   }
 })
+onUnmounted(() => window.removeEventListener('resize', updateDetailColumnCount))
 </script>
 
 <template>
@@ -94,68 +128,50 @@ onMounted(async () => {
         </div>
       </section>
 
-      <v-expansion-panels class="detail-panels" multiple variant="accordion">
-        <v-expansion-panel>
-          <v-expansion-panel-title><v-icon icon="mdi-compass-outline" />{{ t('stop.whyVisit') }}</v-expansion-panel-title>
-          <v-expansion-panel-text><p class="body-copy">{{ t(stop.whyVisit) }}</p><div v-if="hiddenPlaces.length" class="stack-list"><div v-for="item in hiddenPlaces" :key="item.id"><strong>{{ t(item.title) }}</strong><p>{{ t(item.description) }}</p></div></div></v-expansion-panel-text>
-        </v-expansion-panel>
-
-        <v-expansion-panel v-if="campingSpots.length">
-          <v-expansion-panel-title><v-icon icon="mdi-tent" />{{ t('stop.campOptions') }}<v-chip size="x-small">{{ campingSpots.length }}</v-chip></v-expansion-panel-title>
-          <v-expansion-panel-text><div class="stack-list"><div v-for="spot in campingSpots" :key="spot.id"><div class="list-heading"><strong>{{ t(spot.title) }}</strong><v-chip size="x-small">{{ t(`common.${spot.type}`) }}</v-chip></div><p>{{ t(spot.overview) }}</p><small>{{ t(spot.accessNote) }}</small></div></div></v-expansion-panel-text>
-        </v-expansion-panel>
-
-        <v-expansion-panel v-if="hasEssentials">
-          <v-expansion-panel-title><v-icon icon="mdi-shower" />{{ t('stop.essentials') }}</v-expansion-panel-title>
-          <v-expansion-panel-text>
-            <div class="facility-grid">
-              <template v-if="stop.municipalityFacilities.available">
-                <div><v-icon icon="mdi-shower" /><span>{{ t('stop.shower') }}</span><strong>{{ stop.municipalityFacilities.shower?t('common.yes'):t('common.no') }}</strong></div>
-                <div><v-icon icon="mdi-toilet" /><span>{{ t('stop.wc') }}</span><strong>{{ stop.municipalityFacilities.wc?t('common.yes'):t('common.no') }}</strong></div>
+      <div class="detail-panels">
+        <v-expansion-panels v-for="(column, columnIndex) in detailColumns" :key="columnIndex" class="detail-column" multiple variant="accordion">
+          <v-expansion-panel v-for="section in column" :key="section.key" :value="section.key">
+            <v-expansion-panel-title>
+              <v-icon :icon="section.icon" />{{ t(section.title) }}
+              <v-chip v-if="section.badge !== undefined" size="x-small" :color="section.badgeColor">{{ section.badge }}</v-chip>
+            </v-expansion-panel-title>
+            <v-expansion-panel-text>
+              <template v-if="section.key === 'why'">
+                <p class="body-copy">{{ t(stop.whyVisit) }}</p>
+                <div v-if="hiddenPlaces.length" class="stack-list"><div v-for="item in hiddenPlaces" :key="item.id"><strong>{{ t(item.title) }}</strong><p>{{ t(item.description) }}</p></div></div>
               </template>
-              <div v-for="service in availableServices" :key="service.key"><v-icon :icon="service.icon" /><span>{{ t(`stop.${service.key}`) }}</span><strong>{{ t(service.value.name) }}</strong></div>
-            </div>
-            <p v-if="stop.municipalityFacilities.available" class="source-copy">{{ t(stop.municipalityFacilities.notes) }}</p>
-          </v-expansion-panel-text>
-        </v-expansion-panel>
-
-        <v-expansion-panel v-if="conditionItems.length">
-          <v-expansion-panel-title><v-icon icon="mdi-signal" />{{ t('stop.conditions') }}</v-expansion-panel-title>
-          <v-expansion-panel-text><div class="condition-list"><div v-for="item in conditionItems" :key="item.key"><span>{{ t(`stop.${item.key}`) }}</span><strong>{{ item.value }}</strong></div></div></v-expansion-panel-text>
-        </v-expansion-panel>
-
-        <v-expansion-panel v-if="stop.roadWarnings.length">
-          <v-expansion-panel-title><v-icon icon="mdi-alert-outline" />{{ t('stop.roadWarnings') }}<v-chip size="x-small" color="warning">{{ stop.roadWarnings.length }}</v-chip></v-expansion-panel-title>
-          <v-expansion-panel-text><div class="warning-list"><p v-for="warning in stop.roadWarnings" :key="warning"><v-icon icon="mdi-alert-circle-outline" />{{ t(warning) }}</p></div></v-expansion-panel-text>
-        </v-expansion-panel>
-
-        <v-expansion-panel>
-          <v-expansion-panel-title><v-icon icon="mdi-camera-iris" />{{ t('stop.photography') }}</v-expansion-panel-title>
-          <v-expansion-panel-text><div class="sun-grid"><div><v-icon icon="mdi-weather-sunset-up" /><span>{{ t('stop.sunrise') }}</span><p>{{ t(stop.bestSunrise) }}</p></div><div><v-icon icon="mdi-weather-sunset-down" /><span>{{ t('stop.sunset') }}</span><p>{{ t(stop.bestSunset) }}</p></div></div><div v-if="stop.lunaUltraRecommendations.length" class="stack-list"><div v-for="tip in stop.lunaUltraRecommendations" :key="tip.subject"><strong>{{ t(tip.subject) }}</strong><p>{{ t(tip.lens) }} · {{ t(tip.timing) }}</p><small>{{ t(tip.fieldNote) }}</small></div></div></v-expansion-panel-text>
-        </v-expansion-panel>
-
-        <v-expansion-panel v-if="notes.length">
-          <v-expansion-panel-title><v-icon icon="mdi-notebook-outline" />{{ t('stop.ourNotes') }}</v-expansion-panel-title>
-          <v-expansion-panel-text><div class="stack-list"><div v-for="note in notes" :key="note.id"><strong>{{ t(note.title) }}</strong><p>{{ t(note.description) }}</p></div></div></v-expansion-panel-text>
-        </v-expansion-panel>
-
-        <v-expansion-panel v-if="stop.experience?.isPublished && stop.experience.body">
-          <v-expansion-panel-title>
-            <v-icon icon="mdi-book-open-page-variant-outline" />{{ t('stop.ourExperience') }}
-            <v-chip size="x-small">{{ stop.experience.locale.toUpperCase() }}</v-chip>
-          </v-expansion-panel-title>
-          <v-expansion-panel-text>
-            <p class="experience-copy">{{ stop.experience.body }}</p>
-            <p v-if="stop.experience.authorName" class="experience-author">
-              <v-icon icon="mdi-account-outline" />
-              {{ t('stop.experienceBy', {
-                name: stop.experience.authorName,
-                date: d(new Date(stop.experience.updatedAt), { dateStyle: 'medium', timeStyle: 'short' })
-              }) }}
-            </p>
-          </v-expansion-panel-text>
-        </v-expansion-panel>
-      </v-expansion-panels>
+              <div v-else-if="section.key === 'camping'" class="stack-list"><div v-for="spot in campingSpots" :key="spot.id"><div class="list-heading"><strong>{{ t(spot.title) }}</strong><v-chip size="x-small">{{ t(`common.${spot.type}`) }}</v-chip></div><p>{{ t(spot.overview) }}</p><small>{{ t(spot.accessNote) }}</small></div></div>
+              <template v-else-if="section.key === 'essentials'">
+                <div class="facility-grid">
+                  <template v-if="stop.municipalityFacilities.available">
+                    <div><v-icon icon="mdi-shower" /><span>{{ t('stop.shower') }}</span><strong>{{ stop.municipalityFacilities.shower?t('common.yes'):t('common.no') }}</strong></div>
+                    <div><v-icon icon="mdi-toilet" /><span>{{ t('stop.wc') }}</span><strong>{{ stop.municipalityFacilities.wc?t('common.yes'):t('common.no') }}</strong></div>
+                  </template>
+                  <div v-for="service in availableServices" :key="service.key"><v-icon :icon="service.icon" /><span>{{ t(`stop.${service.key}`) }}</span><strong>{{ t(service.value.name) }}</strong></div>
+                </div>
+                <p v-if="stop.municipalityFacilities.available" class="source-copy">{{ t(stop.municipalityFacilities.notes) }}</p>
+              </template>
+              <div v-else-if="section.key === 'conditions'" class="condition-list"><div v-for="item in conditionItems" :key="item.key"><span>{{ t(`stop.${item.key}`) }}</span><strong>{{ item.value }}</strong></div></div>
+              <div v-else-if="section.key === 'warnings'" class="warning-list"><p v-for="warning in stop.roadWarnings" :key="warning"><v-icon icon="mdi-alert-circle-outline" />{{ t(warning) }}</p></div>
+              <template v-else-if="section.key === 'photography'">
+                <div class="sun-grid"><div><v-icon icon="mdi-weather-sunset-up" /><span>{{ t('stop.sunrise') }}</span><p>{{ t(stop.bestSunrise) }}</p></div><div><v-icon icon="mdi-weather-sunset-down" /><span>{{ t('stop.sunset') }}</span><p>{{ t(stop.bestSunset) }}</p></div></div>
+                <div v-if="stop.lunaUltraRecommendations.length" class="stack-list"><div v-for="tip in stop.lunaUltraRecommendations" :key="tip.subject"><strong>{{ t(tip.subject) }}</strong><p>{{ t(tip.lens) }} · {{ t(tip.timing) }}</p><small>{{ t(tip.fieldNote) }}</small></div></div>
+              </template>
+              <div v-else-if="section.key === 'notes'" class="stack-list"><div v-for="note in notes" :key="note.id"><strong>{{ t(note.title) }}</strong><p>{{ t(note.description) }}</p></div></div>
+              <template v-else-if="section.key === 'experience' && stop.experience">
+                <p class="experience-copy">{{ stop.experience.body }}</p>
+                <p v-if="stop.experience.authorName" class="experience-author">
+                  <v-icon icon="mdi-account-outline" />
+                  {{ t('stop.experienceBy', {
+                    name: stop.experience.authorName,
+                    date: d(new Date(stop.experience.updatedAt), { dateStyle: 'medium', timeStyle: 'short' })
+                  }) }}
+                </p>
+              </template>
+            </v-expansion-panel-text>
+          </v-expansion-panel>
+        </v-expansion-panels>
+      </div>
 
       <section class="detail-map-section"><div class="map-section-title"><v-icon icon="mdi-map-outline" /><div><strong>{{ t('stop.interactiveMap') }}</strong><p>{{ t('map.subtitle') }}</p></div></div><div class="detail-map"><AppMap :stops="detailMapStops" :selected-id="stop.id" compact /></div></section>
     </div>
@@ -176,4 +192,6 @@ onMounted(async () => {
 @media(min-width:700px){.cover{height:440px}.photo-strip button{height:270px}.detail-panels{gap:14px;box-shadow:none}.detail-panels :deep(.v-expansion-panel){border-radius:var(--app-radius-md)!important;box-shadow:0 12px 36px rgba(0,0,0,.07)!important}.detail-map{height:440px}.navigation-bar{left:50%;bottom:18px;width:min(680px,calc(100% - 40px));border:1px solid rgba(var(--v-border-color),.13);border-radius:24px;transform:translateX(-50%);box-shadow:var(--app-shadow-float)}}@media(max-width:520px){.cover{height:330px}.summary-row{gap:8px}.summary-row>div{padding:15px 11px}.intro>p{font-size:1rem}.detail-panels :deep(.v-expansion-panel-title){min-height:68px;padding:16px}}
 .summary-row span{font-size:.82rem}
 .summary-row{max-width:960px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}.summary-row>div{display:grid;min-height:86px;grid-template-columns:34px minmax(0,1fr);grid-template-rows:auto auto;align-content:center;column-gap:12px;padding:15px 17px}.summary-row .v-icon{grid-row:1/3;align-self:center;margin:0}.summary-row strong,.summary-row span{grid-column:2;overflow:visible;text-overflow:clip;white-space:normal}.summary-row strong{align-self:end;font-size:1.05rem;line-height:1.3}.summary-row span{align-self:start;margin-top:2px;font-size:.8rem;line-height:1.35}.detail-panels:empty{display:none}@media(max-width:520px){.summary-row{grid-template-columns:1fr}.summary-row>div{min-height:78px}}
+.detail-panels{display:grid;grid-template-columns:1fr;align-items:start;gap:14px;overflow:visible;border:0;background:transparent;box-shadow:none}.detail-column{align-self:start;overflow:hidden;border:1px solid rgba(var(--v-border-color),.11);border-radius:var(--app-radius-md);box-shadow:0 14px 42px rgba(0,0,0,.08)}.detail-panels :deep(.v-expansion-panel-text__wrapper){padding:20px 20px 26px}
+@media(min-width:700px){.detail-panels{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}.detail-column{gap:14px;overflow:visible;border:0;border-radius:0;box-shadow:none}.detail-column :deep(.v-expansion-panel){align-self:start;overflow:hidden;border:1px solid rgba(var(--v-border-color),.1)!important;border-radius:var(--app-radius-md)!important;box-shadow:0 12px 36px rgba(0,0,0,.07)!important}}
 </style>
