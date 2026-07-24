@@ -1,0 +1,16 @@
+import { akbuk } from './akbuk'
+import { akyarlar } from './akyarlar'
+import { bafaLake } from './bafaLake'
+import { cirali } from './cirali'
+import { dalyan } from './dalyan'
+import { faralya } from './faralya'
+import { gumusluk } from './gumusluk'
+import { guzelcamli } from './guzelcamli'
+import { izmir } from './izmir'
+import { karaotBeach } from './karaotBeach'
+import { kas } from './kas'
+import { lara } from './lara'
+import { mazi } from './mazi'
+import type { StopContent } from '../types'
+
+export const stops: StopContent[] = [izmir, guzelcamli, bafaLake, gumusluk, akyarlar, mazi, akbuk, dalyan, karaotBeach, faralya, kas, cirali, lara]
