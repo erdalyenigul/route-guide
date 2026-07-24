@@ -25,7 +25,7 @@ export default {
   trip: { activeTrip: 'Aktif gezi', days: '8 gün', stopsCount: '{count} durak', distance: 'Toplam mesafe', plannedNights: 'Planlanan gece' },
   stop: {
     overview: 'Genel bakış', whyVisit: 'Neden ziyaret edilmeli', stay: 'Önerilen konaklama', nightRange: 'Konaklama aralığı', conditions: 'Koşullar', essentials: 'Yakındaki ihtiyaçlar', campOptions: 'Nerede kalınır',
-    photography: 'Fotoğraf', safety: 'Güvenlik notları', markVisited: 'Ziyaret edildi işaretle', markedVisited: 'Ziyaret edildi', stageComplete: 'Etap tamamlandı', stageCompleteHint: 'Bu durağı ortak rota ilerlemesine dahil et',
+    photography: 'Fotoğraf', safety: 'Güvenlik notları', markVisited: 'Ziyaret edildi işaretle', markedVisited: 'Ziyaret edildi', stageComplete: 'Etap tamamlandı', stageCompleteHint: 'Bu durağı ortak rota ilerlemesine dahil et', stageCompleteEditableHint: 'Bu durağın ortak rota ilerleme durumunu güncelle.', stageCompleteReadOnlyHint: 'Bu ortak rota durumu yönetici tarafından güncellenir.',
     favorite: 'Favorilere ekle', unfavorite: 'Favorilerden çıkar', fromPrevious: 'önceki duraktan', water: 'Su dolumu',
     dumpStation: 'Atık boşaltma', shower: 'Duş', wc: 'WC', wasteBins: 'Çöp kutuları', municipality: 'Belediye tesisleri', market: 'Market', fuel: 'Yakıt', internet: 'İnternet',
     mobileCoverage: 'Mobil kapsama', roadSafety: 'Yol güvenliği', ducatoAccess: 'Ducato erişimi', solar: 'Güneş',
