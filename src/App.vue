@@ -94,6 +94,19 @@ onUnmounted(() => { window.removeEventListener('online', updateOnlineStatus); wi
     <nav v-if="!route.meta.hideNavigation" class="mobile-nav" :aria-label="t('app.name')">
       <v-btn v-for="item in navItems" :key="item.key" :to="item.to" :value="item.key"><v-icon :icon="item.icon" /><span>{{ t(`nav.${item.key}`) }}</span></v-btn>
     </nav>
+    <v-snackbar
+      :model-value="Boolean(trip.stateSyncError)"
+      location="top"
+      color="surface"
+      :timeout="-1"
+      @update:model-value="!$event && trip.clearStateSyncError()"
+    >
+      {{ t(trip.stateSyncError === 'auth' ? 'sync.authRequired' : 'sync.saveError') }}
+      <template #actions>
+        <v-btn v-if="trip.stateSyncError === 'auth'" color="primary" variant="text" to="/manage/login" @click="trip.clearStateSyncError()">{{ t('sync.signIn') }}</v-btn>
+        <v-btn icon="mdi-close" variant="text" :aria-label="t('common.close')" @click="trip.clearStateSyncError()" />
+      </template>
+    </v-snackbar>
   </v-app>
 </template>
 

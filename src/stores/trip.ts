@@ -2,17 +2,20 @@ import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 
 import type { ChecklistItemViewModel, RouteDataset, StopContent, StopViewModel } from '@/content/types'
+import { emptyTripState, type TripState } from '@/domains/trips/repositories/tripStateRepository'
 import { routeContentService } from '@/domains/trips/services/routeContentService'
-import { userStateRepository } from '@/infrastructure/persistence/userStateRepository'
+import { tripStateService } from '@/domains/trips/services/tripStateService'
 
 const emptyDataset: RouteDataset = { routes: [], stops: [], spots: [], activities: [], checklist: [] }
 
 export const useTripStore = defineStore('trip', () => {
-  const userState = ref(userStateRepository.load())
+  const userState = ref<TripState>(emptyTripState())
   const dataset = ref<RouteDataset>(emptyDataset)
   const dataSource = ref<'supabase'>('supabase')
   const isLoading = ref(true)
   const loadError = ref<string | null>(null)
+  const stateSyncError = ref<'auth' | 'save' | null>(null)
+  let unsubscribeFromState: (() => void) | null = null
 
   const activeTrip = computed(() => dataset.value.routes.find((route) => route.status === 'active') ?? dataset.value.routes[0])
 
@@ -21,12 +24,31 @@ export const useTripStore = defineStore('trip', () => {
     loadError.value = null
     try {
       dataset.value = await routeContentService.load()
+      const route = dataset.value.routes.find((item) => item.status === 'active') ?? dataset.value.routes[0]
+      if (route) {
+        userState.value = await tripStateService.load(route.id)
+        unsubscribeFromState?.()
+        unsubscribeFromState = await tripStateService.subscribe(route.id, () => {
+          void refreshTripState(route.id)
+        })
+      }
+      localStorage.removeItem('route-guide:user-state:v1')
     } catch (error) {
       dataset.value = emptyDataset
       loadError.value = error instanceof Error ? error.message : 'content_load_failed'
       console.error('Supabase content could not be loaded.', error)
     } finally {
       isLoading.value = false
+    }
+  }
+
+  async function refreshTripState(routeId = activeTrip.value?.id): Promise<void> {
+    if (!routeId) return
+    try {
+      userState.value = await tripStateService.load(routeId)
+      stateSyncError.value = null
+    } catch {
+      stateSyncError.value = 'save'
     }
   }
 
@@ -72,8 +94,12 @@ export const useTripStore = defineStore('trip', () => {
     ? Math.round((checklist.value.filter((item) => item.completed).length / checklist.value.length) * 100)
     : 0)
 
-  function persist(): void {
-    userStateRepository.save(userState.value)
+  function syncFailure(error: unknown): void {
+    stateSyncError.value = error instanceof Error && error.message === 'AUTH_REQUIRED' ? 'auth' : 'save'
+  }
+
+  function clearStateSyncError(): void {
+    stateSyncError.value = null
   }
 
   function stopById(id: string): StopViewModel | undefined {
@@ -92,27 +118,54 @@ export const useTripStore = defineStore('trip', () => {
     return dataset.value.activities.filter((activity) => activity.stopId === stopId)
   }
 
-  function toggleFavorite(stopId: string): void {
+  async function toggleFavorite(stopId: string): Promise<void> {
     if (!dataset.value.stops.some((stop) => stop.id === stopId)) return
+    const routeId = activeTrip.value?.id
+    if (!routeId) return
     const favorites = userState.value.favoriteStopIds
-    userState.value.favoriteStopIds = favorites.includes(stopId) ? favorites.filter((id) => id !== stopId) : [...favorites, stopId]
-    persist()
+    const favorite = !favorites.includes(stopId)
+    userState.value.favoriteStopIds = favorite ? [...favorites, stopId] : favorites.filter((id) => id !== stopId)
+    stateSyncError.value = null
+    try {
+      await tripStateService.setFavorite(routeId, stopId, favorite)
+    } catch (error) {
+      userState.value.favoriteStopIds = favorites
+      syncFailure(error)
+    }
   }
 
-  function toggleVisited(stopId: string): void {
+  async function toggleVisited(stopId: string): Promise<void> {
     const stop = dataset.value.stops.find((item) => item.id === stopId)
     if (!stop) return
+    const routeId = activeTrip.value?.id
+    if (!routeId) return
     const currentStatus = userState.value.stopStatuses[stopId] ?? stop.initialStatus
-    userState.value.stopStatuses[stopId] = currentStatus === 'visited' ? stop.initialStatus : 'visited'
-    persist()
+    const nextStatus = currentStatus === 'visited' ? stop.initialStatus : 'visited'
+    userState.value.stopStatuses[stopId] = nextStatus
+    stateSyncError.value = null
+    try {
+      await tripStateService.setStopStatus(routeId, stopId, nextStatus)
+    } catch (error) {
+      userState.value.stopStatuses[stopId] = currentStatus
+      syncFailure(error)
+    }
   }
 
-  function toggleChecklistItem(itemId: string): void {
+  async function toggleChecklistItem(itemId: string): Promise<void> {
     const item = checklist.value.find((entry) => entry.id === itemId)
     if (!item) return
-    userState.value.checklistCompleted[itemId] = !item.completed
-    persist()
+    const routeId = activeTrip.value?.id
+    if (!routeId) return
+    const completed = !item.completed
+    userState.value.checklistCompleted[itemId] = completed
+    stateSyncError.value = null
+    try {
+      await tripStateService.setChecklistItem(routeId, itemId, completed)
+    } catch (error) {
+      userState.value.checklistCompleted[itemId] = item.completed
+      syncFailure(error)
+    }
   }
 
-  return { activeTrip, activeStops, currentStop, currentStopIndex, nextStop, remainingDistance, remainingNights, totalDistance, completedDistance, totalNights, nightsStayed, routeProgress, favoriteStops, checklist, checklistProgress, dataSource, isLoading, loadError, initialize, routeById, stopsForRoute, stopById, campingSpotsForStop, activitiesForStop, toggleFavorite, toggleVisited, toggleChecklistItem }
+  return { activeTrip, activeStops, currentStop, currentStopIndex, nextStop, remainingDistance, remainingNights, totalDistance, completedDistance, totalNights, nightsStayed, routeProgress, favoriteStops, checklist, checklistProgress, dataSource, isLoading, loadError, stateSyncError, initialize, refreshTripState, clearStateSyncError, routeById, stopsForRoute, stopById, campingSpotsForStop, activitiesForStop, toggleFavorite, toggleVisited, toggleChecklistItem }
 })

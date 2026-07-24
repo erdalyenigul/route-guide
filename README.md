@@ -14,7 +14,8 @@ The active route follows İzmir → Güzelçamlı → Bafa Lake → Gümüşlük
 - MapLibre renders OpenStreetMap-compatible tiles without an API key.
 - Supabase Storage holds stop covers and galleries.
 - The private editor area manages stop descriptions and shared trip photos.
-- Local Storage persists personal preferences and route progress.
+- Supabase synchronizes shared favorites, route progress and checklist state.
+- Local Storage persists only language and theme preferences.
 - Vue I18n provides English and Turkish interface content.
 
 SQL migrations and seed data live under `supabase/`.

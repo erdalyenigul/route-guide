@@ -23,6 +23,12 @@ export type StopExperienceRow = {
 export type ProfileRow = {
   id: string; username: string; display_name: string; is_editor: boolean; created_at: string; updated_at: string
 }
+export type TripStopStateRow = {
+  id: string; route_id: string; stop_id: string; status: string; is_favorite: boolean; updated_by: string | null; created_at: string; updated_at: string
+}
+export type TripChecklistStateRow = {
+  id: string; route_id: string; item_id: string; completed: boolean; updated_by: string | null; created_at: string; updated_at: string
+}
 export type FacilityRow = VerificationColumns & {
   id: string; stop_id: string; camping_spot_id: string | null; facility_type: string; available: boolean; is_municipal: boolean; name_key: string | null; notes_key: string | null; distance_km: number | null; metadata: Json; created_at: string
 }
@@ -50,6 +56,8 @@ export type Database = {
       galleries: Table<GalleryRow>
       profiles: Table<ProfileRow>
       stop_experiences: Table<StopExperienceRow>
+      trip_stop_states: Table<TripStopStateRow>
+      trip_checklist_states: Table<TripChecklistStateRow>
       facilities: Table<FacilityRow>
       activities: Table<ActivityRow>
       tips: Table<TipRow>

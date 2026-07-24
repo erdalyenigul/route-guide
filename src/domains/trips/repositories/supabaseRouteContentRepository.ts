@@ -1,4 +1,5 @@
 import type { Accessibility, CampingType, ContentTranslationKey, Level, RouteDataset, RouteStatus, StopStatus, VerificationStatus } from '@/content/types'
+import { departureChecklist } from '@/content/checklists/departure'
 import { supabase } from '@/infrastructure/supabase/client'
 import type { FacilityRow, GalleryRow, StopRow, TipRow } from '@/infrastructure/supabase/database.types'
 
@@ -200,6 +201,6 @@ export const supabaseRouteContentRepository: RouteContentRepository = {
       description: contentKey(row.description_key)
     }))
 
-    return { routes, stops, spots, activities, checklist: [] }
+    return { routes, stops, spots, activities, checklist: departureChecklist }
   }
 }
