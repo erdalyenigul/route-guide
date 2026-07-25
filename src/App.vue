@@ -22,7 +22,7 @@ const navItems = computed(() => [
   { key: 'settings', icon: 'mdi-cog-outline', to: '/settings' }
 ])
 
-watch(() => preferences.theme, value => { theme.global.name.value = value === 'dark' ? 'routeDark' : 'routeLight' }, { immediate: true })
+watch(() => preferences.theme, value => { theme.change(value === 'dark' ? 'routeDark' : 'routeLight') }, { immediate: true })
 watch(() => preferences.language, value => { locale.value = value; document.documentElement.lang = value }, { immediate: true })
 watch([() => route.meta.titleKey, () => preferences.language], ([key]) => { document.title = `${t(String(key ?? 'app.name'))} · ${t('app.name')}` }, { immediate: true })
 </script>
