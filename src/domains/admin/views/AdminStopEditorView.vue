@@ -185,119 +185,95 @@ onMounted(() => { void refreshContent() })
       <v-alert v-if="errorMessage" type="error" variant="tonal" closable @click:close="errorMessage=''">{{ errorMessage }}</v-alert>
       <v-alert v-if="successMessage" type="success" variant="tonal" closable @click:close="successMessage=''">{{ successMessage }}</v-alert>
 
-      <div class="editor-layout">
-        <v-card v-if="tripStop" class="panel progress-panel">
-          <div class="panel-heading progress-heading">
-            <div><p class="eyebrow">{{ t('admin.tripProgress') }}</p><h2>{{ t('admin.actualTripData') }}</h2></div>
-            <v-chip :color="progressCompleted ? 'success' : undefined" variant="tonal">
-              {{ t(progressCompleted ? 'common.completed' : 'common.upcoming') }}
-            </v-chip>
-          </div>
-          <p class="panel-description">{{ t('admin.progressHint') }}</p>
-          <div class="planned-values">
-            <div><v-icon icon="mdi-calendar-range-outline" /><span>{{ t('admin.plannedStay') }}</span><strong>{{ tripStop.recommendedNights }} {{ t('common.nights') }}</strong></div>
-            <div><v-icon icon="mdi-map-marker-distance" /><span>{{ t('admin.plannedDistance') }}</span><strong>{{ tripStop.drivingDistanceFromPreviousKm ?? '—' }} {{ t('common.km') }}</strong></div>
-          </div>
-          <v-switch v-model="progressCompleted" class="progress-switch" color="primary" hide-details :label="t('stop.stageComplete')" />
-          <div class="actual-values">
-            <v-text-field
-              v-model.number="nightsStayed"
-              type="number"
-              min="0"
-              max="365"
-              step="1"
-              inputmode="numeric"
-              :disabled="!progressCompleted"
-              :label="t('stop.actualNightsStayed')"
-              :suffix="t('common.nights')"
-            />
-            <v-text-field
-              v-model.number="actualDistanceKm"
-              type="number"
-              min="0"
-              max="5000"
-              step="1"
-              inputmode="numeric"
-              :disabled="!progressCompleted"
-              :label="t('stop.actualDistanceTravelled')"
-              :suffix="t('common.km')"
-            />
-          </div>
-          <v-btn color="primary" size="large" prepend-icon="mdi-content-save-outline" :loading="isSavingProgress" @click="saveProgress">{{ t('admin.saveProgress') }}</v-btn>
-        </v-card>
-
-        <v-card class="panel experience-panel">
-          <div class="panel-heading">
-            <div><p class="eyebrow">{{ t('admin.journal') }}</p><h2>{{ t('admin.experienceTitle') }}</h2></div>
-            <v-switch v-model="isPublished" color="primary" hide-details :label="t('admin.published')" />
-          </div>
-          <v-btn-toggle v-model="locale" mandatory color="primary" density="comfortable">
-            <v-btn value="tr">{{ t('settings.turkish') }}</v-btn>
-            <v-btn value="en">{{ t('settings.english') }}</v-btn>
-          </v-btn-toggle>
-          <v-textarea
-            v-model="body"
-            class="experience-input"
-            :label="t('admin.experienceLabel')"
-            :hint="t('admin.experienceHint')"
-            persistent-hint
-            rows="12"
-            maxlength="10000"
-            counter
-            auto-grow
-          />
-          <p v-if="activeExperience.authorName && activeExperience.updatedAt" class="author-meta">
-            <v-icon icon="mdi-account-edit-outline" />
-            {{ t('admin.lastEditedBy', {
-              name: activeExperience.authorName,
-              date: formatDateTime(activeExperience.updatedAt)
-            }) }}
-          </p>
-          <v-btn color="primary" size="large" prepend-icon="mdi-content-save-outline" :loading="isSaving" @click="saveExperience">{{ t('common.save') }}</v-btn>
-        </v-card>
-
-        <v-card class="panel upload-panel">
-          <div class="panel-heading">
-            <div><p class="eyebrow">{{ t('admin.sharedGallery') }}</p><h2>{{ t('admin.photoUploadTitle') }}</h2></div>
-            <v-chip color="primary" variant="tonal">{{ uploadedPhotoCount }}/{{ MAX_PHOTOS_PER_STOP }}</v-chip>
-          </div>
-          <p class="panel-description">{{ t('admin.photoUploadHint', { count: remainingPhotos }) }}</p>
-          <v-file-input
-            v-model="files"
-            accept="image/jpeg,image/png,image/webp,image/avif"
-            multiple
-            chips
-            show-size
-            prepend-icon=""
-            prepend-inner-icon="mdi-image-plus-outline"
-            :label="t('admin.choosePhotos')"
-            :disabled="remainingPhotos === 0"
-          />
-          <v-text-field v-model="caption" :label="t('admin.photoCaption')" maxlength="500" counter />
-          <v-btn color="primary" size="large" prepend-icon="mdi-cloud-upload-outline" :disabled="!files.length || remainingPhotos === 0" :loading="isUploading" @click="upload">{{ t('admin.uploadPhotos') }}</v-btn>
-        </v-card>
-      </div>
-
-      <section class="photos-section">
-        <div class="section-heading"><div><p class="eyebrow">{{ t('admin.sharedGallery') }}</p><h2>{{ t('admin.currentPhotos') }}</h2></div><span>{{ t('admin.photoCount', { count: editor.photos.length }) }}</span></div>
-        <div v-if="editor.photos.length" class="photo-admin-grid">
-          <v-card v-for="(photo,index) in editor.photos" :key="photo.id" class="photo-admin-card">
-            <button class="photo-preview" type="button" :aria-label="t('gallery.openPhoto')" @click="selectedPhotoIndex=index">
-              <img :src="photo.url" :alt="photo.caption || t('gallery.photoOf',{stop:t(editor.titleKey)})" />
-            </button>
-            <div class="photo-overlay">
-              <v-chip v-if="photo.isCover" class="cover-chip" size="small">{{ t('admin.cover') }}</v-chip>
-              <span v-else />
-              <div>
-                <v-btn class="photo-action-btn" icon="mdi-image-frame" size="small" variant="flat" :title="t('admin.makeCover')" :aria-label="t('admin.makeCover')" @click="setCover(photo)" />
-                <v-btn class="photo-action-btn" icon="mdi-delete-outline" size="small" variant="flat" :title="t('admin.deletePhoto')" :aria-label="t('admin.deletePhoto')" @click="pendingDelete=photo" />
-              </div>
+      <div class="editor-sections">
+        <section class="editor-section">
+          <header class="section-title">
+            <v-icon icon="mdi-image-multiple-outline" />
+            <div class="drawer-heading"><strong>{{ t('admin.currentPhotos') }}</strong><small>{{ t('admin.photoCount', { count: editor.photos.length }) }}</small></div>
+          </header>
+          <div class="section-content">
+            <div v-if="editor.photos.length" class="photo-admin-grid">
+              <v-card v-for="(photo,index) in editor.photos" :key="photo.id" class="photo-admin-card">
+                <button class="photo-preview" type="button" :aria-label="t('gallery.openPhoto')" @click="selectedPhotoIndex=index">
+                  <img :src="photo.url" :alt="photo.caption || t('gallery.photoOf',{stop:t(editor.titleKey)})" />
+                </button>
+                <div class="photo-overlay">
+                  <v-chip v-if="photo.isCover" class="cover-chip" size="small">{{ t('admin.cover') }}</v-chip>
+                  <span v-else />
+                  <div>
+                    <v-btn class="photo-action-btn" icon="mdi-image-frame" size="small" variant="flat" :title="t('admin.makeCover')" :aria-label="t('admin.makeCover')" @click="setCover(photo)" />
+                    <v-btn class="photo-action-btn" icon="mdi-delete-outline" size="small" variant="flat" :title="t('admin.deletePhoto')" :aria-label="t('admin.deletePhoto')" @click="pendingDelete=photo" />
+                  </div>
+                </div>
+                <p v-if="photo.caption">{{ photo.caption }}</p>
+              </v-card>
             </div>
-            <p v-if="photo.caption">{{ photo.caption }}</p>
-          </v-card>
-        </div>
-        <v-empty-state v-else icon="mdi-image-plus-outline" :title="t('admin.noPhotos')" :text="t('admin.noPhotosHint')" />
-      </section>
+            <v-empty-state v-else icon="mdi-image-plus-outline" :title="t('admin.noPhotos')" :text="t('admin.noPhotosHint')" />
+          </div>
+        </section>
+
+        <section class="editor-section">
+          <header class="section-title">
+            <v-icon icon="mdi-image-plus-outline" />
+            <div class="drawer-heading"><strong>{{ t('admin.photoUploadTitle') }}</strong><small>{{ t('admin.photoUploadHint', { count: remainingPhotos }) }}</small></div>
+          </header>
+          <div class="section-content">
+            <div class="drawer-content">
+              <v-file-input v-model="files" accept="image/jpeg,image/png,image/webp,image/avif" multiple chips show-size prepend-icon="" prepend-inner-icon="mdi-image-plus-outline" :label="t('admin.choosePhotos')" :disabled="remainingPhotos === 0" />
+              <v-text-field v-model="caption" :label="t('admin.photoCaption')" maxlength="500" counter />
+              <v-btn color="primary" size="large" prepend-icon="mdi-cloud-upload-outline" :disabled="!files.length || remainingPhotos === 0" :loading="isUploading" @click="upload">{{ t('admin.uploadPhotos') }}</v-btn>
+            </div>
+          </div>
+        </section>
+
+        <section class="editor-section">
+          <header class="section-title">
+            <v-icon icon="mdi-text-box-edit-outline" />
+            <div class="drawer-heading"><strong>{{ t('admin.experienceTitle') }}</strong><small>{{ t('admin.languageDrafts') }}</small></div>
+          </header>
+          <div class="section-content">
+            <div class="drawer-content">
+              <div class="description-tools">
+                <v-btn-toggle v-model="locale" mandatory color="primary" density="comfortable">
+                  <v-btn value="tr">{{ t('settings.turkish') }}</v-btn>
+                  <v-btn value="en">{{ t('settings.english') }}</v-btn>
+                </v-btn-toggle>
+                <v-switch v-model="isPublished" color="primary" hide-details :label="t('admin.published')" />
+              </div>
+              <v-textarea v-model="body" class="experience-input" :label="t('admin.experienceLabel')" :hint="t('admin.experienceHint')" persistent-hint rows="12" maxlength="10000" counter auto-grow />
+              <p v-if="activeExperience.authorName && activeExperience.updatedAt" class="author-meta">
+                <v-icon icon="mdi-account-edit-outline" />
+                {{ t('admin.lastEditedBy', { name: activeExperience.authorName, date: formatDateTime(activeExperience.updatedAt) }) }}
+              </p>
+              <v-btn color="primary" size="large" prepend-icon="mdi-content-save-outline" :loading="isSaving" @click="saveExperience">{{ t('common.save') }}</v-btn>
+            </div>
+          </div>
+        </section>
+
+        <section v-if="tripStop" class="editor-section">
+          <header class="section-title">
+            <v-icon icon="mdi-map-marker-path" />
+            <div class="drawer-heading">
+              <strong>{{ t('admin.actualTripData') }}</strong>
+              <v-chip class="progress-status" :color="progressCompleted ? 'success' : undefined" size="small" variant="tonal">{{ t(progressCompleted ? 'common.completed' : 'common.upcoming') }}</v-chip>
+            </div>
+          </header>
+          <div class="section-content">
+            <div class="drawer-content">
+              <div class="planned-values">
+                <div><v-icon icon="mdi-calendar-range-outline" /><span>{{ t('admin.plannedStay') }}</span><strong>{{ tripStop.recommendedNights }} {{ t('common.nights') }}</strong></div>
+                <div><v-icon icon="mdi-map-marker-distance" /><span>{{ t('admin.plannedDistance') }}</span><strong>{{ tripStop.drivingDistanceFromPreviousKm ?? '—' }} {{ t('common.km') }}</strong></div>
+              </div>
+              <v-switch v-model="progressCompleted" class="progress-switch" color="primary" hide-details :label="t('stop.stageComplete')" />
+              <div class="actual-values">
+                <v-text-field v-model.number="nightsStayed" type="number" min="0" max="365" step="1" inputmode="numeric" :disabled="!progressCompleted" :label="t('stop.actualNightsStayed')" :suffix="t('common.nights')" />
+                <v-text-field v-model.number="actualDistanceKm" type="number" min="0" max="5000" step="1" inputmode="numeric" :disabled="!progressCompleted" :label="t('stop.actualDistanceTravelled')" :suffix="t('common.km')" />
+              </div>
+              <v-btn color="primary" size="large" prepend-icon="mdi-content-save-outline" :loading="isSavingProgress" @click="saveProgress">{{ t('admin.saveProgress') }}</v-btn>
+            </div>
+          </div>
+        </section>
+      </div>
     </template>
 
     <v-dialog :model-value="Boolean(pendingDelete)" max-width="440" @update:model-value="value=>{if(!value)pendingDelete=undefined}">
@@ -313,5 +289,52 @@ onMounted(() => { void refreshContent() })
 </template>
 
 <style scoped>
-.loading{min-height:60dvh;display:grid;place-items:center}.v-alert{margin-bottom:14px}.editor-layout{display:grid;grid-template-columns:1.15fr .85fr;gap:18px}.panel{padding:clamp(20px,3vw,30px);border:1px solid rgba(var(--v-border-color),.11);border-radius:24px!important;box-shadow:var(--app-shadow)}.panel-heading{display:flex;align-items:start;justify-content:space-between;gap:18px;margin-bottom:22px}.panel-heading h2,.section-heading h2{font-size:1.5rem;letter-spacing:-.04em}.progress-panel{grid-column:1/-1}.progress-heading{margin-bottom:12px}.planned-values{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:760px}.planned-values>div{display:grid;grid-template-columns:36px minmax(0,1fr);grid-template-rows:auto auto;align-items:center;padding:16px;border:1px solid rgba(var(--v-border-color),.09);border-radius:17px;background:rgba(var(--v-theme-on-surface),.04)}.planned-values .v-icon{grid-row:1/3;color:rgb(var(--v-theme-primary));font-size:1.25rem}.planned-values span{color:rgba(var(--v-theme-on-surface),.58);font-size:.78rem}.planned-values strong{font-size:1.05rem}.progress-switch{margin:20px 0 12px}.actual-values{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:760px}.experience-input{margin-top:20px}.author-meta{display:flex;align-items:center;gap:8px;margin:-2px 0 18px;color:rgba(var(--v-theme-on-surface),.62);font-size:.86rem;line-height:1.5}.author-meta .v-icon{color:rgb(var(--v-theme-primary));font-size:1.1rem}.panel-description{margin:-8px 0 20px;color:rgba(var(--v-theme-on-surface),.66);font-size:.9rem;line-height:1.55}.photos-section{margin-top:38px}.section-heading{display:flex;align-items:end;justify-content:space-between;margin-bottom:18px}.section-heading>span{color:rgba(var(--v-theme-on-background),.58);font-size:.9rem}.photo-admin-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.photo-admin-card{position:relative;overflow:hidden;border:1px solid rgba(var(--v-border-color),.11);border-radius:20px!important}.photo-preview{display:block;width:100%;padding:0;border:0;background:transparent;cursor:zoom-in}.photo-preview img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;transition:transform .25s}.photo-preview:hover img{transform:scale(1.025)}.photo-admin-card>p{min-height:48px;padding:12px 14px;color:rgba(var(--v-theme-on-surface),.7);font-size:.82rem;line-height:1.4}.photo-overlay{position:absolute;z-index:1;left:10px;right:10px;top:10px;display:flex;justify-content:space-between;gap:10px;pointer-events:none}.photo-overlay>div{display:flex;gap:7px}.photo-overlay .v-btn{pointer-events:auto}.cover-chip,.photo-action-btn{color:#fff!important;background:#090a0d!important;box-shadow:0 6px 18px rgba(0,0,0,.3)}.photo-action-btn:hover{background:#24262b!important}.photo-action-btn :deep(.v-icon){color:#fff!important}.confirm-card{padding:26px}.confirm-card h2{font-size:1.4rem}.confirm-card p{margin-top:10px;color:rgba(var(--v-theme-on-surface),.68);line-height:1.55}.confirm-card>div{display:flex;justify-content:flex-end;gap:8px;margin-top:24px}@media(max-width:1050px){.editor-layout{grid-template-columns:1fr}.photo-admin-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:700px){.photo-admin-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.panel-heading{align-items:center}.panel-heading h2{font-size:1.3rem}.planned-values,.actual-values{grid-template-columns:1fr}}@media(max-width:430px){.photo-admin-grid{grid-template-columns:1fr}}
+.loading{min-height:60dvh;display:grid;place-items:center}
+.v-alert{margin-bottom:14px}
+.editor-sections{display:grid;gap:18px}
+.editor-section{overflow:hidden;border:1px solid rgba(var(--v-border-color),.11);border-radius:24px;background:rgb(var(--v-theme-surface));box-shadow:var(--app-shadow)}
+.section-title{display:flex;align-items:center;gap:14px;padding:20px 24px;border-bottom:1px solid rgba(var(--v-border-color),.09)}
+.section-title>.v-icon{color:rgb(var(--v-theme-primary));font-size:1.45rem}
+.section-content{padding:24px}
+.drawer-heading{display:flex;min-width:0;flex:1;flex-direction:column;align-items:flex-start;gap:4px}
+.drawer-heading strong{max-width:100%;font-size:1.16rem;letter-spacing:-.025em}
+.drawer-heading small{color:rgba(var(--v-theme-on-surface),.58);font-size:.82rem;line-height:1.35}
+.progress-status{margin-top:3px}
+.drawer-content{max-width:900px}
+.description-tools{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.planned-values{display:grid;max-width:760px;grid-template-columns:1fr 1fr;gap:12px}
+.planned-values>div{display:grid;grid-template-columns:36px minmax(0,1fr);grid-template-rows:auto auto;align-items:center;padding:16px;border:1px solid rgba(var(--v-border-color),.09);border-radius:17px;background:rgba(var(--v-theme-on-surface),.04)}
+.planned-values .v-icon{grid-row:1/3;color:rgb(var(--v-theme-primary));font-size:1.25rem}
+.planned-values span{color:rgba(var(--v-theme-on-surface),.58);font-size:.78rem}
+.planned-values strong{font-size:1.05rem}
+.progress-switch{margin:20px 0 12px}
+.actual-values{display:grid;max-width:760px;grid-template-columns:1fr 1fr;gap:12px}
+.experience-input{margin-top:20px}
+.author-meta{display:flex;align-items:center;gap:8px;margin:-2px 0 18px;color:rgba(var(--v-theme-on-surface),.62);font-size:.86rem;line-height:1.5}
+.author-meta .v-icon{color:rgb(var(--v-theme-primary));font-size:1.1rem}
+.photo-admin-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.photo-admin-card{position:relative;overflow:hidden;border:1px solid rgba(var(--v-border-color),.11);border-radius:20px!important}
+.photo-preview{display:block;width:100%;padding:0;border:0;background:transparent;cursor:zoom-in}
+.photo-preview img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;transition:transform .25s}
+.photo-preview:hover img{transform:scale(1.025)}
+.photo-admin-card>p{min-height:48px;padding:12px 14px;color:rgba(var(--v-theme-on-surface),.7);font-size:.82rem;line-height:1.4}
+.photo-overlay{position:absolute;z-index:1;top:10px;right:10px;left:10px;display:flex;justify-content:space-between;gap:10px;pointer-events:none}
+.photo-overlay>div{display:flex;gap:7px}
+.photo-overlay .v-btn{pointer-events:auto}
+.cover-chip,.photo-action-btn{color:#fff!important;background:#090a0d!important;box-shadow:0 6px 18px rgba(0,0,0,.3)}
+.photo-action-btn:hover{background:#24262b!important}
+.photo-action-btn :deep(.v-icon){color:#fff!important}
+.confirm-card{padding:26px}
+.confirm-card h2{font-size:1.4rem}
+.confirm-card p{margin-top:10px;color:rgba(var(--v-theme-on-surface),.68);line-height:1.55}
+.confirm-card>div{display:flex;justify-content:flex-end;gap:8px;margin-top:24px}
+@media(max-width:1050px){.photo-admin-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:700px){
+  .section-title{padding:17px 18px}
+  .section-content{padding:18px}
+  .photo-admin-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .planned-values,.actual-values{grid-template-columns:1fr}
+  .description-tools{align-items:flex-start;flex-direction:column}
+}
+@media(max-width:430px){.photo-admin-grid{grid-template-columns:1fr}}
 </style>
