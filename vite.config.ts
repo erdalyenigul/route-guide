@@ -14,8 +14,8 @@ export default defineConfig({
         name: 'Route Guide',
         short_name: 'Route Guide',
         description: 'Personal caravan travel companion',
-        theme_color: '#1d332b',
-        background_color: '#111915',
+        theme_color: '#1f1f1f',
+        background_color: '#0b0d0f',
         display: 'standalone',
         start_url: '/',
         icons: [
