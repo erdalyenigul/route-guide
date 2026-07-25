@@ -19,6 +19,10 @@ const localizedExperience = computed(() => {
 const hasPublishedExperience = computed(() => Object.values(stop.value?.experiences ?? {})
   .some(experience => experience?.isPublished && experience.body.trim()))
 const campingSpots = computed(() => stop.value ? store.campingSpotsForStop(stop.value.id) : [])
+const navigationDestination = computed(() => {
+  const preferredSpot = campingSpots.value.find(spot => spot.recommended)
+  return preferredSpot ? mapService.coordinate(preferredSpot.coordinates) : (stop.value ? mapService.coordinate(stop.value.coordinates) : null)
+})
 const activities = computed(() => stop.value ? store.activitiesForStop(stop.value.id) : [])
 const notes = computed(() => activities.value.filter(item => item.type === 'note'))
 const hiddenPlaces = computed(() => activities.value.filter(item => item.type === 'hidden_place'))
@@ -44,7 +48,7 @@ const previousDetailStop = computed(() => stopIndex.value > 0 ? routeStops.value
 const nextDetailStop = computed(() => stopIndex.value >= 0 && stopIndex.value < routeStops.value.length - 1 ? routeStops.value[stopIndex.value + 1] : undefined)
 const navigationUrl = computed(() => stop.value ? mapService.externalRouteUrl([
   previousDetailStop.value ? mapService.coordinate(previousDetailStop.value.coordinates) : null,
-  mapService.coordinate(stop.value.coordinates)
+  navigationDestination.value
 ]) : undefined)
 function openNavigation(): void {
   mapService.openExternalUrl(navigationUrl.value)

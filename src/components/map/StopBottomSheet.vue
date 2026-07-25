@@ -18,9 +18,13 @@ const routeStops = computed(() => store.stopsForRoute(props.stop.routeId))
 const stopIndex = computed(() => routeStops.value.findIndex(stop => stop.id === props.stop.id))
 const isRouteOrigin = computed(() => stopIndex.value === 0)
 const isAccommodationStop = computed(() => stopIndex.value > 0 && stopIndex.value < routeStops.value.length - 1)
+const preferredCamp = computed(() => store.campingSpotsForStop(props.stop.id).find(spot => spot.recommended))
+const navigationCoordinate = computed(() => preferredCamp.value
+  ? mapService.coordinate(preferredCamp.value.coordinates)
+  : coordinate.value)
 const routeUrl = computed(() => mapService.externalRouteUrl([
   props.previousStop ? mapService.coordinate(props.previousStop.coordinates) : null,
-  coordinate.value
+  navigationCoordinate.value
 ]))
 function openRoute(): void {
   mapService.openExternalUrl(routeUrl.value)

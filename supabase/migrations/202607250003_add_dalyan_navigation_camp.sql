@@ -1,0 +1,52 @@
+insert into public.camping_spots (
+  stop_id,
+  slug,
+  content_key,
+  title_key,
+  spot_type,
+  latitude,
+  longitude,
+  overview_key,
+  price_note_key,
+  access_note_key,
+  rating,
+  recommended,
+  position,
+  verification_status,
+  source_note,
+  last_verified_at
+)
+select
+  stop.id,
+  'sarigerme-municipal-caravan',
+  'content.stops.dalyan.spots.sarigerme',
+  'content.stops.dalyan.spots.sarigerme.title',
+  'municipality',
+  36.70708,
+  28.71134,
+  'content.stops.dalyan.spots.sarigerme.overview',
+  'content.stops.dalyan.spots.sarigerme.price',
+  'content.stops.dalyan.spots.sarigerme.access',
+  0,
+  true,
+  0,
+  'verified',
+  'Ortaca Belediyesi lists Sarıgerme Çadır ve Karavan; coordinates cross-checked with OpenStreetMap way 1181278032.',
+  '2026-07-25T00:00:00+03:00'
+from public.stops as stop
+where stop.slug = 'dalyan'
+on conflict (slug) do update set
+  stop_id = excluded.stop_id,
+  title_key = excluded.title_key,
+  spot_type = excluded.spot_type,
+  latitude = excluded.latitude,
+  longitude = excluded.longitude,
+  overview_key = excluded.overview_key,
+  price_note_key = excluded.price_note_key,
+  access_note_key = excluded.access_note_key,
+  recommended = excluded.recommended,
+  position = excluded.position,
+  verification_status = excluded.verification_status,
+  source_note = excluded.source_note,
+  last_verified_at = excluded.last_verified_at,
+  updated_at = now();
