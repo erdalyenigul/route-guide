@@ -262,11 +262,11 @@ onMounted(() => { void refreshContent() })
           <div class="section-content">
             <div class="drawer-content">
               <div class="description-tools">
+                <v-switch v-model="isPublished" color="primary" hide-details :label="t('admin.published')" />
                 <v-btn-toggle v-model="locale" mandatory color="primary" density="comfortable">
                   <v-btn value="tr">{{ t('settings.turkish') }}</v-btn>
                   <v-btn value="en">{{ t('settings.english') }}</v-btn>
                 </v-btn-toggle>
-                <v-switch v-model="isPublished" color="primary" hide-details :label="t('admin.published')" />
               </div>
               <v-textarea v-model="body" class="experience-input" :label="t('admin.experienceLabel')" :hint="t('admin.experienceHint')" persistent-hint rows="12" maxlength="10000" counter auto-grow />
               <p v-if="activeExperience.authorName && activeExperience.updatedAt" class="author-meta">
@@ -330,7 +330,7 @@ onMounted(() => { void refreshContent() })
 .section-title h2{font-size:1.16rem;line-height:1.3;letter-spacing:-.025em}
 .section-content{padding:24px}
 .drawer-content{max-width:900px}
-.description-tools{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.description-tools{display:flex;align-items:flex-start;flex-direction:column;gap:18px}
 .planned-values{display:grid;max-width:760px;grid-template-columns:1fr 1fr;gap:12px}
 .planned-values>div{display:grid;grid-template-columns:36px minmax(0,1fr);grid-template-rows:auto auto;align-items:center;padding:16px;border:1px solid rgba(var(--v-border-color),.09);border-radius:17px;background:rgba(var(--v-theme-on-surface),.04)}
 .planned-values .v-icon{grid-row:1/3;color:rgb(var(--v-theme-primary));font-size:1.25rem}
@@ -364,7 +364,6 @@ onMounted(() => { void refreshContent() })
   .section-content{padding:18px}
   .photo-admin-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
   .planned-values,.actual-values{grid-template-columns:1fr}
-  .description-tools{align-items:flex-start;flex-direction:column}
 }
 @media(max-width:430px){.photo-admin-grid{grid-template-columns:1fr}}
 </style>
