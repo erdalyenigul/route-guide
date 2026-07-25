@@ -78,7 +78,9 @@ export const useTripStore = defineStore('trip', () => {
 
   const activeStops = computed(() => activeTrip.value ? stopsForRoute(activeTrip.value.id) : [])
   const accommodationStops = computed(() => activeStops.value.slice(1, -1))
-  const currentStop = computed(() => activeStops.value.find((stop) => stop.status === 'current') ?? activeStops.value[0])
+  const currentStop = computed(() => activeStops.value.find((stop) => stop.status === 'current')
+    ?? activeStops.value.find((stop) => stop.status !== 'visited' && stop.status !== 'skipped')
+    ?? activeStops.value[activeStops.value.length - 1])
   const currentStopIndex = computed(() => currentStop.value ? activeStops.value.findIndex((stop) => stop.id === currentStop.value?.id) : -1)
   const nextStop = computed(() => activeStops.value[currentStopIndex.value + 1])
   const remainingDistance = computed(() => activeStops.value.slice(Math.max(currentStopIndex.value + 1, 0)).reduce((total, stop) => total + (stop.drivingDistanceFromPreviousKm ?? 0), 0))
@@ -142,22 +144,45 @@ export const useTripStore = defineStore('trip', () => {
     if (!stop) return
     const routeId = activeTrip.value?.id
     if (!routeId) return
+    const routeStops = stopsForRoute(routeId)
+    const stopIndex = routeStops.findIndex(item => item.id === stopId)
+    const followingStop = stopIndex >= 0 ? routeStops[stopIndex + 1] : undefined
     const currentStatus = userState.value.stopStatuses[stopId] ?? stop.initialStatus
     const currentNightsStayed = userState.value.nightsStayedByStop[stopId]
     const currentActualDistance = userState.value.actualDistanceByStop[stopId]
+    const followingStatus = followingStop
+      ? (userState.value.stopStatuses[followingStop.id] ?? followingStop.initialStatus)
+      : undefined
     const nextStatus = completed ? 'visited' : stop.initialStatus
     const nextNightsStayed = completed && nightsStayed !== null ? Math.max(0, Math.trunc(nightsStayed)) : null
     const nextActualDistance = completed && actualDistanceKm !== null ? Math.max(0, Math.trunc(actualDistanceKm)) : null
+    const shouldPromoteFollowingStop = Boolean(completed && followingStop && followingStatus !== 'visited')
+    const shouldRestoreFollowingStop = Boolean(!completed && followingStop && followingStatus === 'current')
     userState.value.stopStatuses[stopId] = nextStatus
+    if (followingStop && shouldPromoteFollowingStop) userState.value.stopStatuses[followingStop.id] = 'current'
+    if (followingStop && shouldRestoreFollowingStop) userState.value.stopStatuses[followingStop.id] = followingStop.initialStatus
     if (nextNightsStayed === null) delete userState.value.nightsStayedByStop[stopId]
     else userState.value.nightsStayedByStop[stopId] = nextNightsStayed
     if (nextActualDistance === null) delete userState.value.actualDistanceByStop[stopId]
     else userState.value.actualDistanceByStop[stopId] = nextActualDistance
     stateSyncError.value = null
     try {
-      await tripStateService.setStopProgress(routeId, stopId, nextStatus, nextNightsStayed, nextActualDistance)
+      const writes = [
+        tripStateService.setStopProgress(routeId, stopId, nextStatus, nextNightsStayed, nextActualDistance)
+      ]
+      if (followingStop && (shouldPromoteFollowingStop || shouldRestoreFollowingStop)) {
+        writes.push(tripStateService.setStopProgress(
+          routeId,
+          followingStop.id,
+          shouldPromoteFollowingStop ? 'current' : followingStop.initialStatus,
+          userState.value.nightsStayedByStop[followingStop.id] ?? null,
+          userState.value.actualDistanceByStop[followingStop.id] ?? null
+        ))
+      }
+      await Promise.all(writes)
     } catch (error) {
       userState.value.stopStatuses[stopId] = currentStatus
+      if (followingStop && followingStatus) userState.value.stopStatuses[followingStop.id] = followingStatus
       if (currentNightsStayed === undefined) delete userState.value.nightsStayedByStop[stopId]
       else userState.value.nightsStayedByStop[stopId] = currentNightsStayed
       if (currentActualDistance === undefined) delete userState.value.actualDistanceByStop[stopId]
