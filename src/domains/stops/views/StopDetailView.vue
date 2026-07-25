@@ -37,6 +37,9 @@ const isSavingCompletion = ref(false)
 const detailColumnCount = ref(1)
 const routeStops = computed(() => stop.value ? store.stopsForRoute(stop.value.routeId) : [])
 const stopIndex = computed(() => routeStops.value.findIndex(item => item.id === stop.value?.id))
+const isRouteOrigin = computed(() => stopIndex.value === 0)
+const isRouteDestination = computed(() => stopIndex.value === routeStops.value.length - 1)
+const isAccommodationStop = computed(() => !isRouteOrigin.value && !isRouteDestination.value)
 const previousDetailStop = computed(() => stopIndex.value > 0 ? routeStops.value[stopIndex.value - 1] : undefined)
 const nextDetailStop = computed(() => stopIndex.value >= 0 && stopIndex.value < routeStops.value.length - 1 ? routeStops.value[stopIndex.value + 1] : undefined)
 const navigationUrl = computed(() => stop.value ? mapService.externalRouteUrl([
@@ -111,8 +114,8 @@ async function updateStageCompletion(completed: boolean | null): Promise<void> {
 }
 async function saveCompletion(): Promise<void> {
   if (!isEditor.value || !stop.value) return
-  const nights = Math.min(Math.max(Math.trunc(Number(stayedNightsInput.value) || 0), 0), 365)
-  const distance = Math.min(Math.max(Math.trunc(Number(actualDistanceInput.value) || 0), 0), 5000)
+  const nights = isAccommodationStop.value ? Math.min(Math.max(Math.trunc(Number(stayedNightsInput.value) || 0), 0), 365) : null
+  const distance = isRouteOrigin.value ? null : Math.min(Math.max(Math.trunc(Number(actualDistanceInput.value) || 0), 0), 5000)
   isSavingCompletion.value = true
   try {
     await store.setStopCompletion(stop.value.id, true, nights, distance)
@@ -180,7 +183,9 @@ onUnmounted(() => {
             <div class="stage-completion-copy">
               <strong>{{ t('stop.stageComplete') }}</strong>
               <span v-if="stop.status === 'visited'">
-                {{ t('stop.completionSummary', { nights: stop.nightsStayed ?? 0, distance: stop.actualDistanceKm ?? 0 }) }}
+                <template v-if="isRouteOrigin">{{ t('stop.routeOriginCompleted') }}</template>
+                <template v-else-if="isRouteDestination">{{ t('stop.routeDestinationCompleted', { distance: stop.actualDistanceKm ?? 0 }) }}</template>
+                <template v-else>{{ t('stop.completionSummary', { nights: stop.nightsStayed ?? 0, distance: stop.actualDistanceKm ?? 0 }) }}</template>
               </span>
               <span v-else>{{ t('common.upcoming') }}</span>
             </div>
@@ -195,7 +200,7 @@ onUnmounted(() => {
               @click="openCompletionEditor"
             />
           </div>
-          <div><v-icon icon="mdi-weather-night" /><strong>{{ stop.recommendedNights }}</strong><span>{{ t('common.nights') }}</span></div>
+          <div v-if="isAccommodationStop"><v-icon icon="mdi-weather-night" /><strong>{{ stop.recommendedNights }}</strong><span>{{ t('common.nights') }}</span></div>
           <div v-if="stop.internetScore!==null"><v-icon icon="mdi-wifi" /><strong>{{ score(stop.internetScore) }}</strong><span>{{ t('stop.internet') }}</span></div>
           <div v-if="stop.ducatoAccessibility!==null"><v-icon icon="mdi-van-utility" /><strong>{{ level(stop.ducatoAccessibility) }}</strong><span>{{ t('stop.ducatoAccess') }}</span></div>
         </div>
@@ -278,10 +283,11 @@ onUnmounted(() => {
     <v-dialog v-model="completionDialog" max-width="440">
       <v-card class="completion-dialog">
         <div class="completion-dialog-heading">
-          <v-icon icon="mdi-weather-night" />
-          <div><h2>{{ t('stop.completeStopTitle') }}</h2><p>{{ t('stop.plannedNightsValue', { count: stop.recommendedNights }) }}</p></div>
+          <v-icon :icon="isAccommodationStop ? 'mdi-weather-night' : 'mdi-map-marker-check-outline'" />
+          <div><h2>{{ t('stop.completeStopTitle') }}</h2><p v-if="isAccommodationStop">{{ t('stop.plannedNightsValue', { count: stop.recommendedNights }) }}</p></div>
         </div>
         <v-text-field
+          v-if="isAccommodationStop"
           v-model.number="stayedNightsInput"
           type="number"
           min="0"
@@ -294,6 +300,7 @@ onUnmounted(() => {
           :suffix="t('common.nights')"
         />
         <v-text-field
+          v-if="!isRouteOrigin"
           v-model.number="actualDistanceInput"
           class="completion-distance"
           type="number"

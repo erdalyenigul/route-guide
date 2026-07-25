@@ -123,11 +123,11 @@ onUnmounted(() => {
                   </div>
                   <p class="overview">{{ t(stop.overview) }}</p>
                   <div class="chapter-data">
-                    <div><span>{{ t('home.planned') }}</span><strong>{{ stop.recommendedNights }} {{ t('common.nights') }}</strong></div>
-                    <div><span>{{ t('home.stayed') }}</span><strong>{{ stop.status==='visited'?(stop.nightsStayed??0):0 }} {{ t('common.nights') }}</strong></div>
-                    <div><span>{{ t('trip.distance') }}</span><strong>{{ stop.drivingDistanceFromPreviousKm ?? '—' }} {{ t('common.km') }}</strong></div>
-                    <div v-if="stop.status === 'visited'"><span>{{ t('home.actualDistance') }}</span><strong>{{ stop.actualDistanceKm ?? 0 }} {{ t('common.km') }}</strong></div>
-                    <div><span>{{ t('home.driveTime') }}</span><strong>{{ stop.estimatedDriveTimeMinutes ?? '—' }} {{ t('common.min') }}</strong></div>
+                    <div v-if="index > 0 && index < store.activeStops.length - 1"><span>{{ t('home.planned') }}</span><strong>{{ stop.recommendedNights }} {{ t('common.nights') }}</strong></div>
+                    <div v-if="index > 0 && index < store.activeStops.length - 1"><span>{{ t('home.stayed') }}</span><strong>{{ stop.status==='visited'?(stop.nightsStayed??0):0 }} {{ t('common.nights') }}</strong></div>
+                    <div v-if="index > 0"><span>{{ t('trip.distance') }}</span><strong>{{ stop.drivingDistanceFromPreviousKm ?? '—' }} {{ t('common.km') }}</strong></div>
+                    <div v-if="index > 0 && stop.status === 'visited'"><span>{{ t('home.actualDistance') }}</span><strong>{{ stop.actualDistanceKm ?? 0 }} {{ t('common.km') }}</strong></div>
+                    <div v-if="index > 0"><span>{{ t('home.driveTime') }}</span><strong>{{ stop.estimatedDriveTimeMinutes ?? '—' }} {{ t('common.min') }}</strong></div>
                   </div>
                 </div>
               </v-expand-transition>

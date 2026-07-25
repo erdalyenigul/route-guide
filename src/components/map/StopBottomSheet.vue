@@ -3,15 +3,21 @@ import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { StopViewModel } from '@/content/types'
 import { mapService } from '@/services/mapService'
+import { useTripStore } from '@/stores/trip'
 
 const props = defineProps<{ stop: StopViewModel; previousStop: StopViewModel | undefined }>()
 const { t } = useI18n()
+const store = useTripStore()
 const isOpen = ref(true)
 const isDragging = ref(false)
 const dragOffset = ref(0)
 let dragStartY = 0
 let suppressClick = false
 const coordinate = computed(() => mapService.coordinate(props.stop.coordinates))
+const routeStops = computed(() => store.stopsForRoute(props.stop.routeId))
+const stopIndex = computed(() => routeStops.value.findIndex(stop => stop.id === props.stop.id))
+const isRouteOrigin = computed(() => stopIndex.value === 0)
+const isAccommodationStop = computed(() => stopIndex.value > 0 && stopIndex.value < routeStops.value.length - 1)
 const routeUrl = computed(() => mapService.externalRouteUrl([
   props.previousStop ? mapService.coordinate(props.previousStop.coordinates) : null,
   coordinate.value
@@ -88,9 +94,9 @@ function finishDrag(): void {
         <span />
         <v-icon icon="mdi-chevron-down" />
       </button>
-      <div class="sheet-heading"><div><p>{{ t(`common.${stop.status}`) }}</p><h2>{{ t(stop.title) }}</h2></div><span>{{ stop.drivingDistanceFromPreviousKm ?? '—' }} {{ t('common.km') }}</span></div>
+      <div class="sheet-heading"><div><p>{{ t(`common.${stop.status}`) }}</p><h2>{{ t(stop.title) }}</h2></div><span v-if="!isRouteOrigin">{{ stop.drivingDistanceFromPreviousKm ?? '—' }} {{ t('common.km') }}</span></div>
       <div class="sheet-facts">
-        <span><v-icon icon="mdi-weather-night" />{{ stop.recommendedNights }} {{ t('common.nights') }}</span>
+        <span v-if="isAccommodationStop"><v-icon icon="mdi-weather-night" />{{ stop.recommendedNights }} {{ t('common.nights') }}</span>
         <span v-if="stop.ducatoAccessibility"><v-icon icon="mdi-van-utility" />{{ t(`common.${stop.ducatoAccessibility}`) }}</span>
       </div>
       <div class="sheet-actions"><v-btn color="primary" prepend-icon="mdi-information-outline" :to="`/trips/${stop.routeId}/stops/${stop.id}`">{{ t('map.viewStop') }}</v-btn><v-btn variant="tonal" prepend-icon="mdi-navigation-variant" :href="routeUrl" target="_blank" rel="noopener" :disabled="!routeUrl">{{ t('map.openRoute') }}</v-btn><v-btn variant="tonal" prepend-icon="mdi-image-multiple-outline" :to="`/trips/${stop.routeId}/gallery`">{{ t('nav.gallery') }}</v-btn></div>

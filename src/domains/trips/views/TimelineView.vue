@@ -17,7 +17,7 @@ const stops = computed(() => store.stopsForRoute(String(route.params.routeId)))
         <div class="track"><span :class="stop.status"><v-icon v-if="stop.status==='visited'" icon="mdi-check" size="16" /><template v-else>{{ index+1 }}</template></span></div>
         <v-card class="route-card" :class="{current:stop.status==='current'}" :to="`/trips/${stop.routeId}/stops/${stop.id}`">
           <div class="title-row"><div><p>{{ t(`common.${stop.status}`) }}</p><h2>{{ t(stop.title) }}</h2></div><v-icon icon="mdi-chevron-right" /></div>
-          <div class="route-meta"><span><v-icon icon="mdi-weather-night" />{{ t('timeline.stay',{nights:stop.recommendedNights}) }}</span><span v-if="stop.drivingDistanceFromPreviousKm!==null"><v-icon icon="mdi-steering" />{{ t('timeline.drive',{distance:stop.drivingDistanceFromPreviousKm,minutes:stop.estimatedDriveTimeMinutes??'—'}) }}</span><span v-else><v-icon icon="mdi-steering" />{{ t('timeline.noDriveData') }}</span></div>
+          <div class="route-meta"><span v-if="index > 0 && index < stops.length - 1"><v-icon icon="mdi-weather-night" />{{ t('timeline.stay',{nights:stop.recommendedNights}) }}</span><span v-if="index > 0 && stop.drivingDistanceFromPreviousKm!==null"><v-icon icon="mdi-steering" />{{ t('timeline.drive',{distance:stop.drivingDistanceFromPreviousKm,minutes:stop.estimatedDriveTimeMinutes??'—'}) }}</span><span v-else-if="index > 0"><v-icon icon="mdi-steering" />{{ t('timeline.noDriveData') }}</span></div>
         </v-card>
       </article>
     </section>

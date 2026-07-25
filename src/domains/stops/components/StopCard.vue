@@ -7,6 +7,9 @@ import { useTripStore } from '@/stores/trip'
 const props = defineProps<{ stop: StopViewModel; compact?: boolean }>()
 const { t } = useI18n(); const store = useTripStore()
 const statusColor = computed(() => props.stop.status === 'current' ? 'secondary' : props.stop.status === 'visited' ? 'success' : undefined)
+const routeStops = computed(() => store.stopsForRoute(props.stop.routeId))
+const stopIndex = computed(() => routeStops.value.findIndex(stop => stop.id === props.stop.id))
+const isAccommodationStop = computed(() => stopIndex.value > 0 && stopIndex.value < routeStops.value.length - 1)
 function level(value: string | null): string { return value ? t(`common.${value}`) : t('common.unknown') }
 </script>
 
@@ -15,7 +18,7 @@ function level(value: string | null): string { return value ? t(`common.${value}
     <div class="thumb"><img v-if="stop.photos[0]" :src="stop.photos[0].url" :alt="t(stop.photos[0].alt)" loading="lazy" /><v-icon v-else icon="mdi-image-outline" size="30" /><v-chip :color="statusColor" size="x-small" variant="flat">{{ t(`common.${stop.status}`) }}</v-chip></div>
     <div class="stop-copy">
       <div class="title-line"><div><h2>{{ t(stop.title) }}</h2><p>{{ t(stop.region) }}</p></div><v-btn :icon="stop.favorite?'mdi-heart':'mdi-heart-outline'" :color="stop.favorite?'secondary':undefined" size="small" variant="text" :aria-label="t(stop.favorite?'stop.unfavorite':'stop.favorite')" @click.prevent="store.toggleFavorite(stop.id)" /></div>
-      <div class="compact-facts"><span><v-icon icon="mdi-weather-night" />{{ stop.recommendedNights }} {{ t('common.nights') }}</span><span><v-icon icon="mdi-wifi" />{{ stop.internetScore===null?'—':`${stop.internetScore}/5` }}</span><span><v-icon icon="mdi-van-utility" />{{ level(stop.ducatoAccessibility) }}</span></div>
+      <div class="compact-facts"><span v-if="isAccommodationStop"><v-icon icon="mdi-weather-night" />{{ stop.recommendedNights }} {{ t('common.nights') }}</span><span><v-icon icon="mdi-wifi" />{{ stop.internetScore===null?'—':`${stop.internetScore}/5` }}</span><span><v-icon icon="mdi-van-utility" />{{ level(stop.ducatoAccessibility) }}</span></div>
     </div><v-icon class="chevron" icon="mdi-chevron-right" />
   </v-card>
 </template>

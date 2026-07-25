@@ -47,6 +47,11 @@ const actualDistanceKm = ref(0)
 const pendingDelete = ref<SharedStopPhoto>()
 const selectedPhotoIndex = ref<number | null>(null)
 const tripStop = computed(() => trip.stopById(stopSlug.value))
+const tripStops = computed(() => tripStop.value ? trip.stopsForRoute(tripStop.value.routeId) : [])
+const tripStopIndex = computed(() => tripStops.value.findIndex(stop => stop.id === tripStop.value?.id))
+const isRouteOrigin = computed(() => tripStopIndex.value === 0)
+const isRouteDestination = computed(() => tripStopIndex.value === tripStops.value.length - 1)
+const isAccommodationStop = computed(() => !isRouteOrigin.value && !isRouteDestination.value)
 const uploadedPhotoCount = computed(() => editor.value?.photos.filter(photo => photo.sourceType === 'trip').length ?? 0)
 const remainingPhotos = computed(() => MAX_PHOTOS_PER_STOP - uploadedPhotoCount.value)
 const viewerPhotos = computed(() => editor.value?.photos.map(photo => ({
@@ -94,8 +99,8 @@ async function saveProgress(): Promise<void> {
   isSavingProgress.value = true
   errorMessage.value = ''
   successMessage.value = ''
-  const resolvedNights = Math.min(Math.max(Math.trunc(Number(nightsStayed.value) || 0), 0), 365)
-  const resolvedDistance = Math.min(Math.max(Math.trunc(Number(actualDistanceKm.value) || 0), 0), 5000)
+  const resolvedNights = isAccommodationStop.value ? Math.min(Math.max(Math.trunc(Number(nightsStayed.value) || 0), 0), 365) : null
+  const resolvedDistance = isRouteOrigin.value ? null : Math.min(Math.max(Math.trunc(Number(actualDistanceKm.value) || 0), 0), 5000)
   try {
     await trip.setStopCompletion(stop.id, progressCompleted.value, resolvedNights, resolvedDistance)
     if (trip.stateSyncError) throw new Error('PROGRESS_SAVE_FAILED')
@@ -237,13 +242,13 @@ onMounted(() => { void refreshContent() })
           <div class="section-content">
             <div class="drawer-content">
               <div class="planned-values">
-                <div><v-icon icon="mdi-calendar-range-outline" /><span>{{ t('admin.plannedStay') }}</span><strong>{{ tripStop.recommendedNights }} {{ t('common.nights') }}</strong></div>
-                <div><v-icon icon="mdi-map-marker-distance" /><span>{{ t('admin.plannedDistance') }}</span><strong>{{ tripStop.drivingDistanceFromPreviousKm ?? '—' }} {{ t('common.km') }}</strong></div>
+                <div v-if="isAccommodationStop"><v-icon icon="mdi-calendar-range-outline" /><span>{{ t('admin.plannedStay') }}</span><strong>{{ tripStop.recommendedNights }} {{ t('common.nights') }}</strong></div>
+                <div v-if="!isRouteOrigin"><v-icon icon="mdi-map-marker-distance" /><span>{{ t('admin.plannedDistance') }}</span><strong>{{ tripStop.drivingDistanceFromPreviousKm ?? '—' }} {{ t('common.km') }}</strong></div>
               </div>
               <v-switch v-model="progressCompleted" class="progress-switch" color="primary" hide-details :label="t('stop.stageComplete')" />
               <div class="actual-values">
-                <v-text-field v-model.number="nightsStayed" type="number" min="0" max="365" step="1" inputmode="numeric" :disabled="!progressCompleted" :label="t('stop.actualNightsStayed')" :suffix="t('common.nights')" />
-                <v-text-field v-model.number="actualDistanceKm" type="number" min="0" max="5000" step="1" inputmode="numeric" :disabled="!progressCompleted" :label="t('stop.actualDistanceTravelled')" :suffix="t('common.km')" />
+                <v-text-field v-if="isAccommodationStop" v-model.number="nightsStayed" type="number" min="0" max="365" step="1" inputmode="numeric" :disabled="!progressCompleted" :label="t('stop.actualNightsStayed')" :suffix="t('common.nights')" />
+                <v-text-field v-if="!isRouteOrigin" v-model.number="actualDistanceKm" type="number" min="0" max="5000" step="1" inputmode="numeric" :disabled="!progressCompleted" :label="t('stop.actualDistanceTravelled')" :suffix="t('common.km')" />
               </div>
               <v-btn color="primary" size="large" :disabled="!progressCompleted" :loading="isSavingProgress" @click="saveProgress">{{ t('common.save') }}</v-btn>
             </div>
