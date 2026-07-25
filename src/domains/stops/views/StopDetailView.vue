@@ -217,15 +217,18 @@ onUnmounted(() => {
         <v-expansion-panels v-for="(column, columnIndex) in detailColumns" :key="columnIndex" class="detail-column" multiple variant="accordion">
           <v-expansion-panel v-for="section in column" :key="section.key" :value="section.key" :class="{ 'experience-panel': section.key === 'experience' }">
             <v-expansion-panel-title>
-              <v-icon :icon="section.icon" />{{ t(section.title) }}
-              <v-chip v-if="section.badge !== undefined" size="x-small" :color="section.badgeColor">{{ section.badge }}</v-chip>
+              <v-icon :icon="section.icon" />
+              <span class="section-title-copy">
+                <strong>{{ t(section.title) }}</strong>
+                <v-chip v-if="section.badge !== undefined" size="x-small" :color="section.badgeColor">{{ section.badge }}</v-chip>
+              </span>
             </v-expansion-panel-title>
             <v-expansion-panel-text>
               <template v-if="section.key === 'why'">
                 <p class="body-copy">{{ t(stop.whyVisit) }}</p>
                 <div v-if="hiddenPlaces.length" class="stack-list"><div v-for="item in hiddenPlaces" :key="item.id"><strong>{{ t(item.title) }}</strong><p>{{ t(item.description) }}</p></div></div>
               </template>
-              <div v-else-if="section.key === 'camping'" class="stack-list"><div v-for="spot in campingSpots" :key="spot.id"><div class="list-heading"><strong>{{ t(spot.title) }}</strong><v-chip size="x-small">{{ t(`common.${spot.type}`) }}</v-chip></div><p>{{ t(spot.overview) }}</p><small>{{ t(spot.accessNote) }}</small></div></div>
+              <div v-else-if="section.key === 'camping'" class="stack-list"><div v-for="spot in campingSpots" :key="spot.id"><div class="list-heading"><v-chip size="x-small">{{ t(`common.${spot.type}`) }}</v-chip><strong>{{ t(spot.title) }}</strong></div><p>{{ t(spot.overview) }}</p><small>{{ t(spot.accessNote) }}</small></div></div>
               <template v-else-if="section.key === 'essentials'">
                 <div class="facility-grid">
                   <template v-if="stop.municipalityFacilities.available">
@@ -347,5 +350,6 @@ onUnmounted(() => {
 .summary-row>.stage-completion{display:grid;max-width:none;min-height:86px;grid-template-columns:58px minmax(0,1fr) auto;grid-template-rows:auto auto;align-content:center;align-items:center;column-gap:14px;margin-top:0;padding:15px 17px}.stage-completion-copy{display:flex;width:100%;min-width:0;grid-column:2;grid-row:1/3;flex-direction:column;align-items:flex-start;justify-content:center}.stage-completion-copy strong,.stage-completion-copy span{width:100%;align-self:flex-start;margin-left:0;text-align:left}.stage-checkbox{grid-column:1;grid-row:1/3;align-self:center;justify-self:center}.stage-checkbox.editable{cursor:pointer}.stage-checkbox :deep(.v-selection-control){min-height:52px}.stage-checkbox :deep(.v-selection-control__input){width:52px;height:52px;border-radius:16px;background:rgba(var(--v-theme-primary),.1)}.stage-checkbox :deep(.v-icon){font-size:2rem!important}.completion-edit{grid-column:3;grid-row:1/3;align-self:center}.summary-row>.stage-completion.completed{border-color:rgba(var(--v-theme-primary),.52);background:linear-gradient(145deg,rgba(var(--v-theme-primary),.15),rgb(var(--v-theme-surface)))}@media(max-width:520px){.summary-row>.stage-completion{min-height:82px;padding:14px}}
 .cover-photo-trigger{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;padding:0;border:0;background:transparent;cursor:zoom-in}.cover-photo-trigger img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .35s ease}.cover-photo-trigger:hover img{transform:scale(1.015)}.cover-shade{z-index:1;pointer-events:none}.cover-copy,.back,.favorite{z-index:2}
 .navigation-bar{display:grid;grid-template-columns:82px minmax(0,1fr) 82px;align-items:center;gap:8px}.navigation-bar .v-btn{width:100%;min-width:0;min-height:58px}.directions-action{padding-inline:10px!important}.stop-jump{padding-inline:6px!important}.stop-jump :deep(.v-btn__content){flex-direction:column;gap:1px}.stop-jump .v-icon{font-size:1.25rem}.stop-jump span{font-size:.66rem;line-height:1.1}@media(min-width:700px){.navigation-bar{grid-template-columns:128px minmax(0,1fr) 128px;gap:10px}.stop-jump :deep(.v-btn__content){flex-direction:row;gap:6px}.stop-jump span{font-size:.8rem}}
+.section-title-copy{display:grid;min-width:0;justify-items:start;gap:6px}.section-title-copy strong{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.detail-panels :deep(.section-title-copy .v-chip){margin:0!important}.list-heading{display:grid;justify-items:start;gap:8px}.list-heading strong{display:block;width:100%;line-height:1.35}
 .completion-dialog{padding:26px;border:1px solid rgba(var(--v-border-color),.12);border-radius:24px!important}.completion-dialog-heading{display:flex;align-items:center;gap:14px;margin-bottom:24px}.completion-dialog-heading>.v-icon{display:grid;width:48px;height:48px;place-items:center;border-radius:15px;color:rgb(var(--v-theme-primary));background:rgba(var(--v-theme-primary),.1);font-size:1.5rem}.completion-dialog-heading h2{font-size:1.35rem;letter-spacing:-.035em}.completion-dialog-heading p{margin-top:3px;color:rgba(var(--v-theme-on-surface),.6);font-size:.86rem}.completion-distance{margin-top:18px}.completion-dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:24px}@media(max-width:430px){.completion-dialog{padding:22px}.completion-dialog-actions{display:grid;grid-template-columns:1fr 1fr}.completion-dialog-actions .v-btn{min-width:0}}
 </style>

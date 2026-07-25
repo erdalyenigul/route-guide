@@ -23,9 +23,9 @@ body,
 html { font-size: 17px; text-rendering: optimizeLegibility; }
 body {
   background:
-    radial-gradient(circle at 12% -10%, rgba(var(--v-theme-primary), .15), transparent 36rem),
-    radial-gradient(circle at 92% 2%, rgba(var(--v-theme-secondary), .11), transparent 30rem),
-    radial-gradient(circle at 55% 72%, rgba(var(--v-theme-info), .055), transparent 42rem),
+    linear-gradient(rgba(5, 7, 9, .86), rgba(5, 7, 9, .9)),
+    radial-gradient(circle at 12% -10%, rgba(var(--v-theme-primary), .12), transparent 36rem),
+    url('/full-bg.png') center top / cover fixed no-repeat,
     rgb(var(--v-theme-background));
   color: rgb(var(--v-theme-on-background));
   line-height: 1.5;
@@ -46,7 +46,8 @@ button, input, textarea, select { font: inherit; }
   letter-spacing: -.01em;
   text-transform: none;
 }
-.v-chip { font-size: .75rem; font-weight: 720; }
+.v-chip { max-width: 100%; font-size: .75rem; font-weight: 720; white-space: nowrap; }
+.v-application { background: transparent !important; }
 .v-card {
   background-image:
     radial-gradient(circle at 5% 0, rgba(var(--v-theme-primary), .035), transparent 32%),
