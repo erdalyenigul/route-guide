@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 
 import PageHeader from '@/components/base/PageHeader.vue'
+import PhotoViewer from '@/components/gallery/PhotoViewer.vue'
 import { useTripStore } from '@/stores/trip'
 import { formatDateTime } from '@/utils/dateTime'
 
@@ -29,27 +30,12 @@ const pendingDelete = ref<SharedStopPhoto>()
 const selectedPhotoIndex = ref<number | null>(null)
 const uploadedPhotoCount = computed(() => editor.value?.photos.filter(photo => photo.sourceType === 'trip').length ?? 0)
 const remainingPhotos = computed(() => MAX_PHOTOS_PER_STOP - uploadedPhotoCount.value)
-const selectedPhoto = computed(() => selectedPhotoIndex.value === null ? undefined : editor.value?.photos[selectedPhotoIndex.value])
-
-function movePhoto(direction: number): void {
-  const photoCount = editor.value?.photos.length ?? 0
-  if (selectedPhotoIndex.value === null || photoCount < 2) return
-  selectedPhotoIndex.value = Math.min(Math.max(selectedPhotoIndex.value + direction, 0), photoCount - 1)
-}
-const adminGalleryTouch = {
-  left: () => movePhoto(1),
-  right: () => movePhoto(-1)
-}
-function handleGalleryKeydown(event: KeyboardEvent): void {
-  if (selectedPhotoIndex.value === null) return
-  if (event.key === 'ArrowLeft') {
-    event.preventDefault()
-    movePhoto(-1)
-  } else if (event.key === 'ArrowRight') {
-    event.preventDefault()
-    movePhoto(1)
-  }
-}
+const viewerPhotos = computed(() => editor.value?.photos.map(photo => ({
+  id: photo.id,
+  url: photo.url,
+  alt: photo.caption || t('gallery.photoOf', { stop: t(editor.value?.titleKey ?? 'app.name') }),
+  caption: photo.caption
+})) ?? [])
 
 async function load(): Promise<void> {
   isLoading.value = true
@@ -138,11 +124,7 @@ async function deleteConfirmed(): Promise<void> {
   }
 }
 
-onMounted(() => {
-  void load()
-  window.addEventListener('keydown', handleGalleryKeydown)
-})
-onUnmounted(() => window.removeEventListener('keydown', handleGalleryKeydown))
+onMounted(() => { void load() })
 </script>
 
 <template>
@@ -239,24 +221,10 @@ onUnmounted(() => window.removeEventListener('keydown', handleGalleryKeydown))
       </v-card>
     </v-dialog>
 
-    <v-dialog :model-value="selectedPhotoIndex!==null" fullscreen transition="dialog-bottom-transition" @update:model-value="value=>{if(!value)selectedPhotoIndex=null}">
-      <v-card class="admin-photo-viewer">
-        <v-btn class="viewer-close" icon="mdi-close" :aria-label="t('common.close')" @click="selectedPhotoIndex=null" />
-        <v-btn v-if="(editor?.photos.length??0)>1" class="viewer-previous" icon="mdi-chevron-left" :aria-label="t('gallery.previous')" :disabled="selectedPhotoIndex===0" @click="movePhoto(-1)" />
-        <v-window v-if="editor && selectedPhotoIndex!==null" v-model="selectedPhotoIndex" class="admin-photo-window" :touch="adminGalleryTouch">
-          <v-window-item v-for="(photo,index) in editor.photos" :key="photo.id" :value="index">
-            <div class="admin-photo-slide">
-              <img :src="photo.url" :alt="photo.caption || t('gallery.photoOf',{stop:t(editor.titleKey)})" draggable="false" />
-            </div>
-          </v-window-item>
-        </v-window>
-        <v-btn v-if="(editor?.photos.length??0)>1" class="viewer-next" icon="mdi-chevron-right" :aria-label="t('gallery.next')" :disabled="selectedPhotoIndex===(editor?.photos.length??0)-1" @click="movePhoto(1)" />
-        <p v-if="selectedPhoto?.caption">{{ selectedPhoto.caption }}</p>
-      </v-card>
-    </v-dialog>
+    <PhotoViewer v-model="selectedPhotoIndex" :photos="viewerPhotos" />
   </main>
 </template>
 
 <style scoped>
-.loading{min-height:60dvh;display:grid;place-items:center}.v-alert{margin-bottom:14px}.editor-layout{display:grid;grid-template-columns:1.15fr .85fr;gap:18px}.panel{padding:clamp(20px,3vw,30px);border:1px solid rgba(var(--v-border-color),.11);border-radius:24px!important;box-shadow:var(--app-shadow)}.panel-heading{display:flex;align-items:start;justify-content:space-between;gap:18px;margin-bottom:22px}.panel-heading h2,.section-heading h2{font-size:1.5rem;letter-spacing:-.04em}.experience-input{margin-top:20px}.author-meta{display:flex;align-items:center;gap:8px;margin:-2px 0 18px;color:rgba(var(--v-theme-on-surface),.62);font-size:.86rem;line-height:1.5}.author-meta .v-icon{color:rgb(var(--v-theme-primary));font-size:1.1rem}.panel-description{margin:-8px 0 20px;color:rgba(var(--v-theme-on-surface),.66);font-size:.9rem;line-height:1.55}.photos-section{margin-top:38px}.section-heading{display:flex;align-items:end;justify-content:space-between;margin-bottom:18px}.section-heading>span{color:rgba(var(--v-theme-on-background),.58);font-size:.9rem}.photo-admin-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.photo-admin-card{position:relative;overflow:hidden;border:1px solid rgba(var(--v-border-color),.11);border-radius:20px!important}.photo-preview{display:block;width:100%;padding:0;border:0;background:transparent;cursor:zoom-in}.photo-preview img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;transition:transform .25s}.photo-preview:hover img{transform:scale(1.025)}.photo-admin-card>p{min-height:48px;padding:12px 14px;color:rgba(var(--v-theme-on-surface),.7);font-size:.82rem;line-height:1.4}.photo-overlay{position:absolute;z-index:1;left:10px;right:10px;top:10px;display:flex;justify-content:space-between;gap:10px;pointer-events:none}.photo-overlay>div{display:flex;gap:7px}.photo-overlay .v-btn{pointer-events:auto}.cover-chip,.photo-action-btn{color:#fff!important;background:#090a0d!important;box-shadow:0 6px 18px rgba(0,0,0,.3)}.photo-action-btn:hover{background:#24262b!important}.photo-action-btn :deep(.v-icon){color:#fff!important}.confirm-card{padding:26px}.confirm-card h2{font-size:1.4rem}.confirm-card p{margin-top:10px;color:rgba(var(--v-theme-on-surface),.68);line-height:1.55}.confirm-card>div{display:flex;justify-content:flex-end;gap:8px;margin-top:24px}.admin-photo-viewer{position:relative;display:grid;place-items:center;background:#07080a!important;touch-action:pan-y}.admin-photo-window{width:100%;height:100%;background:transparent!important}.admin-photo-window :deep(.v-window__container),.admin-photo-window :deep(.v-window-item){height:100%}.admin-photo-slide{display:grid;width:100%;height:100%;place-items:center}.admin-photo-slide img{width:100%;height:100%;max-height:100dvh;object-fit:contain;user-select:none;-webkit-user-drag:none}.admin-photo-viewer>.v-btn{position:fixed!important;z-index:20;min-width:50px;min-height:50px;color:#fff!important;background:#090a0d!important;border:1px solid rgba(255,255,255,.16);box-shadow:0 10px 28px rgba(0,0,0,.4)!important;backdrop-filter:blur(16px)}.viewer-close{top:max(16px,env(safe-area-inset-top));right:16px}.viewer-previous,.viewer-next{top:50%;transform:translateY(-50%)}.viewer-previous{left:14px}.viewer-next{right:14px}.admin-photo-viewer>p{position:absolute;z-index:2;left:20px;right:20px;bottom:max(22px,env(safe-area-inset-bottom));padding:10px 14px;border-radius:12px;color:#fff;text-align:center;background:rgba(0,0,0,.58);backdrop-filter:blur(14px)}@media(max-width:1050px){.editor-layout{grid-template-columns:1fr}.photo-admin-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:700px){.photo-admin-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.panel-heading{align-items:center}.panel-heading h2{font-size:1.3rem}}@media(max-width:430px){.photo-admin-grid{grid-template-columns:1fr}}
+.loading{min-height:60dvh;display:grid;place-items:center}.v-alert{margin-bottom:14px}.editor-layout{display:grid;grid-template-columns:1.15fr .85fr;gap:18px}.panel{padding:clamp(20px,3vw,30px);border:1px solid rgba(var(--v-border-color),.11);border-radius:24px!important;box-shadow:var(--app-shadow)}.panel-heading{display:flex;align-items:start;justify-content:space-between;gap:18px;margin-bottom:22px}.panel-heading h2,.section-heading h2{font-size:1.5rem;letter-spacing:-.04em}.experience-input{margin-top:20px}.author-meta{display:flex;align-items:center;gap:8px;margin:-2px 0 18px;color:rgba(var(--v-theme-on-surface),.62);font-size:.86rem;line-height:1.5}.author-meta .v-icon{color:rgb(var(--v-theme-primary));font-size:1.1rem}.panel-description{margin:-8px 0 20px;color:rgba(var(--v-theme-on-surface),.66);font-size:.9rem;line-height:1.55}.photos-section{margin-top:38px}.section-heading{display:flex;align-items:end;justify-content:space-between;margin-bottom:18px}.section-heading>span{color:rgba(var(--v-theme-on-background),.58);font-size:.9rem}.photo-admin-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.photo-admin-card{position:relative;overflow:hidden;border:1px solid rgba(var(--v-border-color),.11);border-radius:20px!important}.photo-preview{display:block;width:100%;padding:0;border:0;background:transparent;cursor:zoom-in}.photo-preview img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;transition:transform .25s}.photo-preview:hover img{transform:scale(1.025)}.photo-admin-card>p{min-height:48px;padding:12px 14px;color:rgba(var(--v-theme-on-surface),.7);font-size:.82rem;line-height:1.4}.photo-overlay{position:absolute;z-index:1;left:10px;right:10px;top:10px;display:flex;justify-content:space-between;gap:10px;pointer-events:none}.photo-overlay>div{display:flex;gap:7px}.photo-overlay .v-btn{pointer-events:auto}.cover-chip,.photo-action-btn{color:#fff!important;background:#090a0d!important;box-shadow:0 6px 18px rgba(0,0,0,.3)}.photo-action-btn:hover{background:#24262b!important}.photo-action-btn :deep(.v-icon){color:#fff!important}.confirm-card{padding:26px}.confirm-card h2{font-size:1.4rem}.confirm-card p{margin-top:10px;color:rgba(var(--v-theme-on-surface),.68);line-height:1.55}.confirm-card>div{display:flex;justify-content:flex-end;gap:8px;margin-top:24px}@media(max-width:1050px){.editor-layout{grid-template-columns:1fr}.photo-admin-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:700px){.photo-admin-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.panel-heading{align-items:center}.panel-heading h2{font-size:1.3rem}}@media(max-width:430px){.photo-admin-grid{grid-template-columns:1fr}}
 </style>
