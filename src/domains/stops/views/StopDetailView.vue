@@ -161,76 +161,10 @@ onUnmounted(() => {
       <section class="intro">
         <p>{{ t(stop.overview) }}</p>
         <div class="summary-row">
-          <component
-            :is="isEditor ? 'button' : 'div'"
-            class="stage-completion"
-            :class="{ completed: stop.status === 'visited', editable: isEditor, expanded: completionEditorOpen }"
-            :type="isEditor ? 'button' : undefined"
-            :disabled="isEditor ? isSavingCompletion : undefined"
-            :aria-expanded="isEditor ? completionEditorOpen : undefined"
-            :title="t(isEditor ? 'stop.stageCompleteEditableHint' : 'stop.stageCompleteReadOnlyHint')"
-            @click="isEditor && openCompletionEditor()"
-          >
-            <span class="stage-action-icon">
-              <v-icon :icon="stop.status === 'visited' ? 'mdi-check-circle' : 'mdi-flag-checkered'" />
-            </span>
-            <div class="stage-completion-copy">
-              <strong>{{ t(stop.status === 'visited' ? 'stop.stageComplete' : 'stop.stageIncomplete') }}</strong>
-              <span v-if="stop.status === 'visited'">
-                <template v-if="isRouteOrigin">{{ t('stop.routeOriginCompleted') }}</template>
-                <template v-else-if="isRouteDestination">{{ t('stop.routeDestinationCompleted', { distance: stop.actualDistanceKm ?? 0 }) }}</template>
-                <template v-else>{{ t('stop.completionSummary', { nights: stop.nightsStayed ?? 0, distance: stop.actualDistanceKm ?? 0 }) }}</template>
-              </span>
-              <span v-else>{{ t('common.upcoming') }}</span>
-            </div>
-            <v-icon v-if="isEditor" class="stage-action-chevron" :icon="completionEditorOpen ? 'mdi-chevron-up' : 'mdi-chevron-down'" />
-          </component>
           <div v-if="isAccommodationStop"><v-icon icon="mdi-weather-night" /><strong>{{ stop.recommendedNights }}</strong><span>{{ t('common.nights') }}</span></div>
           <div v-if="stop.internetScore!==null"><v-icon icon="mdi-wifi" /><strong>{{ score(stop.internetScore) }}</strong><span>{{ t('stop.internet') }}</span></div>
           <div v-if="stop.ducatoAccessibility!==null"><v-icon icon="mdi-van-utility" /><strong>{{ level(stop.ducatoAccessibility) }}</strong><span>{{ t('stop.ducatoAccess') }}</span></div>
         </div>
-        <v-expand-transition>
-          <v-card v-if="completionEditorOpen && isEditor" class="completion-editor">
-            <div class="completion-dialog-heading">
-              <v-icon :icon="isAccommodationStop ? 'mdi-weather-night' : 'mdi-map-marker-check-outline'" />
-              <div class="completion-dialog-copy">
-                <h2>{{ t('stop.completeStopTitle') }}</h2>
-                <p v-if="isAccommodationStop">{{ t('stop.plannedNightsValue', { count: stop.recommendedNights }) }}</p>
-              </div>
-            </div>
-            <v-text-field
-              v-if="isAccommodationStop"
-              v-model.number="stayedNightsInput"
-              type="number"
-              min="0"
-              max="365"
-              step="1"
-              inputmode="numeric"
-              hide-details
-              :label="t('stop.actualNightsStayed')"
-              :suffix="t('common.nights')"
-            />
-            <v-text-field
-              v-if="!isRouteOrigin"
-              v-model.number="actualDistanceInput"
-              class="completion-distance"
-              type="number"
-              min="0"
-              max="5000"
-              step="1"
-              inputmode="numeric"
-              hide-details
-              :label="t('stop.actualDistanceTravelled')"
-              :hint="t('stop.plannedDistanceValue', { count: stop.drivingDistanceFromPreviousKm ?? 0 })"
-              persistent-hint
-              :suffix="t('common.km')"
-            />
-            <div class="completion-dialog-actions">
-              <v-btn variant="text" :disabled="isSavingCompletion" @click="completionEditorOpen=false">{{ t('common.cancel') }}</v-btn>
-              <v-btn color="primary" :loading="isSavingCompletion" @click="saveCompletion">{{ t('stop.completeAndSave') }}</v-btn>
-            </div>
-          </v-card>
-        </v-expand-transition>
       </section>
 
       <div class="detail-panels">
@@ -281,6 +215,75 @@ onUnmounted(() => {
           </v-expansion-panel>
         </v-expansion-panels>
       </div>
+
+      <section class="completion-section">
+        <component
+          :is="isEditor ? 'button' : 'div'"
+          class="stage-completion"
+          :class="{ completed: stop.status === 'visited', editable: isEditor, expanded: completionEditorOpen }"
+          :type="isEditor ? 'button' : undefined"
+          :disabled="isEditor ? isSavingCompletion : undefined"
+          :aria-expanded="isEditor ? completionEditorOpen : undefined"
+          :title="t(isEditor ? 'stop.stageCompleteEditableHint' : 'stop.stageCompleteReadOnlyHint')"
+          @click="isEditor && openCompletionEditor()"
+        >
+          <span class="stage-action-icon">
+            <v-icon :icon="stop.status === 'visited' ? 'mdi-check-circle' : 'mdi-flag-checkered'" />
+          </span>
+          <div class="stage-completion-copy">
+            <strong>{{ t(stop.status === 'visited' ? 'stop.stageComplete' : 'stop.stageIncomplete') }}</strong>
+            <span v-if="stop.status === 'visited'">
+              <template v-if="isRouteOrigin">{{ t('stop.routeOriginCompleted') }}</template>
+              <template v-else-if="isRouteDestination">{{ t('stop.routeDestinationCompleted', { distance: stop.actualDistanceKm ?? 0 }) }}</template>
+              <template v-else>{{ t('stop.completionSummary', { nights: stop.nightsStayed ?? 0, distance: stop.actualDistanceKm ?? 0 }) }}</template>
+            </span>
+            <span v-else>{{ t('common.upcoming') }}</span>
+          </div>
+          <v-icon v-if="isEditor" class="stage-action-chevron" :icon="completionEditorOpen ? 'mdi-chevron-up' : 'mdi-chevron-down'" />
+        </component>
+        <v-expand-transition>
+          <v-card v-if="completionEditorOpen && isEditor" class="completion-editor">
+            <div class="completion-dialog-heading">
+              <v-icon :icon="isAccommodationStop ? 'mdi-weather-night' : 'mdi-map-marker-check-outline'" />
+              <div class="completion-dialog-copy">
+                <h2>{{ t('stop.completeStopTitle') }}</h2>
+                <p v-if="isAccommodationStop">{{ t('stop.plannedNightsValue', { count: stop.recommendedNights }) }}</p>
+              </div>
+            </div>
+            <v-text-field
+              v-if="isAccommodationStop"
+              v-model.number="stayedNightsInput"
+              type="number"
+              min="0"
+              max="365"
+              step="1"
+              inputmode="numeric"
+              hide-details
+              :label="t('stop.actualNightsStayed')"
+              :suffix="t('common.nights')"
+            />
+            <v-text-field
+              v-if="!isRouteOrigin"
+              v-model.number="actualDistanceInput"
+              class="completion-distance"
+              type="number"
+              min="0"
+              max="5000"
+              step="1"
+              inputmode="numeric"
+              hide-details
+              :label="t('stop.actualDistanceTravelled')"
+              :hint="t('stop.plannedDistanceValue', { count: stop.drivingDistanceFromPreviousKm ?? 0 })"
+              persistent-hint
+              :suffix="t('common.km')"
+            />
+            <div class="completion-dialog-actions">
+              <v-btn variant="text" :disabled="isSavingCompletion" @click="completionEditorOpen=false">{{ t('common.cancel') }}</v-btn>
+              <v-btn color="primary" :loading="isSavingCompletion" @click="saveCompletion">{{ t('stop.completeAndSave') }}</v-btn>
+            </div>
+          </v-card>
+        </v-expand-transition>
+      </section>
 
       <section class="detail-map-section"><div class="map-section-title"><v-icon icon="mdi-map-outline" /><div><strong>{{ t('stop.interactiveMap') }}</strong><p>{{ t('map.subtitle') }}</p></div></div><div class="detail-map"><AppMap :stops="detailMapStops" :selected-id="stop.id" compact /></div></section>
     </div>
@@ -334,4 +337,5 @@ onUnmounted(() => {
 .stop-detail{background:rgb(var(--v-theme-background))!important}
 .completion-dialog-overlay{position:fixed;z-index:10000;inset:0;display:grid;place-items:center;padding:max(20px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(20px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));background:rgba(0,0,0,.68);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}.completion-dialog{width:min(440px,100%);max-height:calc(100dvh - max(40px,env(safe-area-inset-top) + env(safe-area-inset-bottom)));overflow-y:auto;padding:26px;border:1px solid rgba(var(--v-border-color),.12);border-radius:24px!important;box-shadow:0 28px 80px rgba(0,0,0,.42)!important}.completion-dialog-heading{display:grid;grid-template-columns:48px minmax(0,1fr);align-items:center;gap:14px;margin-bottom:24px}.completion-dialog-heading>.v-icon{display:grid;width:48px;height:48px;place-items:center;border-radius:15px;color:rgb(var(--v-theme-primary));background:rgba(var(--v-theme-primary),.1);font-size:1.5rem}.completion-dialog-copy{min-width:0;text-align:left}.completion-dialog-heading h2{margin:0;font-size:1.35rem;line-height:1.2;letter-spacing:-.035em;overflow-wrap:anywhere}.completion-dialog-heading p{margin:4px 0 0;color:rgba(var(--v-theme-on-surface),.6);font-size:.86rem;line-height:1.4}.completion-dialog :deep(.v-input){width:100%;min-width:0}.completion-dialog :deep(.v-field__field){min-width:0}.completion-distance{margin-top:18px}.completion-dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:24px}@media(max-width:430px){.completion-dialog-overlay{place-items:end center;padding:env(safe-area-inset-top) 0 0}.completion-dialog{width:100%;max-height:calc(100dvh - max(12px,env(safe-area-inset-top)));padding:22px 20px calc(20px + env(safe-area-inset-bottom));border-radius:24px 24px 0 0!important}.completion-dialog-heading{grid-template-columns:44px minmax(0,1fr);gap:12px;margin-bottom:20px}.completion-dialog-heading>.v-icon{width:44px;height:44px}.completion-dialog-heading h2{font-size:1.2rem}.completion-dialog-actions{display:grid;grid-template-columns:1fr;margin-top:22px}.completion-dialog-actions .v-btn{width:100%;min-width:0;min-height:48px}}
 .summary-row>.stage-completion{width:100%;font:inherit;color:inherit;text-align:left;appearance:none}.summary-row>.stage-completion.editable{cursor:pointer;touch-action:manipulation}.summary-row>.stage-completion.editable:active{transform:scale(.99)}.summary-row>.stage-completion.expanded{border-color:rgba(var(--v-theme-primary),.6);box-shadow:0 0 0 3px rgba(var(--v-theme-primary),.08),0 14px 36px rgba(0,0,0,.1)}.summary-row>.stage-completion>.stage-action-icon{display:grid;width:52px;height:52px;grid-column:1;grid-row:1/3;align-self:center;justify-self:center;place-items:center;margin:0;overflow:visible;border-radius:16px;color:rgb(var(--v-theme-primary));background:rgba(var(--v-theme-primary),.12)}.summary-row>.stage-completion>.stage-action-icon .v-icon{display:block;grid-column:auto;grid-row:auto;margin:0!important;font-size:1.7rem!important}.summary-row>.stage-completion>.stage-action-chevron{grid-column:3!important;grid-row:1/3!important;align-self:center;justify-self:center;margin:0!important;font-size:1.35rem!important}.completion-editor{width:min(100%,960px);margin-top:12px;padding:24px;border:1px solid rgba(var(--v-theme-primary),.3);border-radius:var(--app-radius-md)!important;background:linear-gradient(145deg,rgba(var(--v-theme-primary),.08),rgb(var(--v-theme-surface)))!important;box-shadow:0 18px 44px rgba(0,0,0,.12)!important}.completion-editor :deep(.v-input){width:100%;min-width:0}.completion-editor :deep(.v-field__field){min-width:0}@media(max-width:520px){.completion-editor{padding:20px 16px}.completion-dialog-actions{grid-template-columns:1fr 1fr}.completion-dialog-actions .v-btn{min-height:48px}}
+.completion-section{width:min(100%,960px);margin-top:30px}.completion-section>.stage-completion{display:grid;width:100%;max-width:none;min-height:92px;grid-template-columns:58px minmax(0,1fr) 34px;grid-template-rows:auto auto;align-content:center;align-items:center;column-gap:14px;margin:0;padding:16px 18px;font:inherit;color:inherit;text-align:left;appearance:none}.completion-section>.stage-completion.editable{cursor:pointer;touch-action:manipulation}.completion-section>.stage-completion.editable:active{transform:scale(.99)}.completion-section>.stage-completion.expanded{border-color:rgba(var(--v-theme-primary),.6);box-shadow:0 0 0 3px rgba(var(--v-theme-primary),.08),0 14px 36px rgba(0,0,0,.1)}.completion-section .stage-completion-copy{grid-column:2;grid-row:1/3}.completion-section .stage-completion-copy strong,.completion-section .stage-completion-copy span{overflow:visible;white-space:normal;text-overflow:clip}.completion-section>.stage-completion>.stage-action-icon{display:grid;width:52px;height:52px;grid-column:1;grid-row:1/3;align-self:center;justify-self:center;place-items:center;margin:0;border-radius:16px;color:rgb(var(--v-theme-primary));background:rgba(var(--v-theme-primary),.12)}.completion-section>.stage-completion>.stage-action-icon .v-icon{margin:0!important;font-size:1.7rem!important}.completion-section>.stage-completion>.stage-action-chevron{grid-column:3;grid-row:1/3;align-self:center;justify-self:center;margin:0!important;font-size:1.35rem!important}.completion-section>.completion-editor{width:100%}@media(max-width:520px){.completion-section{margin-top:24px}.completion-section>.stage-completion{min-height:88px;padding:15px 14px}}
 </style>
