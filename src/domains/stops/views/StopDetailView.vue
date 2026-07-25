@@ -248,6 +248,8 @@ onUnmounted(() => {
         </v-expansion-panels>
       </div>
 
+      <section class="detail-map-section"><div class="map-section-title"><v-icon icon="mdi-map-outline" /><div><strong>{{ t('stop.interactiveMap') }}</strong><p>{{ t('map.subtitle') }}</p></div></div><div class="detail-map"><AppMap :stops="detailMapStops" :selected-id="stop.id" compact /></div></section>
+
       <section class="completion-section">
         <component
           :is="isEditor ? 'button' : 'div'"
@@ -318,8 +320,6 @@ onUnmounted(() => {
           </v-card>
         </v-expand-transition>
       </section>
-
-      <section class="detail-map-section"><div class="map-section-title"><v-icon icon="mdi-map-outline" /><div><strong>{{ t('stop.interactiveMap') }}</strong><p>{{ t('map.subtitle') }}</p></div></div><div class="detail-map"><AppMap :stops="detailMapStops" :selected-id="stop.id" compact /></div></section>
     </div>
 
     <nav class="navigation-bar" :aria-label="t('stop.stopNavigation')">
