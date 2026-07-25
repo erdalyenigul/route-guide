@@ -239,7 +239,7 @@ onMounted(() => { void refreshContent() })
                 <v-text-field v-model.number="nightsStayed" type="number" min="0" max="365" step="1" inputmode="numeric" :disabled="!progressCompleted" :label="t('stop.actualNightsStayed')" :suffix="t('common.nights')" />
                 <v-text-field v-model.number="actualDistanceKm" type="number" min="0" max="5000" step="1" inputmode="numeric" :disabled="!progressCompleted" :label="t('stop.actualDistanceTravelled')" :suffix="t('common.km')" />
               </div>
-              <v-btn color="primary" size="large" :loading="isSavingProgress" @click="saveProgress">{{ t('common.save') }}</v-btn>
+              <v-btn color="primary" size="large" :disabled="!progressCompleted" :loading="isSavingProgress" @click="saveProgress">{{ t('common.save') }}</v-btn>
             </div>
           </div>
         </section>
