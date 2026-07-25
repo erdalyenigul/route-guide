@@ -3,7 +3,7 @@ import content from '../content/tr'
 export default {
   content,
   app: { name: 'Route Guide', tagline: 'Sakin yerini bul' },
-  nav: { today: 'Bugün', route: 'Rota', timeline: 'Rota', map: 'Harita', stops: 'Duraklar', gallery: 'Galeri', checklist: 'Kontrol listesi', favorites: 'Favoriler', settings: 'Ayarlar', back: 'Geri' },
+  nav: { home: 'Ana sayfa', today: 'Bugün', route: 'Rota', timeline: 'Rota', map: 'Harita', stops: 'Duraklar', gallery: 'Galeri', checklist: 'Kontrol listesi', favorites: 'Favoriler', settings: 'Ayarlar', back: 'Geri' },
   common: {
     nights: 'gece', night: 'gece', km: 'km', min: 'dk', yes: 'Var', no: 'Yok', free: 'Ücretsiz',
     recommended: 'Önerilen', details: 'Detay', close: 'Kapat', cancel: 'İptal', current: 'Şu an', planned: 'Planlandı',

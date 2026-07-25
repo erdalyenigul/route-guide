@@ -3,7 +3,7 @@ import content from '../content/en'
 export default {
   content,
   app: { name: 'Route Guide', tagline: 'Find your quiet place' },
-  nav: { today: 'Today', route: 'Route', timeline: 'Route', map: 'Map', stops: 'Stops', gallery: 'Gallery', checklist: 'Checklist', favorites: 'Favorites', settings: 'Settings', back: 'Back' },
+  nav: { home: 'Home', today: 'Today', route: 'Route', timeline: 'Route', map: 'Map', stops: 'Stops', gallery: 'Gallery', checklist: 'Checklist', favorites: 'Favorites', settings: 'Settings', back: 'Back' },
   common: {
     nights: 'nights', night: 'night', km: 'km', min: 'min', yes: 'Available', no: 'Unavailable',
     free: 'Free', recommended: 'Recommended', details: 'Detail', close: 'Close', cancel: 'Cancel', current: 'Current',
