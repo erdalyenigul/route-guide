@@ -119,6 +119,14 @@ async function updateStageCompletion(completed: boolean | null): Promise<void> {
     isSavingCompletion.value = false
   }
 }
+async function handleStageCompletionClick(): Promise<void> {
+  if (!isEditor.value || !stop.value || isSavingCompletion.value) return
+  if (stop.value.status === 'visited') {
+    await updateStageCompletion(false)
+    return
+  }
+  openCompletionEditor()
+}
 async function saveCompletion(): Promise<void> {
   if (!isEditor.value || !stop.value) return
   const nights = isAccommodationStop.value ? Math.min(Math.max(Math.trunc(Number(stayedNightsInput.value) || 0), 0), 365) : null
@@ -175,18 +183,17 @@ onUnmounted(() => {
         <p>{{ t(stop.overview) }}</p>
         <div class="summary-row">
           <div class="stage-completion" :class="{ completed: stop.status === 'visited' }">
-            <v-checkbox-btn
+            <button
               class="stage-checkbox"
-              :class="{ editable: isEditor }"
-              :model-value="stop.status === 'visited'"
-              color="primary"
-              true-icon="mdi-checkbox-marked"
-              false-icon="mdi-checkbox-blank-outline"
-              :readonly="!isEditor"
+              :class="{ editable: isEditor, checked: stop.status === 'visited' }"
+              type="button"
+              :disabled="!isEditor || isSavingCompletion"
               :aria-label="t(stop.status === 'visited' ? 'stop.stageComplete' : 'stop.stageIncomplete')"
               :title="t(isEditor ? 'stop.stageCompleteEditableHint' : 'stop.stageCompleteReadOnlyHint')"
-              @update:model-value="updateStageCompletion"
-            />
+              @click="handleStageCompletionClick"
+            >
+              <v-icon :icon="stop.status === 'visited' ? 'mdi-checkbox-marked' : 'mdi-checkbox-blank-outline'" />
+            </button>
             <div class="stage-completion-copy">
               <strong>{{ t(stop.status === 'visited' ? 'stop.stageComplete' : 'stop.stageIncomplete') }}</strong>
               <span v-if="stop.status === 'visited'">
@@ -290,11 +297,14 @@ onUnmounted(() => {
       </v-btn>
       <span v-else class="stop-jump-spacer" />
     </nav>
-    <v-dialog v-model="completionDialog" max-width="440">
+    <v-dialog v-model="completionDialog" max-width="440" content-class="completion-dialog-shell">
       <v-card class="completion-dialog">
         <div class="completion-dialog-heading">
           <v-icon :icon="isAccommodationStop ? 'mdi-weather-night' : 'mdi-map-marker-check-outline'" />
-          <div><h2>{{ t('stop.completeStopTitle') }}</h2><p v-if="isAccommodationStop">{{ t('stop.plannedNightsValue', { count: stop.recommendedNights }) }}</p></div>
+          <div class="completion-dialog-copy">
+            <h2>{{ t('stop.completeStopTitle') }}</h2>
+            <p v-if="isAccommodationStop">{{ t('stop.plannedNightsValue', { count: stop.recommendedNights }) }}</p>
+          </div>
         </div>
         <v-text-field
           v-if="isAccommodationStop"
@@ -347,10 +357,10 @@ onUnmounted(() => {
 .summary-row{max-width:960px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}.summary-row>div{display:grid;min-height:86px;grid-template-columns:58px minmax(0,1fr);grid-template-rows:auto auto;align-content:center;column-gap:14px;padding:15px 17px}.summary-row .v-icon{grid-row:1/3;align-self:center;justify-self:center;margin:0}.summary-row strong,.summary-row span{grid-column:2;overflow:visible;text-overflow:clip;white-space:normal}.summary-row strong{align-self:end;font-size:1.05rem;line-height:1.3}.summary-row span{align-self:start;margin-top:2px;font-size:.8rem;line-height:1.35}.detail-panels:empty{display:none}@media(max-width:520px){.summary-row{grid-template-columns:1fr}.summary-row>div{min-height:78px}}
 .detail-panels{display:grid;grid-template-columns:1fr;align-items:start;gap:14px;overflow:visible;border:0;background:transparent;box-shadow:none}.detail-column{align-self:start;overflow:hidden;border:1px solid rgba(var(--v-border-color),.11);border-radius:var(--app-radius-md);box-shadow:0 14px 42px rgba(0,0,0,.08)}.detail-panels :deep(.v-expansion-panel-text__wrapper){padding:20px 20px 26px}
 @media(min-width:700px){.detail-panels{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}.detail-column{gap:14px;overflow:visible;border:0;border-radius:0;box-shadow:none}.detail-column :deep(.v-expansion-panel){align-self:start;overflow:hidden;border:1px solid rgba(var(--v-border-color),.1)!important;border-radius:var(--app-radius-md)!important;box-shadow:0 12px 36px rgba(0,0,0,.07)!important}}
-.summary-row>.stage-completion{display:grid;max-width:none;min-height:86px;grid-template-columns:58px minmax(0,1fr) auto;grid-template-rows:auto auto;align-content:center;align-items:center;column-gap:14px;margin-top:0;padding:15px 17px}.stage-completion-copy{display:flex;width:100%;min-width:0;grid-column:2;grid-row:1/3;flex-direction:column;align-items:flex-start;justify-content:center}.stage-completion-copy strong,.stage-completion-copy span{width:100%;align-self:flex-start;margin-left:0;text-align:left}.stage-checkbox{grid-column:1;grid-row:1/3;align-self:center;justify-self:center}.stage-checkbox.editable{cursor:pointer}.stage-checkbox :deep(.v-selection-control){min-height:52px}.stage-checkbox :deep(.v-selection-control__input){width:52px;height:52px;border-radius:16px;background:rgba(var(--v-theme-primary),.1)}.stage-checkbox :deep(.v-icon){font-size:2rem!important}.completion-edit{grid-column:3;grid-row:1/3;align-self:center}.summary-row>.stage-completion.completed{border-color:rgba(var(--v-theme-primary),.52);background:linear-gradient(145deg,rgba(var(--v-theme-primary),.15),rgb(var(--v-theme-surface)))}@media(max-width:520px){.summary-row>.stage-completion{min-height:82px;padding:14px}}
+.summary-row>.stage-completion{display:grid;max-width:none;min-height:86px;grid-template-columns:58px minmax(0,1fr) auto;grid-template-rows:auto auto;align-content:center;align-items:center;column-gap:14px;margin-top:0;padding:15px 17px}.stage-completion-copy{display:flex;width:100%;min-width:0;grid-column:2;grid-row:1/3;flex-direction:column;align-items:flex-start;justify-content:center}.stage-completion-copy strong,.stage-completion-copy span{width:100%;align-self:flex-start;margin-left:0;text-align:left}.stage-checkbox{display:grid;width:52px;height:52px;grid-column:1;grid-row:1/3;align-self:center;justify-self:center;place-items:center;padding:0;border:0;border-radius:16px;color:rgba(var(--v-theme-on-surface),.68);background:rgba(var(--v-theme-on-surface),.07);touch-action:manipulation;-webkit-tap-highlight-color:transparent}.stage-checkbox.editable{cursor:pointer}.stage-checkbox.editable:active{transform:scale(.96)}.stage-checkbox.checked{color:rgb(var(--v-theme-primary));background:rgba(var(--v-theme-primary),.14)}.stage-checkbox:disabled{cursor:default}.stage-checkbox .v-icon{font-size:2rem!important}.completion-edit{grid-column:3;grid-row:1/3;align-self:center}.summary-row>.stage-completion.completed{border-color:rgba(var(--v-theme-primary),.52);background:linear-gradient(145deg,rgba(var(--v-theme-primary),.15),rgb(var(--v-theme-surface)))}@media(max-width:520px){.summary-row>.stage-completion{min-height:82px;padding:14px}}
 .cover-photo-trigger{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;padding:0;border:0;background:transparent;cursor:zoom-in}.cover-photo-trigger img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .35s ease}.cover-photo-trigger:hover img{transform:scale(1.015)}.cover-shade{z-index:1;pointer-events:none}.cover-copy,.back,.favorite{z-index:2}
 .navigation-bar{display:grid;grid-template-columns:82px minmax(0,1fr) 82px;align-items:center;gap:8px}.navigation-bar .v-btn{width:100%;min-width:0;min-height:58px}.directions-action{padding-inline:10px!important}.stop-jump{padding-inline:6px!important}.stop-jump :deep(.v-btn__content){flex-direction:column;gap:1px}.stop-jump .v-icon{font-size:1.25rem}.stop-jump span{font-size:.66rem;line-height:1.1}@media(min-width:700px){.navigation-bar{grid-template-columns:128px minmax(0,1fr) 128px;gap:10px}.stop-jump :deep(.v-btn__content){flex-direction:row;gap:6px}.stop-jump span{font-size:.8rem}}
 .section-title-copy{display:grid;min-width:0;justify-items:start;gap:6px}.section-title-copy strong{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.detail-panels :deep(.section-title-copy .v-chip){margin:0!important}.list-heading{display:grid;justify-items:start;gap:8px}.list-heading strong{display:block;width:100%;line-height:1.35}
 .stop-detail{background:rgb(var(--v-theme-background))!important}
-.completion-dialog{padding:26px;border:1px solid rgba(var(--v-border-color),.12);border-radius:24px!important}.completion-dialog-heading{display:flex;align-items:center;gap:14px;margin-bottom:24px}.completion-dialog-heading>.v-icon{display:grid;width:48px;height:48px;place-items:center;border-radius:15px;color:rgb(var(--v-theme-primary));background:rgba(var(--v-theme-primary),.1);font-size:1.5rem}.completion-dialog-heading h2{font-size:1.35rem;letter-spacing:-.035em}.completion-dialog-heading p{margin-top:3px;color:rgba(var(--v-theme-on-surface),.6);font-size:.86rem}.completion-distance{margin-top:18px}.completion-dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:24px}@media(max-width:430px){.completion-dialog{padding:22px}.completion-dialog-actions{display:grid;grid-template-columns:1fr 1fr}.completion-dialog-actions .v-btn{min-width:0}}
+.completion-dialog{width:100%;padding:26px;border:1px solid rgba(var(--v-border-color),.12);border-radius:24px!important}.completion-dialog-heading{display:grid;grid-template-columns:48px minmax(0,1fr);align-items:center;gap:14px;margin-bottom:24px}.completion-dialog-heading>.v-icon{display:grid;width:48px;height:48px;place-items:center;border-radius:15px;color:rgb(var(--v-theme-primary));background:rgba(var(--v-theme-primary),.1);font-size:1.5rem}.completion-dialog-copy{min-width:0;text-align:left}.completion-dialog-heading h2{margin:0;font-size:1.35rem;line-height:1.2;letter-spacing:-.035em;overflow-wrap:anywhere}.completion-dialog-heading p{margin:4px 0 0;color:rgba(var(--v-theme-on-surface),.6);font-size:.86rem;line-height:1.4}.completion-dialog :deep(.v-input){width:100%;min-width:0}.completion-dialog :deep(.v-field__field){min-width:0}.completion-distance{margin-top:18px}.completion-dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:24px}@media(max-width:430px){.completion-dialog{padding:20px;border-radius:22px!important}.completion-dialog-heading{grid-template-columns:44px minmax(0,1fr);gap:12px;margin-bottom:20px}.completion-dialog-heading>.v-icon{width:44px;height:44px}.completion-dialog-heading h2{font-size:1.2rem}.completion-dialog-actions{display:grid;grid-template-columns:1fr;margin-top:22px}.completion-dialog-actions .v-btn{width:100%;min-width:0;min-height:48px}}
 </style>
