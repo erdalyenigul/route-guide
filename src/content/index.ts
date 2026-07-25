@@ -1,5 +1,6 @@
 export { departureChecklist } from './checklists'
 export { routes } from './routes'
 export { spots } from './spots'
+export { stopResourceLinks } from './stopLinks'
 export { stops } from './stops'
 export type * from './types'

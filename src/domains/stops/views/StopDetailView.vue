@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import PhotoViewer from '@/components/gallery/PhotoViewer.vue'
 import AppMap from '@/components/map/AppMap.vue'
+import { stopResourceLinks } from '@/content/stopLinks'
 import { adminContentService } from '@/domains/admin/services/adminContentService'
 import { mapService } from '@/services/mapService'
 import { useTripStore } from '@/stores/trip'
@@ -18,6 +19,7 @@ const localizedExperience = computed(() => {
 })
 const hasPublishedExperience = computed(() => Object.values(stop.value?.experiences ?? {})
   .some(experience => experience?.isPublished && experience.body.trim()))
+const resourceLinks = computed(() => stop.value ? stopResourceLinks[stop.value.slug] ?? [] : [])
 const campingSpots = computed(() => stop.value ? store.campingSpotsForStop(stop.value.id) : [])
 const navigationDestination = computed(() => {
   const preferredSpot = campingSpots.value.find(spot => spot.recommended)
@@ -68,7 +70,7 @@ const conditionItems = computed(() => stop.value ? [
   stop.value.solarSuitability === null ? null : { key: 'solar', value: level(stop.value.solarSuitability) },
   stop.value.droneSuitability === null ? null : { key: 'drone', value: level(stop.value.droneSuitability) }
 ].filter((item): item is { key: string; value: string } => item !== null) : [])
-type DetailSectionKey = 'why' | 'camping' | 'essentials' | 'conditions' | 'warnings' | 'photography' | 'notes' | 'experience'
+type DetailSectionKey = 'why' | 'camping' | 'essentials' | 'conditions' | 'warnings' | 'photography' | 'notes' | 'experience' | 'links'
 interface DetailSection {
   key: DetailSectionKey
   icon: string
@@ -88,6 +90,7 @@ const detailSections = computed<DetailSection[]>(() => {
   if (hasPublishedExperience.value) {
     sections.push({ key: 'experience', icon: 'mdi-book-open-page-variant-outline', title: 'stop.ourExperience', badge: (locale.value === 'tr' ? 'TR' : 'EN') })
   }
+  if (resourceLinks.value.length) sections.push({ key: 'links', icon: 'mdi-link-variant', title: 'stop.usefulLinks', badge: resourceLinks.value.length })
   return sections
 })
 const detailColumns = computed(() => {
@@ -97,6 +100,7 @@ const detailColumns = computed(() => {
 })
 function score(value: number | null): string { return value === null ? t('common.unknown') : `${value}/5` }
 function level(value: string | null | undefined): string { return value ? t(`common.${value}`) : t('common.unknown') }
+function resourceHost(url: string): string { return globalThis.URL ? new globalThis.URL(url).hostname.replace(/^www\./, '') : url }
 function updateDetailColumnCount(): void {
   detailColumnCount.value = window.innerWidth >= 700 ? 2 : 1
 }
@@ -211,6 +215,21 @@ onUnmounted(() => {
                   }) }}
                 </p>
               </template>
+              <div v-else-if="section.key === 'links'" class="resource-links">
+                <a
+                  v-for="link in resourceLinks"
+                  :key="link.url"
+                  :href="link.url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span>
+                    <small>{{ t(`stopLinks.${link.label}`) }}</small>
+                    <strong>{{ resourceHost(link.url) }}</strong>
+                  </span>
+                  <v-icon icon="mdi-open-in-new" />
+                </a>
+              </div>
             </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>
@@ -338,4 +357,5 @@ onUnmounted(() => {
 .completion-dialog-overlay{position:fixed;z-index:10000;inset:0;display:grid;place-items:center;padding:max(20px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(20px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));background:rgba(0,0,0,.68);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}.completion-dialog{width:min(440px,100%);max-height:calc(100dvh - max(40px,env(safe-area-inset-top) + env(safe-area-inset-bottom)));overflow-y:auto;padding:26px;border:1px solid rgba(var(--v-border-color),.12);border-radius:24px!important;box-shadow:0 28px 80px rgba(0,0,0,.42)!important}.completion-dialog-heading{display:grid;grid-template-columns:48px minmax(0,1fr);align-items:center;gap:14px;margin-bottom:24px}.completion-dialog-heading>.v-icon{display:grid;width:48px;height:48px;place-items:center;border-radius:15px;color:rgb(var(--v-theme-primary));background:rgba(var(--v-theme-primary),.1);font-size:1.5rem}.completion-dialog-copy{min-width:0;text-align:left}.completion-dialog-heading h2{margin:0;font-size:1.35rem;line-height:1.2;letter-spacing:-.035em;overflow-wrap:anywhere}.completion-dialog-heading p{margin:4px 0 0;color:rgba(var(--v-theme-on-surface),.6);font-size:.86rem;line-height:1.4}.completion-dialog :deep(.v-input){width:100%;min-width:0}.completion-dialog :deep(.v-field__field){min-width:0}.completion-distance{margin-top:18px}.completion-dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:24px}@media(max-width:430px){.completion-dialog-overlay{place-items:end center;padding:env(safe-area-inset-top) 0 0}.completion-dialog{width:100%;max-height:calc(100dvh - max(12px,env(safe-area-inset-top)));padding:22px 20px calc(20px + env(safe-area-inset-bottom));border-radius:24px 24px 0 0!important}.completion-dialog-heading{grid-template-columns:44px minmax(0,1fr);gap:12px;margin-bottom:20px}.completion-dialog-heading>.v-icon{width:44px;height:44px}.completion-dialog-heading h2{font-size:1.2rem}.completion-dialog-actions{display:grid;grid-template-columns:1fr;margin-top:22px}.completion-dialog-actions .v-btn{width:100%;min-width:0;min-height:48px}}
 .summary-row>.stage-completion{width:100%;font:inherit;color:inherit;text-align:left;appearance:none}.summary-row>.stage-completion.editable{cursor:pointer;touch-action:manipulation}.summary-row>.stage-completion.editable:active{transform:scale(.99)}.summary-row>.stage-completion.expanded{border-color:rgba(var(--v-theme-primary),.6);box-shadow:0 0 0 3px rgba(var(--v-theme-primary),.08),0 14px 36px rgba(0,0,0,.1)}.summary-row>.stage-completion>.stage-action-icon{display:grid;width:52px;height:52px;grid-column:1;grid-row:1/3;align-self:center;justify-self:center;place-items:center;margin:0;overflow:visible;border-radius:16px;color:rgb(var(--v-theme-primary));background:rgba(var(--v-theme-primary),.12)}.summary-row>.stage-completion>.stage-action-icon .v-icon{display:block;grid-column:auto;grid-row:auto;margin:0!important;font-size:1.7rem!important}.summary-row>.stage-completion>.stage-action-chevron{grid-column:3!important;grid-row:1/3!important;align-self:center;justify-self:center;margin:0!important;font-size:1.35rem!important}.completion-editor{width:min(100%,960px);margin-top:12px;padding:24px;border:1px solid rgba(var(--v-theme-primary),.3);border-radius:var(--app-radius-md)!important;background:linear-gradient(145deg,rgba(var(--v-theme-primary),.08),rgb(var(--v-theme-surface)))!important;box-shadow:0 18px 44px rgba(0,0,0,.12)!important}.completion-editor :deep(.v-input){width:100%;min-width:0}.completion-editor :deep(.v-field__field){min-width:0}@media(max-width:520px){.completion-editor{padding:20px 16px}.completion-dialog-actions{grid-template-columns:1fr 1fr}.completion-dialog-actions .v-btn{min-height:48px}}
 .completion-section{width:min(100%,960px);margin-top:30px}.completion-section>.stage-completion{display:grid;width:100%;max-width:none;min-height:92px;grid-template-columns:58px minmax(0,1fr) 34px;grid-template-rows:auto auto;align-content:center;align-items:center;column-gap:14px;margin:0;padding:16px 18px;font:inherit;color:inherit;text-align:left;appearance:none}.completion-section>.stage-completion.editable{cursor:pointer;touch-action:manipulation}.completion-section>.stage-completion.editable:active{transform:scale(.99)}.completion-section>.stage-completion.expanded{border-color:rgba(var(--v-theme-primary),.6);box-shadow:0 0 0 3px rgba(var(--v-theme-primary),.08),0 14px 36px rgba(0,0,0,.1)}.completion-section .stage-completion-copy{grid-column:2;grid-row:1/3}.completion-section .stage-completion-copy strong,.completion-section .stage-completion-copy span{overflow:visible;white-space:normal;text-overflow:clip}.completion-section>.stage-completion>.stage-action-icon{display:grid;width:52px;height:52px;grid-column:1;grid-row:1/3;align-self:center;justify-self:center;place-items:center;margin:0;border-radius:16px;color:rgb(var(--v-theme-primary));background:rgba(var(--v-theme-primary),.12)}.completion-section>.stage-completion>.stage-action-icon .v-icon{margin:0!important;font-size:1.7rem!important}.completion-section>.stage-completion>.stage-action-chevron{grid-column:3;grid-row:1/3;align-self:center;justify-self:center;margin:0!important;font-size:1.35rem!important}.completion-section>.completion-editor{width:100%}@media(max-width:520px){.completion-section{margin-top:24px}.completion-section>.stage-completion{min-height:88px;padding:15px 14px}}
+.resource-links{display:grid;gap:9px}.resource-links a{display:flex;min-width:0;align-items:center;justify-content:space-between;gap:14px;padding:14px 15px;border:1px solid rgba(var(--v-border-color),.08);border-radius:14px;color:inherit;text-decoration:none;background:rgba(var(--v-theme-on-surface),.045);transition:border-color .18s,background .18s,transform .18s}.resource-links a:hover{border-color:rgba(var(--v-theme-primary),.36);background:rgba(var(--v-theme-primary),.09);transform:translateY(-1px)}.resource-links a>span{display:grid;min-width:0;gap:3px}.resource-links small{color:rgb(var(--v-theme-primary));font-size:.68rem;font-weight:760;letter-spacing:.05em;text-transform:uppercase}.resource-links strong{overflow:hidden;font-size:.9rem;text-overflow:ellipsis;white-space:nowrap}.resource-links .v-icon{flex:0 0 auto;color:rgba(var(--v-theme-on-surface),.58);font-size:1.15rem}
 </style>
