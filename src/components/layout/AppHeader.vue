@@ -15,9 +15,11 @@ const router = useRouter()
 const preferences = usePreferencesStore()
 const isOnline = ref(navigator.onLine)
 const adminUser = ref<AdminUser | null>(null)
+const safeAreaTop = ref(0)
 
 const logoUrl = computed(() => preferences.theme === 'dark' ? '/logo-dark.png' : '/logo-light.png')
 const adminInitial = computed(() => adminUser.value?.displayName.trim().charAt(0).toLocaleUpperCase(preferences.language) ?? '')
+const headerHeight = computed(() => 64 + safeAreaTop.value)
 
 watch(
   () => route.fullPath,
@@ -35,6 +37,14 @@ function updateOnlineStatus(): void {
   isOnline.value = navigator.onLine
 }
 
+function updateSafeAreaTop(): void {
+  const probe = document.createElement('div')
+  probe.style.cssText = 'position:fixed;inset:0 auto auto 0;width:0;height:env(safe-area-inset-top);visibility:hidden;pointer-events:none'
+  document.body.appendChild(probe)
+  safeAreaTop.value = Math.max(0, Math.round(probe.getBoundingClientRect().height))
+  probe.remove()
+}
+
 async function signOutAdmin(): Promise<void> {
   await adminContentService.signOut()
   adminUser.value = null
@@ -46,18 +56,21 @@ async function openAdminPanel(): Promise<void> {
 }
 
 onMounted(() => {
+  updateSafeAreaTop()
   window.addEventListener('online', updateOnlineStatus)
   window.addEventListener('offline', updateOnlineStatus)
+  window.addEventListener('resize', updateSafeAreaTop)
 })
 
 onUnmounted(() => {
   window.removeEventListener('online', updateOnlineStatus)
   window.removeEventListener('offline', updateOnlineStatus)
+  window.removeEventListener('resize', updateSafeAreaTop)
 })
 </script>
 
 <template>
-  <v-app-bar class="app-header" :class="`theme-${preferences.theme}`" flat height="64">
+  <v-app-bar class="app-header" :class="`theme-${preferences.theme}`" flat :height="headerHeight">
     <router-link class="app-brand" to="/" :aria-label="t('app.name')">
       <img :src="logoUrl" :alt="t('app.name')" />
     </router-link>
@@ -110,7 +123,7 @@ onUnmounted(() => {
 
 <style scoped>
 .app-header{border-bottom:1px solid rgba(var(--v-border-color),.1)!important;box-shadow:0 8px 30px rgba(0,0,0,.08)!important}.app-header.theme-dark{background:#1f1f1f!important}.app-header.theme-light{background:#f9f8f4!important}
-.app-header :deep(.v-toolbar__content){width:100%}
+.app-header :deep(.v-toolbar__content){box-sizing:border-box;width:100%;padding-top:env(safe-area-inset-top)}
 .app-brand{display:flex;align-items:center;width:146px;height:52px;margin-left:24px;overflow:hidden;border-radius:10px;text-decoration:none}.app-brand img{display:block;width:100%;height:100%;object-fit:contain}
 .sync-state{display:flex;align-items:center;gap:8px;max-width:240px;margin-right:22px;color:rgba(var(--v-theme-on-surface),.64);font-size:.8rem;font-weight:620;text-transform:capitalize;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sync-state i{width:8px;height:8px;border-radius:50%;background:rgb(var(--v-theme-warning));box-shadow:0 0 0 4px rgba(var(--v-theme-warning),.12)}
 .admin-entry,.admin-avatar{margin-right:max(14px,env(safe-area-inset-right));border:1px solid rgba(var(--v-border-color),.12);background:rgba(var(--v-theme-on-surface),.055)!important}.admin-avatar span{display:grid;width:34px;height:34px;place-items:center;border-radius:50%;color:rgb(var(--v-theme-on-primary));background:rgb(var(--v-theme-primary));font-size:.88rem;font-weight:800}.admin-menu{margin-top:8px;border:1px solid rgba(var(--v-border-color),.12);border-radius:18px!important;box-shadow:var(--app-shadow-float)}.admin-profile-link{cursor:pointer}
