@@ -20,7 +20,11 @@ body,
   margin: 0;
 }
 
-html { font-size: 17px; text-rendering: optimizeLegibility; }
+html {
+  font-size: 17px;
+  text-rendering: optimizeLegibility;
+  touch-action: manipulation;
+}
 body {
   background:
     linear-gradient(rgba(5, 7, 9, .89), rgba(5, 7, 9, .92)),
