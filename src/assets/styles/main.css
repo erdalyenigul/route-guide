@@ -23,7 +23,7 @@ body,
 html { font-size: 17px; text-rendering: optimizeLegibility; }
 body {
   background:
-    linear-gradient(rgba(5, 7, 9, .92), rgba(5, 7, 9, .95)),
+    linear-gradient(rgba(5, 7, 9, .89), rgba(5, 7, 9, .92)),
     radial-gradient(circle at 12% -10%, rgba(var(--v-theme-primary), .12), transparent 36rem),
     url('/full-bg.png') center top / cover fixed no-repeat,
     rgb(var(--v-theme-background));
