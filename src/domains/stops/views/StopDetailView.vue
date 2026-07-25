@@ -135,6 +135,17 @@ async function skipCurrentStop(): Promise<void> {
     isSavingCompletion.value = false
   }
 }
+async function resetCurrentStop(): Promise<void> {
+  if (!isEditor.value || !stop.value) return
+  isSavingCompletion.value = true
+  try {
+    await store.setStopCompletion(stop.value.id, false, null, null)
+    syncCompletionInputs()
+    completionEditorOpen.value = false
+  } finally {
+    isSavingCompletion.value = false
+  }
+}
 onMounted(async () => {
   updateDetailColumnCount()
   window.addEventListener('resize', updateDetailColumnCount)
@@ -314,6 +325,14 @@ onUnmounted(() => {
             />
             <div class="completion-dialog-actions">
               <v-btn variant="text" :disabled="isSavingCompletion" @click="completionEditorOpen=false">{{ t('common.cancel') }}</v-btn>
+              <v-btn
+                v-if="stop.status === 'visited' || stop.status === 'skipped'"
+                variant="outlined"
+                :disabled="isSavingCompletion"
+                @click="resetCurrentStop"
+              >
+                {{ t('stop.markIncomplete') }}
+              </v-btn>
               <v-btn variant="outlined" color="warning" :disabled="isSavingCompletion" @click="skipCurrentStop">{{ t('stop.skipRoute') }}</v-btn>
               <v-btn color="primary" :loading="isSavingCompletion" @click="saveCompletion">{{ t('stop.completeAndSave') }}</v-btn>
             </div>
