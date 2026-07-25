@@ -183,12 +183,12 @@ onUnmounted(() => {
               true-icon="mdi-checkbox-marked"
               false-icon="mdi-checkbox-blank-outline"
               :readonly="!isEditor"
-              :aria-label="t('stop.stageComplete')"
+              :aria-label="t(stop.status === 'visited' ? 'stop.stageComplete' : 'stop.stageIncomplete')"
               :title="t(isEditor ? 'stop.stageCompleteEditableHint' : 'stop.stageCompleteReadOnlyHint')"
               @update:model-value="updateStageCompletion"
             />
             <div class="stage-completion-copy">
-              <strong>{{ t('stop.stageComplete') }}</strong>
+              <strong>{{ t(stop.status === 'visited' ? 'stop.stageComplete' : 'stop.stageIncomplete') }}</strong>
               <span v-if="stop.status === 'visited'">
                 <template v-if="isRouteOrigin">{{ t('stop.routeOriginCompleted') }}</template>
                 <template v-else-if="isRouteDestination">{{ t('stop.routeDestinationCompleted', { distance: stop.actualDistanceKm ?? 0 }) }}</template>
