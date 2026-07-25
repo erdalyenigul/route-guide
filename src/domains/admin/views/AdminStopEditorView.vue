@@ -219,7 +219,7 @@ onMounted(() => { void refreshContent() })
             <div class="drawer-content">
               <v-file-input v-model="files" accept="image/jpeg,image/png,image/webp,image/avif" multiple chips show-size prepend-icon="" prepend-inner-icon="mdi-image-plus-outline" :label="t('admin.choosePhotos')" :disabled="remainingPhotos === 0" />
               <v-text-field v-model="caption" :label="t('admin.photoCaption')" maxlength="500" counter />
-              <v-btn color="primary" size="large" prepend-icon="mdi-cloud-upload-outline" :disabled="!files.length || remainingPhotos === 0" :loading="isUploading" @click="upload">{{ t('admin.uploadPhotos') }}</v-btn>
+              <v-btn color="primary" size="large" :disabled="!files.length || remainingPhotos === 0" :loading="isUploading" @click="upload">{{ t('admin.uploadPhotos') }}</v-btn>
             </div>
           </div>
         </section>
@@ -239,7 +239,7 @@ onMounted(() => { void refreshContent() })
                 <v-text-field v-model.number="nightsStayed" type="number" min="0" max="365" step="1" inputmode="numeric" :disabled="!progressCompleted" :label="t('stop.actualNightsStayed')" :suffix="t('common.nights')" />
                 <v-text-field v-model.number="actualDistanceKm" type="number" min="0" max="5000" step="1" inputmode="numeric" :disabled="!progressCompleted" :label="t('stop.actualDistanceTravelled')" :suffix="t('common.km')" />
               </div>
-              <v-btn color="primary" size="large" prepend-icon="mdi-content-save-outline" :loading="isSavingProgress" @click="saveProgress">{{ t('admin.saveProgress') }}</v-btn>
+              <v-btn color="primary" size="large" :loading="isSavingProgress" @click="saveProgress">{{ t('common.save') }}</v-btn>
             </div>
           </div>
         </section>
@@ -262,7 +262,7 @@ onMounted(() => { void refreshContent() })
                 <v-icon icon="mdi-account-edit-outline" />
                 {{ t('admin.lastEditedBy', { name: activeExperience.authorName, date: formatDateTime(activeExperience.updatedAt) }) }}
               </p>
-              <v-btn color="primary" size="large" prepend-icon="mdi-content-save-outline" :loading="isSaving" @click="saveExperience">{{ t('common.save') }}</v-btn>
+              <v-btn color="primary" size="large" :loading="isSaving" @click="saveExperience">{{ t('common.save') }}</v-btn>
             </div>
           </div>
         </section>
@@ -306,7 +306,7 @@ onMounted(() => { void refreshContent() })
 .photo-preview{display:block;width:100%;padding:0;border:0;background:transparent;cursor:zoom-in}
 .photo-preview img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;transition:transform .25s}
 .photo-preview:hover img{transform:scale(1.025)}
-.photo-admin-card>p{min-height:48px;padding:12px 14px;color:rgba(var(--v-theme-on-surface),.7);font-size:.82rem;line-height:1.4}
+.photo-admin-card>p{position:absolute;z-index:1;right:0;bottom:0;left:0;padding:12px 14px;color:#fff;background:rgba(0,0,0,.56);font-size:.82rem;line-height:1.4;pointer-events:none;backdrop-filter:blur(8px)}
 .photo-overlay{position:absolute;z-index:1;top:10px;right:10px;left:10px;display:flex;justify-content:space-between;gap:10px;pointer-events:none}
 .photo-overlay>div{display:flex;gap:7px}
 .photo-overlay .v-btn{pointer-events:auto}
