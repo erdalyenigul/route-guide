@@ -6,7 +6,7 @@ export default {
   nav: { today: 'Bugün', route: 'Rota', timeline: 'Rota', map: 'Harita', stops: 'Duraklar', gallery: 'Galeri', checklist: 'Kontrol listesi', favorites: 'Favoriler', settings: 'Ayarlar', back: 'Geri' },
   common: {
     nights: 'gece', night: 'gece', km: 'km', min: 'dk', yes: 'Var', no: 'Yok', free: 'Ücretsiz',
-    recommended: 'Önerilen', details: 'Detay', close: 'Kapat', current: 'Şu an', planned: 'Planlandı',
+    recommended: 'Önerilen', details: 'Detay', close: 'Kapat', cancel: 'İptal', current: 'Şu an', planned: 'Planlandı',
     visited: 'Ziyaret edildi', skipped: 'Atlandı', save: 'Kaydet', done: 'Tamam', none: 'Yok', low: 'Düşük',
     medium: 'Orta', high: 'Yüksek', excellent: 'Mükemmel', caution: 'Dikkat', difficult: 'Zor', good: 'İyi',
     paid: 'Ücretli kamp', municipality: 'Belediye', freecamp: 'Ücretsiz kamp', unknown: 'Henüz eklenmedi', completed: 'Tamamlandı', next: 'Sıradaki', upcoming: 'Yaklaşan'
@@ -20,12 +20,12 @@ export default {
     title: 'Aktif rota', currentStop: 'Mevcut durak', nextStop: 'Sonraki durak', todayDistance: 'Bugünkü sürüş', remainingDistance: 'Kalan mesafe', remainingNights: 'Kalan gece',
     weather: 'Hava durumu', weatherPlaceholder: 'Hava durumu burada görünecek', quickActions: 'Hızlı işlemler', openMap: 'Haritayı aç', continueRoute: 'Rotaya devam et', openCurrentStop: 'Mevcut durağı aç',
     noActiveRoute: 'Aktif rota yok', noActiveRouteHint: 'Aktif rotayı yüklemek için Supabase migration ve seed dosyalarını uygulayın.', dataUnavailable: 'Gezi verisine ulaşılamıyor', dataUnavailableHint: 'Bağlantıyı ve Supabase ayarlarını kontrol edip tekrar deneyin.', retry: 'Tekrar dene',
-    totalDistance: 'Toplam mesafe', completedDistance: 'Tamamlanan mesafe', totalNights: 'Toplam gece', nightsStayed: 'Kalınan gece', routeChapters: 'Rota bölümleri', planned: 'Planlanan', stayed: 'Kalınan', driveTime: 'Sürüş süresi', stopId: 'ID'
+    totalDistance: 'Toplam mesafe', completedDistance: 'Tamamlanan mesafe', totalNights: 'Toplam gece', nightsStayed: 'Kalınan gece', routeChapters: 'Rota bölümleri', planned: 'Planlanan', stayed: 'Kalınan', actualDistance: 'Gerçek mesafe', driveTime: 'Sürüş süresi', stopId: 'ID'
   },
   trip: { activeTrip: 'Aktif gezi', days: '8 gün', stopsCount: '{count} durak', distance: 'Toplam mesafe', plannedNights: 'Planlanan gece' },
   stop: {
     overview: 'Genel bakış', whyVisit: 'Neden ziyaret edilmeli', stay: 'Önerilen konaklama', nightRange: 'Konaklama aralığı', conditions: 'Koşullar', essentials: 'Yakındaki ihtiyaçlar', campOptions: 'Nerede kalınır',
-    photography: 'Fotoğraf', safety: 'Güvenlik notları', markVisited: 'Ziyaret edildi işaretle', markedVisited: 'Ziyaret edildi', stageComplete: 'Etap tamamlandı', stageCompleteHint: 'Bu durağı ortak rota ilerlemesine dahil et', stageCompleteEditableHint: 'Bu durağın ortak rota ilerleme durumunu güncelle.', stageCompleteReadOnlyHint: 'Bu ortak rota durumu yönetici tarafından güncellenir.',
+    photography: 'Fotoğraf', safety: 'Güvenlik notları', markVisited: 'Ziyaret edildi işaretle', markedVisited: 'Ziyaret edildi', stageComplete: 'Etap tamamlandı', stageCompleteHint: 'Bu durağı ortak rota ilerlemesine dahil et', stageCompleteEditableHint: 'Bu durağın ortak rota ilerleme durumunu güncelle.', stageCompleteReadOnlyHint: 'Bu ortak rota durumu yönetici tarafından güncellenir.', nightsStayedValue: '{count} gece kalındı', completionSummary: '{nights} gece · {distance} km sürüldü', completeStopTitle: 'Etap tamamla', plannedNightsValue: '{count} gece planlandı', actualNightsStayed: 'Gerçek kalınan gece', actualDistanceTravelled: 'Gerçek yapılan mesafe', plannedDistanceValue: 'Planlanan mesafe: {count} km', completeAndSave: 'Tamamla ve kaydet', editCompletion: 'Gezi bilgilerini düzenle',
     favorite: 'Favorilere ekle', unfavorite: 'Favorilerden çıkar', fromPrevious: 'önceki duraktan', water: 'Su dolumu',
     dumpStation: 'Atık boşaltma', shower: 'Duş', wc: 'WC', wasteBins: 'Çöp kutuları', municipality: 'Belediye tesisleri', market: 'Market', fuel: 'Yakıt', internet: 'İnternet',
     mobileCoverage: 'Mobil kapsama', roadSafety: 'Yol güvenliği', ducatoAccess: 'Ducato erişimi', solar: 'Güneş',

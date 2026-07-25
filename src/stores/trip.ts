@@ -56,7 +56,9 @@ export const useTripStore = defineStore('trip', () => {
     return {
       ...stop,
       status: userState.value.stopStatuses[stop.id] ?? stop.initialStatus,
-      favorite: userState.value.favoriteStopIds.includes(stop.id)
+      favorite: userState.value.favoriteStopIds.includes(stop.id),
+      nightsStayed: userState.value.nightsStayedByStop[stop.id] ?? null,
+      actualDistanceKm: userState.value.actualDistanceByStop[stop.id] ?? null
     }
   }
 
@@ -79,11 +81,11 @@ export const useTripStore = defineStore('trip', () => {
   const currentStopIndex = computed(() => currentStop.value ? activeStops.value.findIndex((stop) => stop.id === currentStop.value?.id) : -1)
   const nextStop = computed(() => activeStops.value[currentStopIndex.value + 1])
   const remainingDistance = computed(() => activeStops.value.slice(Math.max(currentStopIndex.value + 1, 0)).reduce((total, stop) => total + (stop.drivingDistanceFromPreviousKm ?? 0), 0))
-  const remainingNights = computed(() => activeStops.value.slice(Math.max(currentStopIndex.value, 0)).reduce((total, stop) => total + stop.recommendedNights, 0))
+  const remainingNights = computed(() => activeStops.value.filter(stop => stop.status !== 'visited').reduce((total, stop) => total + stop.recommendedNights, 0))
   const totalDistance = computed(() => activeTrip.value?.totalDistanceKm || activeStops.value.reduce((total, stop) => total + (stop.drivingDistanceFromPreviousKm ?? 0), 0))
-  const completedDistance = computed(() => activeStops.value.filter(stop => stop.status === 'visited').reduce((total, stop) => total + (stop.drivingDistanceFromPreviousKm ?? 0), 0))
+  const completedDistance = computed(() => activeStops.value.filter(stop => stop.status === 'visited').reduce((total, stop) => total + (stop.actualDistanceKm ?? stop.drivingDistanceFromPreviousKm ?? 0), 0))
   const totalNights = computed(() => activeStops.value.reduce((total, stop) => total + stop.recommendedNights, 0))
-  const nightsStayed = computed(() => activeStops.value.filter(stop => stop.status === 'visited').reduce((total, stop) => total + stop.recommendedNights, 0))
+  const nightsStayed = computed(() => activeStops.value.filter(stop => stop.status === 'visited').reduce((total, stop) => total + (stop.nightsStayed ?? 0), 0))
   const routeProgress = computed(() => activeStops.value.length ? Math.round((activeStops.value.filter(stop => stop.status === 'visited').length / activeStops.value.length) * 100) : 0)
   const favoriteStops = computed(() => dataset.value.stops.map(toStopViewModel).filter((stop) => stop.favorite))
   const checklist = computed<ChecklistItemViewModel[]>(() => dataset.value.checklist.map((item) => ({
@@ -134,19 +136,31 @@ export const useTripStore = defineStore('trip', () => {
     }
   }
 
-  async function toggleVisited(stopId: string): Promise<void> {
+  async function setStopCompletion(stopId: string, completed: boolean, nightsStayed: number | null, actualDistanceKm: number | null): Promise<void> {
     const stop = dataset.value.stops.find((item) => item.id === stopId)
     if (!stop) return
     const routeId = activeTrip.value?.id
     if (!routeId) return
     const currentStatus = userState.value.stopStatuses[stopId] ?? stop.initialStatus
-    const nextStatus = currentStatus === 'visited' ? stop.initialStatus : 'visited'
+    const currentNightsStayed = userState.value.nightsStayedByStop[stopId]
+    const currentActualDistance = userState.value.actualDistanceByStop[stopId]
+    const nextStatus = completed ? 'visited' : stop.initialStatus
+    const nextNightsStayed = completed ? Math.max(0, Math.trunc(nightsStayed ?? 0)) : null
+    const nextActualDistance = completed ? Math.max(0, Math.trunc(actualDistanceKm ?? 0)) : null
     userState.value.stopStatuses[stopId] = nextStatus
+    if (nextNightsStayed === null) delete userState.value.nightsStayedByStop[stopId]
+    else userState.value.nightsStayedByStop[stopId] = nextNightsStayed
+    if (nextActualDistance === null) delete userState.value.actualDistanceByStop[stopId]
+    else userState.value.actualDistanceByStop[stopId] = nextActualDistance
     stateSyncError.value = null
     try {
-      await tripStateService.setStopStatus(routeId, stopId, nextStatus)
+      await tripStateService.setStopProgress(routeId, stopId, nextStatus, nextNightsStayed, nextActualDistance)
     } catch (error) {
       userState.value.stopStatuses[stopId] = currentStatus
+      if (currentNightsStayed === undefined) delete userState.value.nightsStayedByStop[stopId]
+      else userState.value.nightsStayedByStop[stopId] = currentNightsStayed
+      if (currentActualDistance === undefined) delete userState.value.actualDistanceByStop[stopId]
+      else userState.value.actualDistanceByStop[stopId] = currentActualDistance
       syncFailure(error)
     }
   }
@@ -167,5 +181,5 @@ export const useTripStore = defineStore('trip', () => {
     }
   }
 
-  return { activeTrip, activeStops, currentStop, currentStopIndex, nextStop, remainingDistance, remainingNights, totalDistance, completedDistance, totalNights, nightsStayed, routeProgress, favoriteStops, checklist, checklistProgress, dataSource, isLoading, loadError, stateSyncError, initialize, refreshTripState, clearStateSyncError, routeById, stopsForRoute, stopById, campingSpotsForStop, activitiesForStop, toggleFavorite, toggleVisited, toggleChecklistItem }
+  return { activeTrip, activeStops, currentStop, currentStopIndex, nextStop, remainingDistance, remainingNights, totalDistance, completedDistance, totalNights, nightsStayed, routeProgress, favoriteStops, checklist, checklistProgress, dataSource, isLoading, loadError, stateSyncError, initialize, refreshTripState, clearStateSyncError, routeById, stopsForRoute, stopById, campingSpotsForStop, activitiesForStop, toggleFavorite, setStopCompletion, toggleChecklistItem }
 })

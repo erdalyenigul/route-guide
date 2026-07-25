@@ -145,5 +145,5 @@ export interface RouteDataset {
   checklist: ChecklistItemContent[]
 }
 
-export type StopViewModel = StopContent & { status: StopStatus; favorite: boolean }
+export type StopViewModel = StopContent & { status: StopStatus; favorite: boolean; nightsStayed: number | null; actualDistanceKm: number | null }
 export type ChecklistItemViewModel = ChecklistItemContent & { completed: boolean }

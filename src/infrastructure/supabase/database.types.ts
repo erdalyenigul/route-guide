@@ -24,7 +24,7 @@ export type ProfileRow = {
   id: string; username: string; display_name: string; is_editor: boolean; created_at: string; updated_at: string
 }
 export type TripStopStateRow = {
-  id: string; route_id: string; stop_id: string; status: string; is_favorite: boolean; updated_by: string | null; created_at: string; updated_at: string
+  id: string; route_id: string; stop_id: string; status: string; is_favorite: boolean; nights_stayed: number | null; actual_distance_km: number | null; updated_by: string | null; created_at: string; updated_at: string
 }
 export type TripChecklistStateRow = {
   id: string; route_id: string; item_id: string; completed: boolean; updated_by: string | null; created_at: string; updated_at: string

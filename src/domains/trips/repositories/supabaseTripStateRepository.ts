@@ -61,7 +61,7 @@ export const supabaseTripStateRepository: TripStateRepository = {
   async getState(routeSlug) {
     const resolved = await resolveRoute(routeSlug)
     const [stopResult, checklistResult] = await Promise.all([
-      client().from('trip_stop_states').select('stop_id,status,is_favorite').eq('route_id', resolved.routeId),
+      client().from('trip_stop_states').select('stop_id,status,is_favorite,nights_stayed,actual_distance_km').eq('route_id', resolved.routeId),
       client().from('trip_checklist_states').select('item_id,completed').eq('route_id', resolved.routeId)
     ])
     if (stopResult.error) throw stopResult.error
@@ -72,6 +72,8 @@ export const supabaseTripStateRepository: TripStateRepository = {
       const slug = resolved.stopSlugById.get(row.stop_id)
       if (!slug) continue
       state.stopStatuses[slug] = row.status as StopStatus
+      if (row.nights_stayed !== null) state.nightsStayedByStop[slug] = row.nights_stayed
+      if (row.actual_distance_km !== null) state.actualDistanceByStop[slug] = row.actual_distance_km
       if (row.is_favorite) state.favoriteStopIds.push(slug)
     }
     for (const row of checklistResult.data ?? []) state.checklistCompleted[row.item_id] = row.completed
@@ -86,10 +88,12 @@ export const supabaseTripStateRepository: TripStateRepository = {
     }).eq('route_id', resolved.routeId).eq('stop_id', stopId(resolved, stopSlug)))
   },
 
-  async setStopStatus(routeSlug, stopSlug, status) {
+  async setStopProgress(routeSlug, stopSlug, status, nightsStayed, actualDistanceKm) {
     const [resolved, user] = await Promise.all([resolveRoute(routeSlug), currentUser()])
     await verifyWrite(await client().from('trip_stop_states').update({
       status,
+      nights_stayed: nightsStayed,
+      actual_distance_km: actualDistanceKm,
       updated_by: user.id
     }).eq('route_id', resolved.routeId).eq('stop_id', stopId(resolved, stopSlug)))
   },

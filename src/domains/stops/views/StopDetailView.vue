@@ -17,6 +17,10 @@ const hiddenPlaces = computed(() => activities.value.filter(item => item.type ==
 const selectedPhotoIndex = ref<number | null>(null)
 const selectedPhoto = computed(() => selectedPhotoIndex.value === null ? undefined : stop.value?.photos[selectedPhotoIndex.value])
 const isEditor = ref(false)
+const completionDialog = ref(false)
+const stayedNightsInput = ref(0)
+const actualDistanceInput = ref(0)
+const isSavingCompletion = ref(false)
 const detailColumnCount = ref(1)
 const routeStops = computed(() => stop.value ? store.stopsForRoute(stop.value.routeId) : [])
 const stopIndex = computed(() => routeStops.value.findIndex(item => item.id === stop.value?.id))
@@ -71,9 +75,36 @@ function level(value: string | null | undefined): string { return value ? t(`com
 function updateDetailColumnCount(): void {
   detailColumnCount.value = window.innerWidth >= 700 ? 2 : 1
 }
-async function updateStageCompletion(): Promise<void> {
+function openCompletionEditor(): void {
   if (!isEditor.value || !stop.value) return
-  await store.toggleVisited(stop.value.id)
+  stayedNightsInput.value = stop.value.nightsStayed ?? stop.value.recommendedNights
+  actualDistanceInput.value = stop.value.actualDistanceKm ?? stop.value.drivingDistanceFromPreviousKm ?? 0
+  completionDialog.value = true
+}
+async function updateStageCompletion(completed: boolean | null): Promise<void> {
+  if (!isEditor.value || !stop.value) return
+  if (completed) {
+    openCompletionEditor()
+    return
+  }
+  isSavingCompletion.value = true
+  try {
+    await store.setStopCompletion(stop.value.id, false, null, null)
+  } finally {
+    isSavingCompletion.value = false
+  }
+}
+async function saveCompletion(): Promise<void> {
+  if (!isEditor.value || !stop.value) return
+  const nights = Math.min(Math.max(Math.trunc(Number(stayedNightsInput.value) || 0), 0), 365)
+  const distance = Math.min(Math.max(Math.trunc(Number(actualDistanceInput.value) || 0), 0), 5000)
+  isSavingCompletion.value = true
+  try {
+    await store.setStopCompletion(stop.value.id, true, nights, distance)
+    completionDialog.value = false
+  } finally {
+    isSavingCompletion.value = false
+  }
 }
 function movePhoto(direction: number): void {
   const photoCount = stop.value?.photos.length ?? 0
@@ -154,8 +185,21 @@ onUnmounted(() => {
             />
             <div class="stage-completion-copy">
               <strong>{{ t('stop.stageComplete') }}</strong>
-              <span>{{ t(stop.status === 'visited' ? 'common.completed' : 'common.upcoming') }}</span>
+              <span v-if="stop.status === 'visited'">
+                {{ t('stop.completionSummary', { nights: stop.nightsStayed ?? 0, distance: stop.actualDistanceKm ?? 0 }) }}
+              </span>
+              <span v-else>{{ t('common.upcoming') }}</span>
             </div>
+            <v-btn
+              v-if="isEditor && stop.status === 'visited'"
+              class="completion-edit"
+              icon="mdi-pencil-outline"
+              size="small"
+              variant="text"
+              :aria-label="t('stop.editCompletion')"
+              :title="t('stop.editCompletion')"
+              @click="openCompletionEditor"
+            />
           </div>
           <div><v-icon icon="mdi-weather-night" /><strong>{{ stop.recommendedNights }}</strong><span>{{ t('common.nights') }}</span></div>
           <div v-if="stop.internetScore!==null"><v-icon icon="mdi-wifi" /><strong>{{ score(stop.internetScore) }}</strong><span>{{ t('stop.internet') }}</span></div>
@@ -212,6 +256,44 @@ onUnmounted(() => {
     </div>
 
     <div class="navigation-bar"><v-btn block color="primary" size="x-large" prepend-icon="mdi-navigation-variant" :href="navigationUrl" target="_blank" rel="noopener" :disabled="!navigationUrl">{{ t('map.navigate') }}</v-btn></div>
+    <v-dialog v-model="completionDialog" max-width="440">
+      <v-card class="completion-dialog">
+        <div class="completion-dialog-heading">
+          <v-icon icon="mdi-weather-night" />
+          <div><h2>{{ t('stop.completeStopTitle') }}</h2><p>{{ t('stop.plannedNightsValue', { count: stop.recommendedNights }) }}</p></div>
+        </div>
+        <v-text-field
+          v-model.number="stayedNightsInput"
+          type="number"
+          min="0"
+          max="365"
+          step="1"
+          inputmode="numeric"
+          autofocus
+          hide-details
+          :label="t('stop.actualNightsStayed')"
+          :suffix="t('common.nights')"
+        />
+        <v-text-field
+          v-model.number="actualDistanceInput"
+          class="completion-distance"
+          type="number"
+          min="0"
+          max="5000"
+          step="1"
+          inputmode="numeric"
+          hide-details
+          :label="t('stop.actualDistanceTravelled')"
+          :hint="t('stop.plannedDistanceValue', { count: stop.drivingDistanceFromPreviousKm ?? 0 })"
+          persistent-hint
+          :suffix="t('common.km')"
+        />
+        <div class="completion-dialog-actions">
+          <v-btn variant="text" :disabled="isSavingCompletion" @click="completionDialog=false">{{ t('common.cancel') }}</v-btn>
+          <v-btn color="primary" prepend-icon="mdi-check" :loading="isSavingCompletion" @click="saveCompletion">{{ t('stop.completeAndSave') }}</v-btn>
+        </div>
+      </v-card>
+    </v-dialog>
     <v-dialog :model-value="selectedPhotoIndex!==null" fullscreen transition="dialog-bottom-transition" @update:model-value="value=>{if(!value)selectedPhotoIndex=null}">
       <v-card class="photo-viewer">
         <v-btn class="viewer-close" icon="mdi-close" :aria-label="t('common.close')" @click="selectedPhotoIndex=null" />
@@ -242,6 +324,7 @@ onUnmounted(() => {
 .detail-panels{display:grid;grid-template-columns:1fr;align-items:start;gap:14px;overflow:visible;border:0;background:transparent;box-shadow:none}.detail-column{align-self:start;overflow:hidden;border:1px solid rgba(var(--v-border-color),.11);border-radius:var(--app-radius-md);box-shadow:0 14px 42px rgba(0,0,0,.08)}.detail-panels :deep(.v-expansion-panel-text__wrapper){padding:20px 20px 26px}
 @media(min-width:700px){.detail-panels{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}.detail-column{gap:14px;overflow:visible;border:0;border-radius:0;box-shadow:none}.detail-column :deep(.v-expansion-panel){align-self:start;overflow:hidden;border:1px solid rgba(var(--v-border-color),.1)!important;border-radius:var(--app-radius-md)!important;box-shadow:0 12px 36px rgba(0,0,0,.07)!important}}
 .photo-viewer{touch-action:pan-y}.detail-photo-window{width:100%;height:100%;background:transparent!important}.detail-photo-window :deep(.v-window__container),.detail-photo-window :deep(.v-window-item){height:100%}.detail-photo-slide{display:grid;width:100%;height:100%;place-items:center}.detail-photo-slide img{width:100%;height:100%;max-height:100dvh;object-fit:contain;user-select:none;-webkit-user-drag:none}.photo-viewer>.v-btn{position:fixed!important;z-index:20;top:auto;right:auto;min-width:50px;min-height:50px;color:#fff!important;background:#090a0d!important;border:1px solid rgba(255,255,255,.16);box-shadow:0 10px 28px rgba(0,0,0,.4)!important}.photo-viewer>.viewer-close{top:max(18px,env(safe-area-inset-top));right:18px}.photo-viewer>.viewer-previous,.photo-viewer>.viewer-next{top:50%;transform:translateY(-50%)}.photo-viewer>.viewer-previous{left:14px}.photo-viewer>.viewer-next{right:14px}
-.summary-row>.stage-completion{display:grid;max-width:none;min-height:86px;grid-template-columns:58px minmax(0,1fr);grid-template-rows:auto auto;align-content:center;align-items:center;column-gap:14px;margin-top:0;padding:15px 17px}.stage-completion-copy{display:grid;min-width:0;grid-column:2;grid-row:1/3;align-content:center}.stage-checkbox{grid-column:1;grid-row:1/3;align-self:center;justify-self:start}.stage-checkbox.editable{cursor:pointer}.stage-checkbox :deep(.v-selection-control){min-height:52px}.stage-checkbox :deep(.v-selection-control__input){width:52px;height:52px;border-radius:16px;background:rgba(var(--v-theme-primary),.1)}.stage-checkbox :deep(.v-icon){font-size:2rem!important}.summary-row>.stage-completion.completed{border-color:rgba(var(--v-theme-primary),.52);background:linear-gradient(145deg,rgba(var(--v-theme-primary),.15),rgb(var(--v-theme-surface)))}@media(max-width:520px){.summary-row>.stage-completion{min-height:82px;padding:14px}}
+.summary-row>.stage-completion{display:grid;max-width:none;min-height:86px;grid-template-columns:58px minmax(0,1fr) auto;grid-template-rows:auto auto;align-content:center;align-items:center;column-gap:14px;margin-top:0;padding:15px 17px}.stage-completion-copy{display:grid;min-width:0;grid-column:2;grid-row:1/3;align-content:center}.stage-checkbox{grid-column:1;grid-row:1/3;align-self:center;justify-self:start}.stage-checkbox.editable{cursor:pointer}.stage-checkbox :deep(.v-selection-control){min-height:52px}.stage-checkbox :deep(.v-selection-control__input){width:52px;height:52px;border-radius:16px;background:rgba(var(--v-theme-primary),.1)}.stage-checkbox :deep(.v-icon){font-size:2rem!important}.completion-edit{grid-column:3;grid-row:1/3;align-self:center}.summary-row>.stage-completion.completed{border-color:rgba(var(--v-theme-primary),.52);background:linear-gradient(145deg,rgba(var(--v-theme-primary),.15),rgb(var(--v-theme-surface)))}@media(max-width:520px){.summary-row>.stage-completion{min-height:82px;padding:14px}}
 .cover-photo-trigger{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;padding:0;border:0;background:transparent;cursor:zoom-in}.cover-photo-trigger img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .35s ease}.cover-photo-trigger:hover img{transform:scale(1.015)}.cover-shade{z-index:1;pointer-events:none}.cover-copy,.back,.favorite{z-index:2}
+.completion-dialog{padding:26px;border:1px solid rgba(var(--v-border-color),.12);border-radius:24px!important}.completion-dialog-heading{display:flex;align-items:center;gap:14px;margin-bottom:24px}.completion-dialog-heading>.v-icon{display:grid;width:48px;height:48px;place-items:center;border-radius:15px;color:rgb(var(--v-theme-primary));background:rgba(var(--v-theme-primary),.1);font-size:1.5rem}.completion-dialog-heading h2{font-size:1.35rem;letter-spacing:-.035em}.completion-dialog-heading p{margin-top:3px;color:rgba(var(--v-theme-on-surface),.6);font-size:.86rem}.completion-distance{margin-top:18px}.completion-dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:24px}@media(max-width:430px){.completion-dialog{padding:22px}.completion-dialog-actions{display:grid;grid-template-columns:1fr 1fr}.completion-dialog-actions .v-btn{min-width:0}}
 </style>

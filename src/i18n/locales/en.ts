@@ -6,7 +6,7 @@ export default {
   nav: { today: 'Today', route: 'Route', timeline: 'Route', map: 'Map', stops: 'Stops', gallery: 'Gallery', checklist: 'Checklist', favorites: 'Favorites', settings: 'Settings', back: 'Back' },
   common: {
     nights: 'nights', night: 'night', km: 'km', min: 'min', yes: 'Available', no: 'Unavailable',
-    free: 'Free', recommended: 'Recommended', details: 'Detail', close: 'Close', current: 'Current',
+    free: 'Free', recommended: 'Recommended', details: 'Detail', close: 'Close', cancel: 'Cancel', current: 'Current',
     planned: 'Planned', visited: 'Visited', skipped: 'Skipped', save: 'Save', done: 'Done',
     none: 'None', low: 'Low', medium: 'Medium', high: 'High', excellent: 'Excellent',
     caution: 'Caution', difficult: 'Difficult', good: 'Good', paid: 'Paid camp', municipality: 'Municipality', freecamp: 'Freecamp', unknown: 'Not added yet', completed: 'Completed', next: 'Next', upcoming: 'Upcoming'
@@ -20,13 +20,13 @@ export default {
     title: 'Active route', currentStop: 'Current stop', nextStop: 'Next stop', todayDistance: "Today’s drive", remainingDistance: 'Remaining distance', remainingNights: 'Remaining nights',
     weather: 'Weather', weatherPlaceholder: 'Weather will appear here', quickActions: 'Quick actions', openMap: 'Open map', continueRoute: 'Continue route', openCurrentStop: 'Open current stop',
     noActiveRoute: 'No active route', noActiveRouteHint: 'Apply the Supabase migrations and seed to load the active route.', dataUnavailable: 'Trip data is unavailable', dataUnavailableHint: 'Check your connection and Supabase configuration, then try again.', retry: 'Try again',
-    totalDistance: 'Total distance', completedDistance: 'Completed distance', totalNights: 'Total nights', nightsStayed: 'Nights stayed', routeChapters: 'Route chapters', planned: 'Planned', stayed: 'Stayed', driveTime: 'Drive time', stopId: 'ID'
+    totalDistance: 'Total distance', completedDistance: 'Completed distance', totalNights: 'Total nights', nightsStayed: 'Nights stayed', routeChapters: 'Route chapters', planned: 'Planned', stayed: 'Stayed', actualDistance: 'Actual distance', driveTime: 'Drive time', stopId: 'ID'
   },
   trip: { activeTrip: 'Active trip', days: '8 days', stopsCount: '{count} stops', distance: 'Total distance', plannedNights: 'Planned nights' },
   stop: {
     overview: 'Overview', whyVisit: 'Why visit', stay: 'Recommended stay', nightRange: 'Stay range', conditions: 'Conditions', essentials: 'Nearby essentials',
     campOptions: 'Where to stay', photography: 'Photography', safety: 'Safety notes', markVisited: 'Mark as visited',
-    markedVisited: 'Visited', stageComplete: 'Leg complete', stageCompleteHint: 'Include this stop in shared trip progress', stageCompleteEditableHint: 'Update this stop in the shared route progress.', stageCompleteReadOnlyHint: 'This shared route status is managed by an administrator.', favorite: 'Add to favorites', unfavorite: 'Remove from favorites', fromPrevious: 'from previous stop',
+    markedVisited: 'Visited', stageComplete: 'Leg complete', stageCompleteHint: 'Include this stop in shared trip progress', stageCompleteEditableHint: 'Update this stop in the shared route progress.', stageCompleteReadOnlyHint: 'This shared route status is managed by an administrator.', nightsStayedValue: '{count} nights stayed', completionSummary: '{nights} nights · {distance} km driven', completeStopTitle: 'Complete this leg', plannedNightsValue: '{count} nights planned', actualNightsStayed: 'Actual nights stayed', actualDistanceTravelled: 'Actual distance driven', plannedDistanceValue: 'Planned distance: {count} km', completeAndSave: 'Complete and save', editCompletion: 'Edit trip details', favorite: 'Add to favorites', unfavorite: 'Remove from favorites', fromPrevious: 'from previous stop',
     water: 'Water refill', dumpStation: 'Dump station', shower: 'Shower', wc: 'WC', wasteBins: 'Waste bins', municipality: 'Municipality facilities', market: 'Market', fuel: 'Fuel',
     internet: 'Internet', mobileCoverage: 'Mobile coverage', roadSafety: 'Road safety', ducatoAccess: 'Ducato access',
     seaScore: 'Sea score', silenceScore: 'Silence score', safetyScore: 'Safety score', solar: 'Solar', shade: 'Shade', crowd: 'Crowd', sunrise: 'Best sunrise', sunset: 'Best sunset', drone: 'Drone',
