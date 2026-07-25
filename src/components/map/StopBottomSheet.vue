@@ -89,7 +89,10 @@ function finishDrag(): void {
         <v-icon icon="mdi-chevron-down" />
       </button>
       <div class="sheet-heading"><div><p>{{ t(`common.${stop.status}`) }}</p><h2>{{ t(stop.title) }}</h2></div><span>{{ stop.drivingDistanceFromPreviousKm ?? '—' }} {{ t('common.km') }}</span></div>
-      <div class="sheet-facts"><span><v-icon icon="mdi-weather-night" />{{ stop.recommendedNights }} {{ t('common.nights') }}</span><span><v-icon icon="mdi-van-utility" />{{ stop.ducatoAccessibility ? t(`common.${stop.ducatoAccessibility}`) : t('common.unknown') }}</span><span><v-icon icon="mdi-water-outline" />{{ stop.waterRefill.available ? t('common.yes') : t('common.unknown') }}</span></div>
+      <div class="sheet-facts">
+        <span><v-icon icon="mdi-weather-night" />{{ stop.recommendedNights }} {{ t('common.nights') }}</span>
+        <span v-if="stop.ducatoAccessibility"><v-icon icon="mdi-van-utility" />{{ t(`common.${stop.ducatoAccessibility}`) }}</span>
+      </div>
       <div class="sheet-actions"><v-btn color="primary" prepend-icon="mdi-information-outline" :to="`/trips/${stop.routeId}/stops/${stop.id}`">{{ t('map.viewStop') }}</v-btn><v-btn variant="tonal" prepend-icon="mdi-navigation-variant" :href="routeUrl" target="_blank" rel="noopener" :disabled="!routeUrl">{{ t('map.openRoute') }}</v-btn><v-btn variant="tonal" prepend-icon="mdi-image-multiple-outline" :to="`/trips/${stop.routeId}/gallery`">{{ t('nav.gallery') }}</v-btn></div>
     </template>
   </v-card>
