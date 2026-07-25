@@ -35,11 +35,19 @@ function toggleChapter(stopId: string): void {
     ? openChapters.value.filter(id => id !== stopId)
     : [...openChapters.value, stopId]
 }
+function refreshVisibleTripState(): void {
+  if (document.visibilityState === 'visible') void store.refreshTripState()
+}
 onMounted(() => {
   updateChapterColumnCount()
+  void store.refreshTripState()
   window.addEventListener('resize', updateChapterColumnCount)
+  document.addEventListener('visibilitychange', refreshVisibleTripState)
 })
-onUnmounted(() => window.removeEventListener('resize', updateChapterColumnCount))
+onUnmounted(() => {
+  window.removeEventListener('resize', updateChapterColumnCount)
+  document.removeEventListener('visibilitychange', refreshVisibleTripState)
+})
 </script>
 
 <template>
