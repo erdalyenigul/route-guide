@@ -9,7 +9,7 @@ export default {
     free: 'Free', recommended: 'Recommended', details: 'Detail', close: 'Close', cancel: 'Cancel', current: 'Current',
     planned: 'Planned', visited: 'Visited', skipped: 'Skipped', save: 'Save', done: 'Done',
     none: 'None', low: 'Low', medium: 'Medium', high: 'High', excellent: 'Excellent',
-    caution: 'Caution', difficult: 'Difficult', good: 'Good', paid: 'Paid camp', municipality: 'Municipality', freecamp: 'Freecamp', unknown: 'Not added yet', completed: 'Completed', next: 'Next', upcoming: 'Upcoming'
+    caution: 'Caution', difficult: 'Difficult', good: 'Good', paid: 'Paid camp', municipality: 'Municipality', freecamp: 'Freecamp', unknown: 'Unknown', completed: 'Completed', next: 'Next', upcoming: 'Upcoming'
   },
   home: {
     greeting: 'Good evening', question: 'Where should we sleep tonight?',
