@@ -101,8 +101,8 @@ onUnmounted(() => {
             <v-list-item
               prepend-icon="mdi-account-circle-outline"
               append-icon="mdi-chevron-right"
-              :title="adminUser.displayName"
-              :subtitle="adminUser.username"
+              :title="t('admin.roleLabel')"
+              :subtitle="adminUser.displayName"
               class="admin-profile-link"
               link
               @click="openAdminPanel"
