@@ -19,6 +19,18 @@ if (import.meta.env.DEV && 'serviceWorker' in navigator) {
   }
 }
 
+if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+  const updateInstalledApp = async (): Promise<void> => {
+    const registrations = await navigator.serviceWorker.getRegistrations()
+    await Promise.all(registrations.map(registration => registration.update()))
+  }
+
+  window.addEventListener('load', () => void updateInstalledApp())
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') void updateInstalledApp()
+  })
+}
+
 const app = createApp(App)
 const pinia = createPinia()
 

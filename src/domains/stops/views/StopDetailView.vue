@@ -297,49 +297,61 @@ onUnmounted(() => {
       </v-btn>
       <span v-else class="stop-jump-spacer" />
     </nav>
-    <v-dialog v-model="completionDialog" max-width="440" content-class="completion-dialog-shell">
-      <v-card class="completion-dialog">
-        <div class="completion-dialog-heading">
-          <v-icon :icon="isAccommodationStop ? 'mdi-weather-night' : 'mdi-map-marker-check-outline'" />
-          <div class="completion-dialog-copy">
-            <h2>{{ t('stop.completeStopTitle') }}</h2>
-            <p v-if="isAccommodationStop">{{ t('stop.plannedNightsValue', { count: stop.recommendedNights }) }}</p>
+    <Teleport to="body">
+      <div
+        v-if="completionDialog"
+        class="completion-dialog-overlay"
+        role="presentation"
+        @click.self="completionDialog=false"
+      >
+        <v-card
+          class="completion-dialog"
+          role="dialog"
+          aria-modal="true"
+          :aria-label="t('stop.completeStopTitle')"
+        >
+          <div class="completion-dialog-heading">
+            <v-icon :icon="isAccommodationStop ? 'mdi-weather-night' : 'mdi-map-marker-check-outline'" />
+            <div class="completion-dialog-copy">
+              <h2>{{ t('stop.completeStopTitle') }}</h2>
+              <p v-if="isAccommodationStop">{{ t('stop.plannedNightsValue', { count: stop.recommendedNights }) }}</p>
+            </div>
           </div>
-        </div>
-        <v-text-field
-          v-if="isAccommodationStop"
-          v-model.number="stayedNightsInput"
-          type="number"
-          min="0"
-          max="365"
-          step="1"
-          inputmode="numeric"
-          autofocus
-          hide-details
-          :label="t('stop.actualNightsStayed')"
-          :suffix="t('common.nights')"
-        />
-        <v-text-field
-          v-if="!isRouteOrigin"
-          v-model.number="actualDistanceInput"
-          class="completion-distance"
-          type="number"
-          min="0"
-          max="5000"
-          step="1"
-          inputmode="numeric"
-          hide-details
-          :label="t('stop.actualDistanceTravelled')"
-          :hint="t('stop.plannedDistanceValue', { count: stop.drivingDistanceFromPreviousKm ?? 0 })"
-          persistent-hint
-          :suffix="t('common.km')"
-        />
-        <div class="completion-dialog-actions">
-          <v-btn variant="text" :disabled="isSavingCompletion" @click="completionDialog=false">{{ t('common.cancel') }}</v-btn>
-          <v-btn color="primary" prepend-icon="mdi-check" :loading="isSavingCompletion" @click="saveCompletion">{{ t('stop.completeAndSave') }}</v-btn>
-        </div>
-      </v-card>
-    </v-dialog>
+          <v-text-field
+            v-if="isAccommodationStop"
+            v-model.number="stayedNightsInput"
+            type="number"
+            min="0"
+            max="365"
+            step="1"
+            inputmode="numeric"
+            autofocus
+            hide-details
+            :label="t('stop.actualNightsStayed')"
+            :suffix="t('common.nights')"
+          />
+          <v-text-field
+            v-if="!isRouteOrigin"
+            v-model.number="actualDistanceInput"
+            class="completion-distance"
+            type="number"
+            min="0"
+            max="5000"
+            step="1"
+            inputmode="numeric"
+            hide-details
+            :label="t('stop.actualDistanceTravelled')"
+            :hint="t('stop.plannedDistanceValue', { count: stop.drivingDistanceFromPreviousKm ?? 0 })"
+            persistent-hint
+            :suffix="t('common.km')"
+          />
+          <div class="completion-dialog-actions">
+            <v-btn variant="text" :disabled="isSavingCompletion" @click="completionDialog=false">{{ t('common.cancel') }}</v-btn>
+            <v-btn color="primary" prepend-icon="mdi-check" :loading="isSavingCompletion" @click="saveCompletion">{{ t('stop.completeAndSave') }}</v-btn>
+          </div>
+        </v-card>
+      </div>
+    </Teleport>
     <PhotoViewer v-model="selectedPhotoIndex" :photos="viewerPhotos" />
   </main>
 </template>
@@ -362,5 +374,5 @@ onUnmounted(() => {
 .navigation-bar{display:grid;grid-template-columns:82px minmax(0,1fr) 82px;align-items:center;gap:8px}.navigation-bar .v-btn{width:100%;min-width:0;min-height:58px}.directions-action{padding-inline:10px!important}.stop-jump{padding-inline:6px!important}.stop-jump :deep(.v-btn__content){flex-direction:column;gap:1px}.stop-jump .v-icon{font-size:1.25rem}.stop-jump span{font-size:.66rem;line-height:1.1}@media(min-width:700px){.navigation-bar{grid-template-columns:128px minmax(0,1fr) 128px;gap:10px}.stop-jump :deep(.v-btn__content){flex-direction:row;gap:6px}.stop-jump span{font-size:.8rem}}
 .section-title-copy{display:grid;min-width:0;justify-items:start;gap:6px}.section-title-copy strong{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.detail-panels :deep(.section-title-copy .v-chip){margin:0!important}.list-heading{display:grid;justify-items:start;gap:8px}.list-heading strong{display:block;width:100%;line-height:1.35}
 .stop-detail{background:rgb(var(--v-theme-background))!important}
-.completion-dialog{width:100%;padding:26px;border:1px solid rgba(var(--v-border-color),.12);border-radius:24px!important}.completion-dialog-heading{display:grid;grid-template-columns:48px minmax(0,1fr);align-items:center;gap:14px;margin-bottom:24px}.completion-dialog-heading>.v-icon{display:grid;width:48px;height:48px;place-items:center;border-radius:15px;color:rgb(var(--v-theme-primary));background:rgba(var(--v-theme-primary),.1);font-size:1.5rem}.completion-dialog-copy{min-width:0;text-align:left}.completion-dialog-heading h2{margin:0;font-size:1.35rem;line-height:1.2;letter-spacing:-.035em;overflow-wrap:anywhere}.completion-dialog-heading p{margin:4px 0 0;color:rgba(var(--v-theme-on-surface),.6);font-size:.86rem;line-height:1.4}.completion-dialog :deep(.v-input){width:100%;min-width:0}.completion-dialog :deep(.v-field__field){min-width:0}.completion-distance{margin-top:18px}.completion-dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:24px}@media(max-width:430px){.completion-dialog{padding:20px;border-radius:22px!important}.completion-dialog-heading{grid-template-columns:44px minmax(0,1fr);gap:12px;margin-bottom:20px}.completion-dialog-heading>.v-icon{width:44px;height:44px}.completion-dialog-heading h2{font-size:1.2rem}.completion-dialog-actions{display:grid;grid-template-columns:1fr;margin-top:22px}.completion-dialog-actions .v-btn{width:100%;min-width:0;min-height:48px}}
+.completion-dialog-overlay{position:fixed;z-index:10000;inset:0;display:grid;place-items:center;padding:max(20px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(20px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));background:rgba(0,0,0,.68);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}.completion-dialog{width:min(440px,100%);max-height:calc(100dvh - max(40px,env(safe-area-inset-top) + env(safe-area-inset-bottom)));overflow-y:auto;padding:26px;border:1px solid rgba(var(--v-border-color),.12);border-radius:24px!important;box-shadow:0 28px 80px rgba(0,0,0,.42)!important}.completion-dialog-heading{display:grid;grid-template-columns:48px minmax(0,1fr);align-items:center;gap:14px;margin-bottom:24px}.completion-dialog-heading>.v-icon{display:grid;width:48px;height:48px;place-items:center;border-radius:15px;color:rgb(var(--v-theme-primary));background:rgba(var(--v-theme-primary),.1);font-size:1.5rem}.completion-dialog-copy{min-width:0;text-align:left}.completion-dialog-heading h2{margin:0;font-size:1.35rem;line-height:1.2;letter-spacing:-.035em;overflow-wrap:anywhere}.completion-dialog-heading p{margin:4px 0 0;color:rgba(var(--v-theme-on-surface),.6);font-size:.86rem;line-height:1.4}.completion-dialog :deep(.v-input){width:100%;min-width:0}.completion-dialog :deep(.v-field__field){min-width:0}.completion-distance{margin-top:18px}.completion-dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:24px}@media(max-width:430px){.completion-dialog-overlay{place-items:end center;padding:env(safe-area-inset-top) 0 0}.completion-dialog{width:100%;max-height:calc(100dvh - max(12px,env(safe-area-inset-top)));padding:22px 20px calc(20px + env(safe-area-inset-bottom));border-radius:24px 24px 0 0!important}.completion-dialog-heading{grid-template-columns:44px minmax(0,1fr);gap:12px;margin-bottom:20px}.completion-dialog-heading>.v-icon{width:44px;height:44px}.completion-dialog-heading h2{font-size:1.2rem}.completion-dialog-actions{display:grid;grid-template-columns:1fr;margin-top:22px}.completion-dialog-actions .v-btn{width:100%;min-width:0;min-height:48px}}
 </style>
