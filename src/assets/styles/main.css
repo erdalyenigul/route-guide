@@ -48,6 +48,7 @@ button, input, textarea, select { font: inherit; }
 }
 .v-chip { max-width: 100%; font-size: .75rem; font-weight: 720; white-space: nowrap; }
 .v-application { background: transparent !important; }
+.v-application.v-theme--routeLight { background: rgb(var(--v-theme-background)) !important; }
 .v-card {
   background-image:
     radial-gradient(circle at 5% 0, rgba(var(--v-theme-primary), .035), transparent 32%),
