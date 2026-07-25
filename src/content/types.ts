@@ -104,6 +104,7 @@ export interface StopContent {
   bestSunrise: ContentTranslationKey
   bestSunset: ContentTranslationKey
   photos: PhotoAsset[]
+  experiences?: Partial<Record<'en' | 'tr', StopExperience>>
   experience?: StopExperience
   initialStatus: StopStatus
   verificationStatus?: VerificationStatus

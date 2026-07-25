@@ -28,7 +28,7 @@ export interface SharedStopEditorData {
   stopSlug: string
   titleKey: string
   photos: SharedStopPhoto[]
-  experience: SharedStopExperience
+  experiences: Record<'en' | 'tr', SharedStopExperience>
 }
 
 export interface SaveExperienceInput {

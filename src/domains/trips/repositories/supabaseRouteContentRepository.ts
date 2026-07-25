@@ -1,4 +1,4 @@
-import type { Accessibility, CampingType, ContentTranslationKey, Level, RouteDataset, RouteStatus, StopStatus, VerificationStatus } from '@/content/types'
+import type { Accessibility, CampingType, ContentTranslationKey, Level, RouteDataset, RouteStatus, StopExperience, StopStatus, VerificationStatus } from '@/content/types'
 import { departureChecklist } from '@/content/checklists/departure'
 import { supabase } from '@/infrastructure/supabase/client'
 import type { FacilityRow, GalleryRow, StopRow, TipRow } from '@/infrastructure/supabase/database.types'
@@ -110,7 +110,20 @@ export const supabaseRouteContentRepository: RouteContentRepository = {
       const municipality = stopFacilities.find((facility) => facility.facility_type === 'municipality' && !facility.camping_spot_id)
       const stopGalleries = galleryRows.filter((gallery) => gallery.stop_id === row.id)
       const stopSpotRows = spotRows.filter((spot) => spot.stop_id === row.id)
-      const experience = experienceRows.find((item) => item.stop_id === row.id)
+      const experiences = experienceRows
+        .filter((item) => item.stop_id === row.id && (item.locale === 'en' || item.locale === 'tr'))
+        .reduce<Partial<Record<'en' | 'tr', StopExperience>>>((result, item) => {
+          const locale = item.locale as 'en' | 'tr'
+          result[locale] = {
+            body: item.body,
+            locale,
+            isPublished: item.is_published,
+            authorName: item.author_name,
+            updatedAt: item.updated_at
+          }
+          return result
+        }, {})
+      const experience = experiences.tr ?? experiences.en
       return {
         id: row.slug,
         routeId: routeSlugById.get(routeStop.route_id) ?? routeStop.route_id,
@@ -163,15 +176,8 @@ export const supabaseRouteContentRepository: RouteContentRepository = {
           storagePath: gallery.storage_path,
           bucket: gallery.bucket as 'covers' | 'gallery'
         })),
-        ...(experience ? {
-          experience: {
-            body: experience.body,
-            locale: experience.locale as 'en' | 'tr',
-            isPublished: experience.is_published,
-            authorName: experience.author_name,
-            updatedAt: experience.updated_at
-          }
-        } : {}),
+        experiences,
+        ...(experience ? { experience } : {}),
         initialStatus: routeStop.initial_status as StopStatus,
         verificationStatus: row.verification_status as VerificationStatus,
         sourceNote: row.source_note,

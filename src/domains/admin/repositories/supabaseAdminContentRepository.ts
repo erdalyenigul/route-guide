@@ -4,7 +4,7 @@ import { supabase } from '@/infrastructure/supabase/client'
 import type { Database, GalleryRow } from '@/infrastructure/supabase/database.types'
 
 import type { AdminContentRepository } from './adminContentRepository'
-import type { AdminUser, SharedStopPhoto } from '../types'
+import type { AdminUser, SharedStopExperience, SharedStopPhoto } from '../types'
 
 function client(): SupabaseClient<Database> {
   if (!supabase) throw new Error('Supabase environment variables are not configured')
@@ -45,6 +45,16 @@ function photo(row: GalleryRow): SharedStopPhoto {
   }
 }
 
+function emptyExperience(locale: 'en' | 'tr'): SharedStopExperience {
+  return {
+    body: '',
+    locale,
+    isPublished: true,
+    authorName: null,
+    updatedAt: null
+  }
+}
+
 async function requireUser(): Promise<User> {
   const { data, error } = await client().auth.getUser()
   if (error || !data.user) throw error ?? new Error('Authentication required')
@@ -82,25 +92,32 @@ export const supabaseAdminContentRepository: AdminContentRepository = {
     await requireUser()
     const stop = await stopIdForSlug(stopSlug)
     const [experienceResult, galleryResult] = await Promise.all([
-      client().from('stop_experiences').select('*').eq('stop_id', stop.id).maybeSingle(),
+      client().from('stop_experiences').select('*').eq('stop_id', stop.id),
       client().from('galleries').select('*').eq('stop_id', stop.id).order('is_cover', { ascending: false }).order('position')
     ])
     if (experienceResult.error) throw experienceResult.error
     if (galleryResult.error) throw galleryResult.error
-    const experience = experienceResult.data
+    const experiences = {
+      en: emptyExperience('en'),
+      tr: emptyExperience('tr')
+    }
+    for (const experience of experienceResult.data ?? []) {
+      if (experience.locale !== 'en' && experience.locale !== 'tr') continue
+      experiences[experience.locale] = {
+        body: experience.body,
+        locale: experience.locale,
+        isPublished: experience.is_published,
+        authorName: experience.author_name,
+        updatedAt: experience.updated_at
+      }
+    }
 
     return {
       stopId: stop.id,
       stopSlug,
       titleKey: stop.titleKey,
       photos: (galleryResult.data ?? []).map(photo),
-      experience: {
-        body: experience?.body ?? '',
-        locale: (experience?.locale as 'en' | 'tr' | undefined) ?? 'tr',
-        isPublished: experience?.is_published ?? true,
-        authorName: experience?.author_name ?? null,
-        updatedAt: experience?.updated_at ?? null
-      }
+      experiences
     }
   },
 
@@ -115,7 +132,7 @@ export const supabaseAdminContentRepository: AdminContentRepository = {
       is_published: input.isPublished,
       updated_by: user.id,
       author_name: author.displayName
-    }, { onConflict: 'stop_id' })
+    }, { onConflict: 'stop_id,locale' })
     if (error) throw error
   },
 

@@ -9,8 +9,13 @@ import { mapService } from '@/services/mapService'
 import { useTripStore } from '@/stores/trip'
 import { formatDateTime } from '@/utils/dateTime'
 
-const { t } = useI18n(); const route = useRoute(); const store = useTripStore()
+const { t, locale } = useI18n(); const route = useRoute(); const store = useTripStore()
 const stop = computed(() => store.stopById(String(route.params.stopId)))
+const localizedExperience = computed(() => {
+  if (!stop.value) return undefined
+  const activeLocale = locale.value === 'tr' ? 'tr' : 'en'
+  return stop.value.experiences?.[activeLocale]
+})
 const campingSpots = computed(() => stop.value ? store.campingSpotsForStop(stop.value.id) : [])
 const activities = computed(() => stop.value ? store.activitiesForStop(stop.value.id) : [])
 const notes = computed(() => activities.value.filter(item => item.type === 'note'))
@@ -68,8 +73,8 @@ const detailSections = computed<DetailSection[]>(() => {
   if (stop.value.roadWarnings.length) sections.push({ key: 'warnings', icon: 'mdi-alert-outline', title: 'stop.roadWarnings', badge: stop.value.roadWarnings.length, badgeColor: 'warning' })
   sections.push({ key: 'photography', icon: 'mdi-camera-iris', title: 'stop.photography' })
   if (notes.value.length) sections.push({ key: 'notes', icon: 'mdi-notebook-outline', title: 'stop.ourNotes' })
-  if (stop.value.experience?.isPublished && stop.value.experience.body) {
-    sections.push({ key: 'experience', icon: 'mdi-book-open-page-variant-outline', title: 'stop.ourExperience', badge: stop.value.experience.locale.toUpperCase() })
+  if (localizedExperience.value?.isPublished && localizedExperience.value.body) {
+    sections.push({ key: 'experience', icon: 'mdi-book-open-page-variant-outline', title: 'stop.ourExperience', badge: localizedExperience.value.locale.toUpperCase() })
   }
   return sections
 })
@@ -224,13 +229,13 @@ onUnmounted(() => {
                 <div v-if="stop.lunaUltraRecommendations.length" class="stack-list"><div v-for="tip in stop.lunaUltraRecommendations" :key="tip.subject"><strong>{{ t(tip.subject) }}</strong><p>{{ t(tip.lens) }} · {{ t(tip.timing) }}</p><small>{{ t(tip.fieldNote) }}</small></div></div>
               </template>
               <div v-else-if="section.key === 'notes'" class="stack-list"><div v-for="note in notes" :key="note.id"><strong>{{ t(note.title) }}</strong><p>{{ t(note.description) }}</p></div></div>
-              <template v-else-if="section.key === 'experience' && stop.experience">
-                <p class="experience-copy">{{ stop.experience.body }}</p>
-                <p v-if="stop.experience.authorName" class="experience-author">
+              <template v-else-if="section.key === 'experience' && localizedExperience">
+                <p class="experience-copy">{{ localizedExperience.body }}</p>
+                <p v-if="localizedExperience.authorName" class="experience-author">
                   <v-icon icon="mdi-account-outline" />
                   {{ t('stop.experienceBy', {
-                    name: stop.experience.authorName,
-                    date: formatDateTime(stop.experience.updatedAt)
+                    name: localizedExperience.authorName,
+                    date: formatDateTime(localizedExperience.updatedAt)
                   }) }}
                 </p>
               </template>

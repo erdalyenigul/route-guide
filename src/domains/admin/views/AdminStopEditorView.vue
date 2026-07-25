@@ -9,16 +9,27 @@ import { useTripStore } from '@/stores/trip'
 import { formatDateTime } from '@/utils/dateTime'
 
 import { adminContentService, MAX_PHOTOS_PER_STOP } from '../services/adminContentService'
-import type { SharedStopEditorData, SharedStopPhoto } from '../types'
+import type { SharedStopEditorData, SharedStopExperience, SharedStopPhoto } from '../types'
 
 const { t } = useI18n()
 const route = useRoute()
 const trip = useTripStore()
 const stopSlug = computed(() => String(route.params.stopId))
 const editor = ref<SharedStopEditorData>()
-const body = ref('')
 const locale = ref<'en' | 'tr'>('tr')
-const isPublished = ref(true)
+const experienceDrafts = ref<Record<'en' | 'tr', SharedStopExperience>>({
+  en: { body: '', locale: 'en', isPublished: true, authorName: null, updatedAt: null },
+  tr: { body: '', locale: 'tr', isPublished: true, authorName: null, updatedAt: null }
+})
+const activeExperience = computed(() => experienceDrafts.value[locale.value])
+const body = computed({
+  get: () => activeExperience.value.body,
+  set: (value: string) => { activeExperience.value.body = value }
+})
+const isPublished = computed({
+  get: () => activeExperience.value.isPublished,
+  set: (value: boolean) => { activeExperience.value.isPublished = value }
+})
 const caption = ref('')
 const files = ref<File[]>([])
 const isLoading = ref(true)
@@ -47,9 +58,10 @@ async function load(): Promise<void> {
   errorMessage.value = ''
   try {
     editor.value = await adminContentService.getStopEditor(stopSlug.value)
-    body.value = editor.value.experience.body
-    locale.value = editor.value.experience.locale
-    isPublished.value = editor.value.experience.isPublished
+    experienceDrafts.value = {
+      en: { ...editor.value.experiences.en },
+      tr: { ...editor.value.experiences.tr }
+    }
   } catch {
     errorMessage.value = t('admin.loadError')
   } finally {
@@ -234,11 +246,11 @@ onMounted(() => { void refreshContent() })
             counter
             auto-grow
           />
-          <p v-if="editor.experience.authorName && editor.experience.updatedAt" class="author-meta">
+          <p v-if="activeExperience.authorName && activeExperience.updatedAt" class="author-meta">
             <v-icon icon="mdi-account-edit-outline" />
             {{ t('admin.lastEditedBy', {
-              name: editor.experience.authorName,
-              date: formatDateTime(editor.experience.updatedAt)
+              name: activeExperience.authorName,
+              date: formatDateTime(activeExperience.updatedAt)
             }) }}
           </p>
           <v-btn color="primary" size="large" prepend-icon="mdi-content-save-outline" :loading="isSaving" @click="saveExperience">{{ t('common.save') }}</v-btn>
