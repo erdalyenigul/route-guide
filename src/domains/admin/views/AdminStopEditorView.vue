@@ -259,7 +259,7 @@ onMounted(() => { void refreshContent() })
                 <v-icon icon="mdi-account-edit-outline" />
                 {{ t('admin.lastEditedBy', { name: activeExperience.authorName, date: formatDateTime(activeExperience.updatedAt) }) }}
               </p>
-              <v-btn color="primary" size="large" :loading="isSaving" @click="saveExperience">{{ t('common.save') }}</v-btn>
+              <v-btn class="experience-save" color="primary" size="large" :loading="isSaving" @click="saveExperience">{{ t('common.save') }}</v-btn>
             </div>
           </div>
         </section>
@@ -325,8 +325,9 @@ onMounted(() => { void refreshContent() })
 .progress-switch{margin:20px 0 12px}
 .actual-values{display:grid;max-width:760px;grid-template-columns:1fr 1fr;gap:12px}
 .experience-input{margin-top:20px}
-.author-meta{display:flex;align-items:center;gap:8px;margin:-2px 0 18px;color:rgba(var(--v-theme-on-surface),.62);font-size:.86rem;line-height:1.5}
+.author-meta{display:flex;align-items:center;gap:8px;margin:12px 0 0;color:rgba(var(--v-theme-on-surface),.62);font-size:.86rem;line-height:1.5}
 .author-meta .v-icon{color:rgb(var(--v-theme-primary));font-size:1.1rem}
+.experience-save{margin-top:20px}
 .photo-admin-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
 .photo-admin-card{position:relative;overflow:hidden;border:1px solid rgba(var(--v-border-color),.11);border-radius:20px!important}
 .photo-preview{display:block;width:100%;padding:0;border:0;background:transparent;cursor:zoom-in}
