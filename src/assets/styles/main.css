@@ -64,3 +64,53 @@ button:focus-visible {
   .page-shell { padding-inline: 16px; }
   .standard-page { padding-top: 24px; padding-bottom: 116px; }
 }
+
+@media (hover: none) and (pointer: coarse) {
+  button,
+  a,
+  [role="button"] {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  button:not(:disabled),
+  a,
+  [role="button"]:not([aria-disabled="true"]) {
+    transition-duration: .16s !important;
+  }
+
+  button:not(:disabled):active,
+  a:active,
+  [role="button"]:not([aria-disabled="true"]):active {
+    opacity: .82;
+  }
+
+  .v-btn:not(.v-btn--disabled):active {
+    transform: scale(.96);
+  }
+
+  .v-card[href]:active,
+  .v-card[to]:active {
+    transform: scale(.985);
+  }
+
+  .photo-strip {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+  }
+
+  .photo-strip > * {
+    scroll-snap-stop: always;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
