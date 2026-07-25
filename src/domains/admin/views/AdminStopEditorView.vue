@@ -188,8 +188,7 @@ onMounted(() => { void refreshContent() })
       <div class="editor-sections">
         <section class="editor-section">
           <header class="section-title">
-            <v-icon icon="mdi-image-multiple-outline" />
-            <div class="drawer-heading"><strong>{{ t('admin.currentPhotos') }}</strong><small>{{ t('admin.photoCount', { count: editor.photos.length }) }}</small></div>
+            <h2>{{ t('admin.currentPhotos') }}</h2>
           </header>
           <div class="section-content">
             <div v-if="editor.photos.length" class="photo-admin-grid">
@@ -214,8 +213,7 @@ onMounted(() => { void refreshContent() })
 
         <section class="editor-section">
           <header class="section-title">
-            <v-icon icon="mdi-image-plus-outline" />
-            <div class="drawer-heading"><strong>{{ t('admin.photoUploadTitle') }}</strong><small>{{ t('admin.photoUploadHint', { count: remainingPhotos }) }}</small></div>
+            <h2>{{ t('admin.photoUploadTitle') }}</h2>
           </header>
           <div class="section-content">
             <div class="drawer-content">
@@ -226,10 +224,29 @@ onMounted(() => { void refreshContent() })
           </div>
         </section>
 
+        <section v-if="tripStop" class="editor-section">
+          <header class="section-title">
+            <h2>{{ t('admin.actualTripData') }}</h2>
+          </header>
+          <div class="section-content">
+            <div class="drawer-content">
+              <div class="planned-values">
+                <div><v-icon icon="mdi-calendar-range-outline" /><span>{{ t('admin.plannedStay') }}</span><strong>{{ tripStop.recommendedNights }} {{ t('common.nights') }}</strong></div>
+                <div><v-icon icon="mdi-map-marker-distance" /><span>{{ t('admin.plannedDistance') }}</span><strong>{{ tripStop.drivingDistanceFromPreviousKm ?? '—' }} {{ t('common.km') }}</strong></div>
+              </div>
+              <v-switch v-model="progressCompleted" class="progress-switch" color="primary" hide-details :label="t('stop.stageComplete')" />
+              <div class="actual-values">
+                <v-text-field v-model.number="nightsStayed" type="number" min="0" max="365" step="1" inputmode="numeric" :disabled="!progressCompleted" :label="t('stop.actualNightsStayed')" :suffix="t('common.nights')" />
+                <v-text-field v-model.number="actualDistanceKm" type="number" min="0" max="5000" step="1" inputmode="numeric" :disabled="!progressCompleted" :label="t('stop.actualDistanceTravelled')" :suffix="t('common.km')" />
+              </div>
+              <v-btn color="primary" size="large" prepend-icon="mdi-content-save-outline" :loading="isSavingProgress" @click="saveProgress">{{ t('admin.saveProgress') }}</v-btn>
+            </div>
+          </div>
+        </section>
+
         <section class="editor-section">
           <header class="section-title">
-            <v-icon icon="mdi-text-box-edit-outline" />
-            <div class="drawer-heading"><strong>{{ t('admin.experienceTitle') }}</strong><small>{{ t('admin.languageDrafts') }}</small></div>
+            <h2>{{ t('admin.experienceTitle') }}</h2>
           </header>
           <div class="section-content">
             <div class="drawer-content">
@@ -246,30 +263,6 @@ onMounted(() => { void refreshContent() })
                 {{ t('admin.lastEditedBy', { name: activeExperience.authorName, date: formatDateTime(activeExperience.updatedAt) }) }}
               </p>
               <v-btn color="primary" size="large" prepend-icon="mdi-content-save-outline" :loading="isSaving" @click="saveExperience">{{ t('common.save') }}</v-btn>
-            </div>
-          </div>
-        </section>
-
-        <section v-if="tripStop" class="editor-section">
-          <header class="section-title">
-            <v-icon icon="mdi-map-marker-path" />
-            <div class="drawer-heading">
-              <strong>{{ t('admin.actualTripData') }}</strong>
-              <v-chip class="progress-status" :color="progressCompleted ? 'success' : undefined" size="small" variant="tonal">{{ t(progressCompleted ? 'common.completed' : 'common.upcoming') }}</v-chip>
-            </div>
-          </header>
-          <div class="section-content">
-            <div class="drawer-content">
-              <div class="planned-values">
-                <div><v-icon icon="mdi-calendar-range-outline" /><span>{{ t('admin.plannedStay') }}</span><strong>{{ tripStop.recommendedNights }} {{ t('common.nights') }}</strong></div>
-                <div><v-icon icon="mdi-map-marker-distance" /><span>{{ t('admin.plannedDistance') }}</span><strong>{{ tripStop.drivingDistanceFromPreviousKm ?? '—' }} {{ t('common.km') }}</strong></div>
-              </div>
-              <v-switch v-model="progressCompleted" class="progress-switch" color="primary" hide-details :label="t('stop.stageComplete')" />
-              <div class="actual-values">
-                <v-text-field v-model.number="nightsStayed" type="number" min="0" max="365" step="1" inputmode="numeric" :disabled="!progressCompleted" :label="t('stop.actualNightsStayed')" :suffix="t('common.nights')" />
-                <v-text-field v-model.number="actualDistanceKm" type="number" min="0" max="5000" step="1" inputmode="numeric" :disabled="!progressCompleted" :label="t('stop.actualDistanceTravelled')" :suffix="t('common.km')" />
-              </div>
-              <v-btn color="primary" size="large" prepend-icon="mdi-content-save-outline" :loading="isSavingProgress" @click="saveProgress">{{ t('admin.saveProgress') }}</v-btn>
             </div>
           </div>
         </section>
@@ -293,13 +286,9 @@ onMounted(() => { void refreshContent() })
 .v-alert{margin-bottom:14px}
 .editor-sections{display:grid;gap:18px}
 .editor-section{overflow:hidden;border:1px solid rgba(var(--v-border-color),.11);border-radius:24px;background:rgb(var(--v-theme-surface));box-shadow:var(--app-shadow)}
-.section-title{display:flex;align-items:center;gap:14px;padding:20px 24px;border-bottom:1px solid rgba(var(--v-border-color),.09)}
-.section-title>.v-icon{color:rgb(var(--v-theme-primary));font-size:1.45rem}
+.section-title{padding:20px 24px;border-bottom:1px solid rgba(var(--v-border-color),.09)}
+.section-title h2{font-size:1.16rem;line-height:1.3;letter-spacing:-.025em}
 .section-content{padding:24px}
-.drawer-heading{display:flex;min-width:0;flex:1;flex-direction:column;align-items:flex-start;gap:4px}
-.drawer-heading strong{max-width:100%;font-size:1.16rem;letter-spacing:-.025em}
-.drawer-heading small{color:rgba(var(--v-theme-on-surface),.58);font-size:.82rem;line-height:1.35}
-.progress-status{margin-top:3px}
 .drawer-content{max-width:900px}
 .description-tools{display:flex;align-items:center;justify-content:space-between;gap:16px}
 .planned-values{display:grid;max-width:760px;grid-template-columns:1fr 1fr;gap:12px}
