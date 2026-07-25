@@ -5,6 +5,22 @@ import type { SaveExperienceInput } from '../types'
 const MAX_PHOTOS_PER_STOP = 10
 const MAX_SOURCE_FILE_BYTES = 20 * 1024 * 1024
 const MAX_IMAGE_EDGE = 2400
+const INVISIBLE_INPUT_CHARACTERS = /[\u200B-\u200D\u2060\uFEFF]/g
+
+function normalizeUsername(value: string): string {
+  return value
+    .normalize('NFKC')
+    .replace(INVISIBLE_INPUT_CHARACTERS, '')
+    .trim()
+    .toLocaleLowerCase('en-US')
+}
+
+function normalizePassword(value: string): string {
+  return value
+    .normalize('NFKC')
+    .replace(INVISIBLE_INPUT_CHARACTERS, '')
+    .trim()
+}
 
 async function imageBlob(file: File): Promise<Blob> {
   if (!file.type.startsWith('image/')) throw new Error('INVALID_IMAGE_TYPE')
@@ -32,7 +48,9 @@ export class AdminContentService {
   constructor(private readonly repository: AdminContentRepository) {}
 
   currentUser() { return this.repository.currentUser() }
-  signIn(username: string, password: string) { return this.repository.signIn(username.trim().toLowerCase(), password) }
+  signIn(username: string, password: string) {
+    return this.repository.signIn(normalizeUsername(username), normalizePassword(password))
+  }
   signOut() { return this.repository.signOut() }
   getStopEditor(stopSlug: string) { return this.repository.getStopEditor(stopSlug) }
 

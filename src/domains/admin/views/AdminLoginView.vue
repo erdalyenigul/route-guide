@@ -13,12 +13,24 @@ const preferences = usePreferencesStore()
 const logoUrl = computed(() => preferences.theme === 'dark' ? '/logo-dark.png' : '/logo-light.png')
 const username = ref('')
 const password = ref('')
+const showPassword = ref(false)
 const isLoading = ref(false)
 const errorMessage = ref('')
 
 onMounted(async () => {
-  if (await adminContentService.currentUser()) await router.replace({ name: 'admin-dashboard' })
+  try {
+    if (await adminContentService.currentUser()) await router.replace({ name: 'admin-dashboard' })
+  } catch {
+    // A temporary connection problem must not prevent a fresh sign-in attempt.
+  }
 })
+
+function isInvalidCredentialsError(cause: unknown): boolean {
+  if (!cause || typeof cause !== 'object') return false
+  const error = cause as { code?: unknown, message?: unknown }
+  return error.code === 'invalid_credentials'
+    || (typeof error.message === 'string' && /invalid login credentials/i.test(error.message))
+}
 
 async function submit(): Promise<void> {
   errorMessage.value = ''
@@ -27,8 +39,8 @@ async function submit(): Promise<void> {
     await adminContentService.signIn(username.value, password.value)
     const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : '/manage'
     await router.replace(redirect)
-  } catch {
-    errorMessage.value = t('admin.loginError')
+  } catch (cause) {
+    errorMessage.value = t(isInvalidCredentialsError(cause) ? 'admin.loginError' : 'admin.loginConnectionError')
   } finally {
     isLoading.value = false
   }
@@ -43,8 +55,21 @@ async function submit(): Promise<void> {
       <h1>{{ t('admin.loginTitle') }}</h1>
       <v-alert v-if="errorMessage" type="error" variant="tonal">{{ errorMessage }}</v-alert>
       <form @submit.prevent="submit">
-        <v-text-field v-model="username" :label="t('admin.username')" autocomplete="username" prepend-inner-icon="mdi-account-outline" autocapitalize="none" spellcheck="false" required />
-        <v-text-field v-model="password" :label="t('admin.password')" type="password" autocomplete="current-password" prepend-inner-icon="mdi-lock-outline" required />
+        <v-text-field v-model="username" :label="t('admin.username')" autocomplete="username" inputmode="text" prepend-inner-icon="mdi-account-outline" autocapitalize="none" autocorrect="off" spellcheck="false" required />
+        <v-text-field
+          v-model="password"
+          :label="t('admin.password')"
+          :type="showPassword ? 'text' : 'password'"
+          autocomplete="current-password"
+          inputmode="text"
+          prepend-inner-icon="mdi-lock-outline"
+          :append-inner-icon="showPassword ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
+          autocapitalize="none"
+          autocorrect="off"
+          spellcheck="false"
+          required
+          @click:append-inner="showPassword = !showPassword"
+        />
         <v-btn class="login-submit" type="submit" block color="primary" size="x-large" :loading="isLoading">{{ t('admin.signIn') }}</v-btn>
       </form>
       <v-btn variant="outlined" block size="x-large" to="/settings">{{ t('nav.back') }}</v-btn>
