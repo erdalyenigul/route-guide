@@ -182,9 +182,6 @@ onMounted(() => { void refreshContent() })
         <v-btn :to="`/trips/${trip.activeTrip?.id ?? 'active'}/stops/${stopSlug}`" variant="tonal" prepend-icon="mdi-open-in-new">{{ t('admin.viewStop') }}</v-btn>
       </PageHeader>
 
-      <v-alert v-if="errorMessage" type="error" variant="tonal" closable @click:close="errorMessage=''">{{ errorMessage }}</v-alert>
-      <v-alert v-if="successMessage" type="success" variant="tonal" closable @click:close="successMessage=''">{{ successMessage }}</v-alert>
-
       <div class="editor-sections">
         <section class="editor-section">
           <header class="section-title">
@@ -278,12 +275,41 @@ onMounted(() => { void refreshContent() })
     </v-dialog>
 
     <PhotoViewer v-model="selectedPhotoIndex" :photos="viewerPhotos" />
+
+    <v-snackbar
+      :model-value="Boolean(successMessage)"
+      class="editor-toast"
+      color="success"
+      location="top end"
+      style="margin-top:calc(env(safe-area-inset-top) + 72px)"
+      :timeout="3500"
+      @update:model-value="value => { if (!value) successMessage = '' }"
+    >
+      {{ successMessage }}
+      <template #actions>
+        <v-btn icon="mdi-close" variant="text" :aria-label="t('common.close')" @click="successMessage = ''" />
+      </template>
+    </v-snackbar>
+
+    <v-snackbar
+      :model-value="Boolean(errorMessage)"
+      class="editor-toast"
+      color="error"
+      location="top end"
+      style="margin-top:calc(env(safe-area-inset-top) + 72px)"
+      :timeout="6000"
+      @update:model-value="value => { if (!value) errorMessage = '' }"
+    >
+      {{ errorMessage }}
+      <template #actions>
+        <v-btn icon="mdi-close" variant="text" :aria-label="t('common.close')" @click="errorMessage = ''" />
+      </template>
+    </v-snackbar>
   </main>
 </template>
 
 <style scoped>
 .loading{min-height:60dvh;display:grid;place-items:center}
-.v-alert{margin-bottom:14px}
 .editor-sections{display:grid;gap:18px}
 .editor-section{overflow:hidden;border:1px solid rgba(var(--v-border-color),.11);border-radius:24px;background:rgb(var(--v-theme-surface));box-shadow:var(--app-shadow)}
 .section-title{padding:20px 24px;border-bottom:1px solid rgba(var(--v-border-color),.09)}
