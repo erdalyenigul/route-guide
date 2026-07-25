@@ -108,11 +108,14 @@ async function saveExperience(): Promise<void> {
   errorMessage.value = ''
   successMessage.value = ''
   try {
-    await adminContentService.saveExperience(stopSlug.value, {
-      body: body.value,
-      locale: locale.value,
-      isPublished: isPublished.value
-    })
+    await Promise.all((['tr', 'en'] as const).map(draftLocale => {
+      const draft = experienceDrafts.value[draftLocale]
+      return adminContentService.saveExperience(stopSlug.value, {
+        body: draft.body,
+        locale: draftLocale,
+        isPublished: draft.isPublished
+      })
+    }))
     successMessage.value = t('admin.experienceSaved')
     await refreshContent()
   } catch {
