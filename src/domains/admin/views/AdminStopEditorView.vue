@@ -24,10 +24,15 @@ const files = ref<File[]>([])
 const isLoading = ref(true)
 const isSaving = ref(false)
 const isUploading = ref(false)
+const isSavingProgress = ref(false)
 const errorMessage = ref('')
 const successMessage = ref('')
+const progressCompleted = ref(false)
+const nightsStayed = ref(0)
+const actualDistanceKm = ref(0)
 const pendingDelete = ref<SharedStopPhoto>()
 const selectedPhotoIndex = ref<number | null>(null)
+const tripStop = computed(() => trip.stopById(stopSlug.value))
 const uploadedPhotoCount = computed(() => editor.value?.photos.filter(photo => photo.sourceType === 'trip').length ?? 0)
 const remainingPhotos = computed(() => MAX_PHOTOS_PER_STOP - uploadedPhotoCount.value)
 const viewerPhotos = computed(() => editor.value?.photos.map(photo => ({
@@ -54,6 +59,36 @@ async function load(): Promise<void> {
 
 async function refreshContent(): Promise<void> {
   await Promise.all([load(), trip.initialize()])
+  syncProgressForm()
+}
+
+function syncProgressForm(): void {
+  const stop = tripStop.value
+  if (!stop) return
+  progressCompleted.value = stop.status === 'visited'
+  nightsStayed.value = stop.nightsStayed ?? stop.recommendedNights
+  actualDistanceKm.value = stop.actualDistanceKm ?? stop.drivingDistanceFromPreviousKm ?? 0
+}
+
+async function saveProgress(): Promise<void> {
+  const stop = tripStop.value
+  if (!stop) return
+  isSavingProgress.value = true
+  errorMessage.value = ''
+  successMessage.value = ''
+  const resolvedNights = Math.min(Math.max(Math.trunc(Number(nightsStayed.value) || 0), 0), 365)
+  const resolvedDistance = Math.min(Math.max(Math.trunc(Number(actualDistanceKm.value) || 0), 0), 5000)
+  try {
+    await trip.setStopCompletion(stop.id, progressCompleted.value, resolvedNights, resolvedDistance)
+    if (trip.stateSyncError) throw new Error('PROGRESS_SAVE_FAILED')
+    await trip.refreshTripState()
+    syncProgressForm()
+    successMessage.value = t('admin.progressSaved')
+  } catch {
+    errorMessage.value = t('admin.progressSaveError')
+  } finally {
+    isSavingProgress.value = false
+  }
 }
 
 async function saveExperience(): Promise<void> {
@@ -124,7 +159,7 @@ async function deleteConfirmed(): Promise<void> {
   }
 }
 
-onMounted(() => { void load() })
+onMounted(() => { void refreshContent() })
 </script>
 
 <template>
@@ -139,6 +174,46 @@ onMounted(() => { void load() })
       <v-alert v-if="successMessage" type="success" variant="tonal" closable @click:close="successMessage=''">{{ successMessage }}</v-alert>
 
       <div class="editor-layout">
+        <v-card v-if="tripStop" class="panel progress-panel">
+          <div class="panel-heading progress-heading">
+            <div><p class="eyebrow">{{ t('admin.tripProgress') }}</p><h2>{{ t('admin.actualTripData') }}</h2></div>
+            <v-chip :color="progressCompleted ? 'success' : undefined" variant="tonal">
+              {{ t(progressCompleted ? 'common.completed' : 'common.upcoming') }}
+            </v-chip>
+          </div>
+          <p class="panel-description">{{ t('admin.progressHint') }}</p>
+          <div class="planned-values">
+            <div><v-icon icon="mdi-calendar-range-outline" /><span>{{ t('admin.plannedStay') }}</span><strong>{{ tripStop.recommendedNights }} {{ t('common.nights') }}</strong></div>
+            <div><v-icon icon="mdi-map-marker-distance" /><span>{{ t('admin.plannedDistance') }}</span><strong>{{ tripStop.drivingDistanceFromPreviousKm ?? '—' }} {{ t('common.km') }}</strong></div>
+          </div>
+          <v-switch v-model="progressCompleted" class="progress-switch" color="primary" hide-details :label="t('stop.stageComplete')" />
+          <div class="actual-values">
+            <v-text-field
+              v-model.number="nightsStayed"
+              type="number"
+              min="0"
+              max="365"
+              step="1"
+              inputmode="numeric"
+              :disabled="!progressCompleted"
+              :label="t('stop.actualNightsStayed')"
+              :suffix="t('common.nights')"
+            />
+            <v-text-field
+              v-model.number="actualDistanceKm"
+              type="number"
+              min="0"
+              max="5000"
+              step="1"
+              inputmode="numeric"
+              :disabled="!progressCompleted"
+              :label="t('stop.actualDistanceTravelled')"
+              :suffix="t('common.km')"
+            />
+          </div>
+          <v-btn color="primary" size="large" prepend-icon="mdi-content-save-outline" :loading="isSavingProgress" @click="saveProgress">{{ t('admin.saveProgress') }}</v-btn>
+        </v-card>
+
         <v-card class="panel experience-panel">
           <div class="panel-heading">
             <div><p class="eyebrow">{{ t('admin.journal') }}</p><h2>{{ t('admin.experienceTitle') }}</h2></div>
@@ -226,5 +301,5 @@ onMounted(() => { void load() })
 </template>
 
 <style scoped>
-.loading{min-height:60dvh;display:grid;place-items:center}.v-alert{margin-bottom:14px}.editor-layout{display:grid;grid-template-columns:1.15fr .85fr;gap:18px}.panel{padding:clamp(20px,3vw,30px);border:1px solid rgba(var(--v-border-color),.11);border-radius:24px!important;box-shadow:var(--app-shadow)}.panel-heading{display:flex;align-items:start;justify-content:space-between;gap:18px;margin-bottom:22px}.panel-heading h2,.section-heading h2{font-size:1.5rem;letter-spacing:-.04em}.experience-input{margin-top:20px}.author-meta{display:flex;align-items:center;gap:8px;margin:-2px 0 18px;color:rgba(var(--v-theme-on-surface),.62);font-size:.86rem;line-height:1.5}.author-meta .v-icon{color:rgb(var(--v-theme-primary));font-size:1.1rem}.panel-description{margin:-8px 0 20px;color:rgba(var(--v-theme-on-surface),.66);font-size:.9rem;line-height:1.55}.photos-section{margin-top:38px}.section-heading{display:flex;align-items:end;justify-content:space-between;margin-bottom:18px}.section-heading>span{color:rgba(var(--v-theme-on-background),.58);font-size:.9rem}.photo-admin-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.photo-admin-card{position:relative;overflow:hidden;border:1px solid rgba(var(--v-border-color),.11);border-radius:20px!important}.photo-preview{display:block;width:100%;padding:0;border:0;background:transparent;cursor:zoom-in}.photo-preview img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;transition:transform .25s}.photo-preview:hover img{transform:scale(1.025)}.photo-admin-card>p{min-height:48px;padding:12px 14px;color:rgba(var(--v-theme-on-surface),.7);font-size:.82rem;line-height:1.4}.photo-overlay{position:absolute;z-index:1;left:10px;right:10px;top:10px;display:flex;justify-content:space-between;gap:10px;pointer-events:none}.photo-overlay>div{display:flex;gap:7px}.photo-overlay .v-btn{pointer-events:auto}.cover-chip,.photo-action-btn{color:#fff!important;background:#090a0d!important;box-shadow:0 6px 18px rgba(0,0,0,.3)}.photo-action-btn:hover{background:#24262b!important}.photo-action-btn :deep(.v-icon){color:#fff!important}.confirm-card{padding:26px}.confirm-card h2{font-size:1.4rem}.confirm-card p{margin-top:10px;color:rgba(var(--v-theme-on-surface),.68);line-height:1.55}.confirm-card>div{display:flex;justify-content:flex-end;gap:8px;margin-top:24px}@media(max-width:1050px){.editor-layout{grid-template-columns:1fr}.photo-admin-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:700px){.photo-admin-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.panel-heading{align-items:center}.panel-heading h2{font-size:1.3rem}}@media(max-width:430px){.photo-admin-grid{grid-template-columns:1fr}}
+.loading{min-height:60dvh;display:grid;place-items:center}.v-alert{margin-bottom:14px}.editor-layout{display:grid;grid-template-columns:1.15fr .85fr;gap:18px}.panel{padding:clamp(20px,3vw,30px);border:1px solid rgba(var(--v-border-color),.11);border-radius:24px!important;box-shadow:var(--app-shadow)}.panel-heading{display:flex;align-items:start;justify-content:space-between;gap:18px;margin-bottom:22px}.panel-heading h2,.section-heading h2{font-size:1.5rem;letter-spacing:-.04em}.progress-panel{grid-column:1/-1}.progress-heading{margin-bottom:12px}.planned-values{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:760px}.planned-values>div{display:grid;grid-template-columns:36px minmax(0,1fr);grid-template-rows:auto auto;align-items:center;padding:16px;border:1px solid rgba(var(--v-border-color),.09);border-radius:17px;background:rgba(var(--v-theme-on-surface),.04)}.planned-values .v-icon{grid-row:1/3;color:rgb(var(--v-theme-primary));font-size:1.25rem}.planned-values span{color:rgba(var(--v-theme-on-surface),.58);font-size:.78rem}.planned-values strong{font-size:1.05rem}.progress-switch{margin:20px 0 12px}.actual-values{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:760px}.experience-input{margin-top:20px}.author-meta{display:flex;align-items:center;gap:8px;margin:-2px 0 18px;color:rgba(var(--v-theme-on-surface),.62);font-size:.86rem;line-height:1.5}.author-meta .v-icon{color:rgb(var(--v-theme-primary));font-size:1.1rem}.panel-description{margin:-8px 0 20px;color:rgba(var(--v-theme-on-surface),.66);font-size:.9rem;line-height:1.55}.photos-section{margin-top:38px}.section-heading{display:flex;align-items:end;justify-content:space-between;margin-bottom:18px}.section-heading>span{color:rgba(var(--v-theme-on-background),.58);font-size:.9rem}.photo-admin-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.photo-admin-card{position:relative;overflow:hidden;border:1px solid rgba(var(--v-border-color),.11);border-radius:20px!important}.photo-preview{display:block;width:100%;padding:0;border:0;background:transparent;cursor:zoom-in}.photo-preview img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;transition:transform .25s}.photo-preview:hover img{transform:scale(1.025)}.photo-admin-card>p{min-height:48px;padding:12px 14px;color:rgba(var(--v-theme-on-surface),.7);font-size:.82rem;line-height:1.4}.photo-overlay{position:absolute;z-index:1;left:10px;right:10px;top:10px;display:flex;justify-content:space-between;gap:10px;pointer-events:none}.photo-overlay>div{display:flex;gap:7px}.photo-overlay .v-btn{pointer-events:auto}.cover-chip,.photo-action-btn{color:#fff!important;background:#090a0d!important;box-shadow:0 6px 18px rgba(0,0,0,.3)}.photo-action-btn:hover{background:#24262b!important}.photo-action-btn :deep(.v-icon){color:#fff!important}.confirm-card{padding:26px}.confirm-card h2{font-size:1.4rem}.confirm-card p{margin-top:10px;color:rgba(var(--v-theme-on-surface),.68);line-height:1.55}.confirm-card>div{display:flex;justify-content:flex-end;gap:8px;margin-top:24px}@media(max-width:1050px){.editor-layout{grid-template-columns:1fr}.photo-admin-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:700px){.photo-admin-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.panel-heading{align-items:center}.panel-heading h2{font-size:1.3rem}.planned-values,.actual-values{grid-template-columns:1fr}}@media(max-width:430px){.photo-admin-grid{grid-template-columns:1fr}}
 </style>
