@@ -1,7 +1,7 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 
-import type { ChecklistItemViewModel, RouteDataset, StopContent, StopViewModel } from '@/content/types'
+import type { ChecklistItemViewModel, RouteDataset, StopContent, StopStatus, StopViewModel } from '@/content/types'
 import { emptyTripState, type TripState } from '@/domains/trips/repositories/tripStateRepository'
 import { routeContentService } from '@/domains/trips/services/routeContentService'
 import { tripStateService } from '@/domains/trips/services/tripStateService'
@@ -78,18 +78,22 @@ export const useTripStore = defineStore('trip', () => {
 
   const activeStops = computed(() => activeTrip.value ? stopsForRoute(activeTrip.value.id) : [])
   const accommodationStops = computed(() => activeStops.value.slice(1, -1))
-  const currentStop = computed(() => activeStops.value.find((stop) => stop.status === 'current')
-    ?? activeStops.value.find((stop) => stop.status !== 'visited' && stop.status !== 'skipped')
-    ?? activeStops.value[activeStops.value.length - 1])
+  const lastProgressedStopIndex = computed(() => activeStops.value.reduce(
+    (latest, stop, index) => stop.status === 'visited' || stop.status === 'skipped' ? index : latest,
+    -1
+  ))
+  const currentStop = computed(() => lastProgressedStopIndex.value >= 0
+    ? activeStops.value[lastProgressedStopIndex.value]
+    : (activeStops.value.find((stop) => stop.status === 'current') ?? activeStops.value[0]))
   const currentStopIndex = computed(() => currentStop.value ? activeStops.value.findIndex((stop) => stop.id === currentStop.value?.id) : -1)
   const nextStop = computed(() => activeStops.value[currentStopIndex.value + 1])
   const remainingDistance = computed(() => activeStops.value.slice(Math.max(currentStopIndex.value + 1, 0)).reduce((total, stop) => total + (stop.drivingDistanceFromPreviousKm ?? 0), 0))
-  const remainingNights = computed(() => accommodationStops.value.filter(stop => stop.status !== 'visited').reduce((total, stop) => total + stop.recommendedNights, 0))
+  const remainingNights = computed(() => accommodationStops.value.filter(stop => stop.status !== 'visited' && stop.status !== 'skipped').reduce((total, stop) => total + stop.recommendedNights, 0))
   const totalDistance = computed(() => activeTrip.value?.totalDistanceKm || activeStops.value.reduce((total, stop) => total + (stop.drivingDistanceFromPreviousKm ?? 0), 0))
   const completedDistance = computed(() => activeStops.value.filter(stop => stop.status === 'visited').reduce((total, stop) => total + (stop.actualDistanceKm ?? stop.drivingDistanceFromPreviousKm ?? 0), 0))
   const totalNights = computed(() => accommodationStops.value.reduce((total, stop) => total + stop.recommendedNights, 0))
   const nightsStayed = computed(() => accommodationStops.value.filter(stop => stop.status === 'visited').reduce((total, stop) => total + (stop.nightsStayed ?? 0), 0))
-  const routeProgress = computed(() => activeStops.value.length ? Math.round((activeStops.value.filter(stop => stop.status === 'visited').length / activeStops.value.length) * 100) : 0)
+  const routeProgress = computed(() => activeStops.value.length ? Math.round((activeStops.value.filter(stop => stop.status === 'visited' || stop.status === 'skipped').length / activeStops.value.length) * 100) : 0)
   const favoriteStops = computed(() => dataset.value.stops.map(toStopViewModel).filter((stop) => stop.favorite))
   const checklist = computed<ChecklistItemViewModel[]>(() => dataset.value.checklist.map((item) => ({
     ...item,
@@ -139,7 +143,7 @@ export const useTripStore = defineStore('trip', () => {
     }
   }
 
-  async function setStopCompletion(stopId: string, completed: boolean, nightsStayed: number | null, actualDistanceKm: number | null): Promise<void> {
+  async function setStopStatus(stopId: string, nextStatus: StopStatus, nightsStayed: number | null, actualDistanceKm: number | null): Promise<void> {
     const stop = dataset.value.stops.find((item) => item.id === stopId)
     if (!stop) return
     const routeId = activeTrip.value?.id
@@ -153,14 +157,19 @@ export const useTripStore = defineStore('trip', () => {
     const followingStatus = followingStop
       ? (userState.value.stopStatuses[followingStop.id] ?? followingStop.initialStatus)
       : undefined
-    const nextStatus = completed ? 'visited' : stop.initialStatus
-    const nextNightsStayed = completed && nightsStayed !== null ? Math.max(0, Math.trunc(nightsStayed)) : null
-    const nextActualDistance = completed && actualDistanceKm !== null ? Math.max(0, Math.trunc(actualDistanceKm)) : null
-    const shouldPromoteFollowingStop = Boolean(completed && followingStop && followingStatus !== 'visited')
-    const shouldRestoreFollowingStop = Boolean(!completed && followingStop && followingStatus === 'current')
+    const isCompleted = nextStatus === 'visited'
+    const advancesRoute = nextStatus === 'visited' || nextStatus === 'skipped'
+    const staleCurrentStops = advancesRoute
+      ? routeStops.filter(item => item.id !== stopId && item.id !== followingStop?.id && item.status === 'current')
+      : []
+    const nextNightsStayed = isCompleted && nightsStayed !== null ? Math.max(0, Math.trunc(nightsStayed)) : null
+    const nextActualDistance = isCompleted && actualDistanceKm !== null ? Math.max(0, Math.trunc(actualDistanceKm)) : null
+    const shouldPromoteFollowingStop = Boolean(advancesRoute && followingStop && followingStatus !== 'visited' && followingStatus !== 'skipped')
+    const shouldRestoreFollowingStop = Boolean(!advancesRoute && followingStop && followingStatus === 'current')
     userState.value.stopStatuses[stopId] = nextStatus
     if (followingStop && shouldPromoteFollowingStop) userState.value.stopStatuses[followingStop.id] = 'current'
     if (followingStop && shouldRestoreFollowingStop) userState.value.stopStatuses[followingStop.id] = followingStop.initialStatus
+    for (const staleStop of staleCurrentStops) userState.value.stopStatuses[staleStop.id] = 'planned'
     if (nextNightsStayed === null) delete userState.value.nightsStayedByStop[stopId]
     else userState.value.nightsStayedByStop[stopId] = nextNightsStayed
     if (nextActualDistance === null) delete userState.value.actualDistanceByStop[stopId]
@@ -179,16 +188,35 @@ export const useTripStore = defineStore('trip', () => {
           userState.value.actualDistanceByStop[followingStop.id] ?? null
         ))
       }
+      for (const staleStop of staleCurrentStops) {
+        writes.push(tripStateService.setStopProgress(
+          routeId,
+          staleStop.id,
+          'planned',
+          userState.value.nightsStayedByStop[staleStop.id] ?? null,
+          userState.value.actualDistanceByStop[staleStop.id] ?? null
+        ))
+      }
       await Promise.all(writes)
     } catch (error) {
       userState.value.stopStatuses[stopId] = currentStatus
       if (followingStop && followingStatus) userState.value.stopStatuses[followingStop.id] = followingStatus
+      for (const staleStop of staleCurrentStops) userState.value.stopStatuses[staleStop.id] = 'current'
       if (currentNightsStayed === undefined) delete userState.value.nightsStayedByStop[stopId]
       else userState.value.nightsStayedByStop[stopId] = currentNightsStayed
       if (currentActualDistance === undefined) delete userState.value.actualDistanceByStop[stopId]
       else userState.value.actualDistanceByStop[stopId] = currentActualDistance
       syncFailure(error)
     }
+  }
+
+  function setStopCompletion(stopId: string, completed: boolean, nightsStayed: number | null, actualDistanceKm: number | null): Promise<void> {
+    const stop = dataset.value.stops.find(item => item.id === stopId)
+    return setStopStatus(stopId, completed ? 'visited' : (stop?.initialStatus ?? 'planned'), nightsStayed, actualDistanceKm)
+  }
+
+  function skipStop(stopId: string): Promise<void> {
+    return setStopStatus(stopId, 'skipped', null, null)
   }
 
   async function toggleChecklistItem(itemId: string): Promise<void> {
@@ -207,5 +235,5 @@ export const useTripStore = defineStore('trip', () => {
     }
   }
 
-  return { activeTrip, activeStops, currentStop, currentStopIndex, nextStop, remainingDistance, remainingNights, totalDistance, completedDistance, totalNights, nightsStayed, routeProgress, favoriteStops, checklist, checklistProgress, dataSource, isLoading, loadError, stateSyncError, initialize, refreshTripState, clearStateSyncError, routeById, stopsForRoute, stopById, campingSpotsForStop, activitiesForStop, toggleFavorite, setStopCompletion, toggleChecklistItem }
+  return { activeTrip, activeStops, currentStop, currentStopIndex, nextStop, remainingDistance, remainingNights, totalDistance, completedDistance, totalNights, nightsStayed, routeProgress, favoriteStops, checklist, checklistProgress, dataSource, isLoading, loadError, stateSyncError, initialize, refreshTripState, clearStateSyncError, routeById, stopsForRoute, stopById, campingSpotsForStop, activitiesForStop, toggleFavorite, setStopCompletion, skipStop, toggleChecklistItem }
 })
