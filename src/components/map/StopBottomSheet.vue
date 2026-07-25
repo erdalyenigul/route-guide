@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { StopViewModel } from '@/content/types'
 import { mapService } from '@/services/mapService'
@@ -29,10 +29,6 @@ const routeUrl = computed(() => mapService.externalRouteUrl([
 function openRoute(): void {
   mapService.openExternalUrl(routeUrl.value)
 }
-
-watch(() => props.stop.id, () => {
-  isOpen.value = true
-})
 
 function toggleFromClick(): void {
   if (suppressClick) return
