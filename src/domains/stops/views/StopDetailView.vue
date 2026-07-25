@@ -114,12 +114,20 @@ function resourceHost(url: string): string { return globalThis.URL ? new globalT
 function updateDetailColumnCount(): void {
   detailColumnCount.value = window.innerWidth >= 700 ? 2 : 1
 }
-function openCompletionEditor(): void {
-  if (!isEditor.value || !stop.value) return
+function syncCompletionInputs(): void {
+  if (!stop.value) return
   stayedNightsInput.value = stop.value.nightsStayed ?? stop.value.recommendedNights
   actualDistanceInput.value = stop.value.actualDistanceKm ?? stop.value.drivingDistanceFromPreviousKm ?? 0
+}
+function openCompletionEditor(): void {
+  if (!isEditor.value || !stop.value) return
+  if (!completionEditorOpen.value) syncCompletionInputs()
   completionEditorOpen.value = !completionEditorOpen.value
 }
+watch(() => stop.value?.id, () => {
+  syncCompletionInputs()
+  selectedPhotoIndex.value = null
+})
 async function saveCompletion(): Promise<void> {
   if (!isEditor.value || !stop.value) return
   const nights = isAccommodationStop.value ? Math.min(Math.max(Math.trunc(Number(stayedNightsInput.value) || 0), 0), 365) : null
