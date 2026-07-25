@@ -27,8 +27,11 @@ const body = computed({
   set: (value: string) => { activeExperience.value.body = value }
 })
 const isPublished = computed({
-  get: () => activeExperience.value.isPublished,
-  set: (value: boolean) => { activeExperience.value.isPublished = value }
+  get: () => experienceDrafts.value.tr.isPublished && experienceDrafts.value.en.isPublished,
+  set: (value: boolean) => {
+    experienceDrafts.value.tr.isPublished = value
+    experienceDrafts.value.en.isPublished = value
+  }
 })
 const caption = ref('')
 const files = ref<File[]>([])
@@ -62,6 +65,9 @@ async function load(): Promise<void> {
       en: { ...editor.value.experiences.en },
       tr: { ...editor.value.experiences.tr }
     }
+    const sharedPublished = experienceDrafts.value.tr.isPublished && experienceDrafts.value.en.isPublished
+    experienceDrafts.value.tr.isPublished = sharedPublished
+    experienceDrafts.value.en.isPublished = sharedPublished
   } catch {
     errorMessage.value = t('admin.loadError')
   } finally {
