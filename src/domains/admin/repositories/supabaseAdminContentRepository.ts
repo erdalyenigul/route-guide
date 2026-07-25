@@ -45,10 +45,9 @@ function photo(row: GalleryRow): SharedStopPhoto {
   }
 }
 
-function emptyExperience(locale: 'en' | 'tr'): SharedStopExperience {
+function emptyExperience(): SharedStopExperience {
   return {
     body: '',
-    locale,
     isPublished: true,
     authorName: null,
     updatedAt: null
@@ -97,27 +96,21 @@ export const supabaseAdminContentRepository: AdminContentRepository = {
     ])
     if (experienceResult.error) throw experienceResult.error
     if (galleryResult.error) throw galleryResult.error
-    const experiences = {
-      en: emptyExperience('en'),
-      tr: emptyExperience('tr')
-    }
-    for (const experience of experienceResult.data ?? []) {
-      if (experience.locale !== 'en' && experience.locale !== 'tr') continue
-      experiences[experience.locale] = {
-        body: experience.body,
-        locale: experience.locale,
-        isPublished: experience.is_published,
-        authorName: experience.author_name,
-        updatedAt: experience.updated_at
-      }
-    }
+    const rows = [...(experienceResult.data ?? [])].sort((a, b) => b.updated_at.localeCompare(a.updated_at))
+    const row = rows.find(experience => experience.locale === 'tr') ?? rows[0]
+    const experience = row ? {
+      body: row.body,
+      isPublished: row.is_published,
+      authorName: row.author_name,
+      updatedAt: row.updated_at
+    } : emptyExperience()
 
     return {
       stopId: stop.id,
       stopSlug,
       titleKey: stop.titleKey,
       photos: (galleryResult.data ?? []).map(photo),
-      experiences
+      experience
     }
   },
 
@@ -128,12 +121,18 @@ export const supabaseAdminContentRepository: AdminContentRepository = {
     const { error } = await client().from('stop_experiences').upsert({
       stop_id: stop.id,
       body: input.body,
-      locale: input.locale,
+      locale: 'tr',
       is_published: input.isPublished,
       updated_by: user.id,
       author_name: author.displayName
     }, { onConflict: 'stop_id,locale' })
     if (error) throw error
+    const { error: cleanupError } = await client()
+      .from('stop_experiences')
+      .delete()
+      .eq('stop_id', stop.id)
+      .neq('locale', 'tr')
+    if (cleanupError) throw cleanupError
   },
 
   async uploadPhoto(stopSlug, image, caption) {

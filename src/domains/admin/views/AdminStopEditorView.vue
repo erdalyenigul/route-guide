@@ -16,22 +16,19 @@ const route = useRoute()
 const trip = useTripStore()
 const stopSlug = computed(() => String(route.params.stopId))
 const editor = ref<SharedStopEditorData>()
-const locale = ref<'en' | 'tr'>('tr')
-const experienceDrafts = ref<Record<'en' | 'tr', SharedStopExperience>>({
-  en: { body: '', locale: 'en', isPublished: true, authorName: null, updatedAt: null },
-  tr: { body: '', locale: 'tr', isPublished: true, authorName: null, updatedAt: null }
+const experienceDraft = ref<SharedStopExperience>({
+  body: '',
+  isPublished: true,
+  authorName: null,
+  updatedAt: null
 })
-const activeExperience = computed(() => experienceDrafts.value[locale.value])
 const body = computed({
-  get: () => activeExperience.value.body,
-  set: (value: string) => { activeExperience.value.body = value }
+  get: () => experienceDraft.value.body,
+  set: (value: string) => { experienceDraft.value.body = value }
 })
 const isPublished = computed({
-  get: () => experienceDrafts.value.tr.isPublished && experienceDrafts.value.en.isPublished,
-  set: (value: boolean) => {
-    experienceDrafts.value.tr.isPublished = value
-    experienceDrafts.value.en.isPublished = value
-  }
+  get: () => experienceDraft.value.isPublished,
+  set: (value: boolean) => { experienceDraft.value.isPublished = value }
 })
 const caption = ref('')
 const files = ref<File[]>([])
@@ -66,13 +63,7 @@ async function load(): Promise<void> {
   errorMessage.value = ''
   try {
     editor.value = await adminContentService.getStopEditor(stopSlug.value)
-    experienceDrafts.value = {
-      en: { ...editor.value.experiences.en },
-      tr: { ...editor.value.experiences.tr }
-    }
-    const sharedPublished = experienceDrafts.value.tr.isPublished && experienceDrafts.value.en.isPublished
-    experienceDrafts.value.tr.isPublished = sharedPublished
-    experienceDrafts.value.en.isPublished = sharedPublished
+    experienceDraft.value = { ...editor.value.experience }
   } catch {
     errorMessage.value = t('admin.loadError')
   } finally {
@@ -119,14 +110,10 @@ async function saveExperience(): Promise<void> {
   errorMessage.value = ''
   successMessage.value = ''
   try {
-    await Promise.all((['tr', 'en'] as const).map(draftLocale => {
-      const draft = experienceDrafts.value[draftLocale]
-      return adminContentService.saveExperience(stopSlug.value, {
-        body: draft.body,
-        locale: draftLocale,
-        isPublished: draft.isPublished
-      })
-    }))
+    await adminContentService.saveExperience(stopSlug.value, {
+      body: experienceDraft.value.body,
+      isPublished: experienceDraft.value.isPublished
+    })
     successMessage.value = t('admin.experienceSaved')
     await refreshContent()
   } catch {
@@ -263,15 +250,11 @@ onMounted(() => { void refreshContent() })
             <div class="drawer-content">
               <div class="description-tools">
                 <v-switch v-model="isPublished" color="primary" hide-details :label="t('admin.published')" />
-                <v-btn-toggle v-model="locale" mandatory color="primary" density="comfortable">
-                  <v-btn value="tr">{{ t('settings.turkish') }}</v-btn>
-                  <v-btn value="en">{{ t('settings.english') }}</v-btn>
-                </v-btn-toggle>
               </div>
               <v-textarea v-model="body" class="experience-input" :label="t('admin.experienceLabel')" :hint="t('admin.experienceHint')" persistent-hint rows="12" maxlength="10000" counter auto-grow />
-              <p v-if="activeExperience.authorName && activeExperience.updatedAt" class="author-meta">
+              <p v-if="experienceDraft.authorName && experienceDraft.updatedAt" class="author-meta">
                 <v-icon icon="mdi-account-edit-outline" />
-                {{ t('admin.lastEditedBy', { name: activeExperience.authorName, date: formatDateTime(activeExperience.updatedAt) }) }}
+                {{ t('admin.lastEditedBy', { name: experienceDraft.authorName, date: formatDateTime(experienceDraft.updatedAt) }) }}
               </p>
               <v-btn class="experience-save" color="primary" size="large" :loading="isSaving" @click="saveExperience">{{ t('common.save') }}</v-btn>
             </div>

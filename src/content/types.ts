@@ -24,7 +24,6 @@ export interface PhotoAsset {
 
 export interface StopExperience {
   body: string
-  locale: 'en' | 'tr'
   isPublished: boolean
   authorName: string | null
   updatedAt: string
@@ -104,7 +103,6 @@ export interface StopContent {
   bestSunrise: ContentTranslationKey
   bestSunset: ContentTranslationKey
   photos: PhotoAsset[]
-  experiences?: Partial<Record<'en' | 'tr', StopExperience>>
   experience?: StopExperience
   initialStatus: StopStatus
   verificationStatus?: VerificationStatus

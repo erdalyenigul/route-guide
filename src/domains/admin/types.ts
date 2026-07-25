@@ -17,7 +17,6 @@ export interface SharedStopPhoto {
 
 export interface SharedStopExperience {
   body: string
-  locale: 'en' | 'tr'
   isPublished: boolean
   authorName: string | null
   updatedAt: string | null
@@ -28,11 +27,10 @@ export interface SharedStopEditorData {
   stopSlug: string
   titleKey: string
   photos: SharedStopPhoto[]
-  experiences: Record<'en' | 'tr', SharedStopExperience>
+  experience: SharedStopExperience
 }
 
 export interface SaveExperienceInput {
   body: string
-  locale: 'en' | 'tr'
   isPublished: boolean
 }
