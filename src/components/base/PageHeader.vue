@@ -1,13 +1,13 @@
 <script setup lang="ts">
-defineProps<{ title: string; subtitle: string; back?: boolean }>()
+defineProps<{ title: string; subtitle?: string; back?: boolean; stackActions?: boolean }>()
 </script>
 
 <template>
-  <header class="page-header">
+  <header class="page-header" :class="{ 'stack-actions': stackActions }">
     <v-btn v-if="back" class="back-btn" icon="mdi-arrow-left" variant="text" :aria-label="$t('nav.back')" @click="$router.back()" />
     <div>
       <h1 class="page-title">{{ title }}</h1>
-      <p class="page-subtitle">{{ subtitle }}</p>
+      <p v-if="subtitle" class="page-subtitle">{{ subtitle }}</p>
     </div>
     <div class="page-actions"><slot /></div>
   </header>
@@ -19,5 +19,10 @@ defineProps<{ title: string; subtitle: string; back?: boolean }>()
 .page-subtitle { max-width: 760px; margin-top: 8px; color: rgba(var(--v-theme-on-background), .62); font-size: 1rem; line-height: 1.5; }
 .page-actions { margin-left: auto; display: flex; gap: 8px; }
 .back-btn { margin-top: 2px; }
+.page-header.stack-actions { display: grid; grid-template-columns: auto minmax(0, 1fr); }
+.stack-actions .back-btn { grid-column: 1; grid-row: 1; }
+.stack-actions > div:not(.page-actions) { min-width: 0; grid-column: 2; grid-row: 1; }
+.stack-actions .page-actions { grid-column: 2; grid-row: 2; justify-self: start; margin: 12px 0 0; }
+.stack-actions .page-actions :deep(.v-btn) { white-space: nowrap; }
 @media (max-width: 600px) { .page-header { margin-bottom: 24px; }.page-subtitle { font-size: .95rem; } }
 </style>

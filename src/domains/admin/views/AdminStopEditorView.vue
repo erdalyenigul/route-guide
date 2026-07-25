@@ -192,7 +192,7 @@ onMounted(() => { void refreshContent() })
   <main class="page-shell standard-page editor-page">
     <div v-if="isLoading" class="loading"><v-progress-circular indeterminate color="primary" /></div>
     <template v-else-if="editor">
-      <PageHeader :title="t(editor.titleKey)" :subtitle="t('admin.stopEditorSubtitle')" back>
+      <PageHeader :title="t(editor.titleKey)" back stack-actions>
         <v-btn :to="`/trips/${trip.activeTrip?.id ?? 'active'}/stops/${stopSlug}`" variant="tonal" prepend-icon="mdi-open-in-new">{{ t('admin.viewStop') }}</v-btn>
       </PageHeader>
 
