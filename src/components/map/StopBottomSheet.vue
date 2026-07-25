@@ -22,6 +22,9 @@ const routeUrl = computed(() => mapService.externalRouteUrl([
   props.previousStop ? mapService.coordinate(props.previousStop.coordinates) : null,
   coordinate.value
 ]))
+function openRoute(): void {
+  mapService.openExternalUrl(routeUrl.value)
+}
 
 watch(() => props.stop.id, () => {
   isOpen.value = true
@@ -99,7 +102,7 @@ function finishDrag(): void {
         <span v-if="isAccommodationStop"><v-icon icon="mdi-weather-night" />{{ stop.recommendedNights }} {{ t('common.nights') }}</span>
         <span v-if="stop.ducatoAccessibility"><v-icon icon="mdi-van-utility" />{{ t(`common.${stop.ducatoAccessibility}`) }}</span>
       </div>
-      <div class="sheet-actions"><v-btn color="primary" prepend-icon="mdi-information-outline" :to="`/trips/${stop.routeId}/stops/${stop.id}`">{{ t('map.viewStop') }}</v-btn><v-btn variant="tonal" prepend-icon="mdi-navigation-variant" :href="routeUrl" target="_blank" rel="noopener" :disabled="!routeUrl">{{ t('map.openRoute') }}</v-btn><v-btn variant="tonal" prepend-icon="mdi-image-multiple-outline" :to="`/trips/${stop.routeId}/gallery`">{{ t('nav.gallery') }}</v-btn></div>
+      <div class="sheet-actions"><v-btn color="primary" prepend-icon="mdi-information-outline" :to="`/trips/${stop.routeId}/stops/${stop.id}`">{{ t('map.viewStop') }}</v-btn><v-btn variant="tonal" prepend-icon="mdi-navigation-variant" :disabled="!routeUrl" @click="openRoute">{{ t('map.openRoute') }}</v-btn><v-btn variant="tonal" prepend-icon="mdi-image-multiple-outline" :to="`/trips/${stop.routeId}/gallery`">{{ t('nav.gallery') }}</v-btn></div>
     </template>
   </v-card>
 </template>

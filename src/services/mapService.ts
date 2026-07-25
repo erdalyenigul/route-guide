@@ -76,5 +76,10 @@ export const mapService = {
       parameters.set('waypoints', waypoints.map((coordinate) => `${coordinate.latitude},${coordinate.longitude}`).join('|'))
     }
     return `https://www.google.com/maps/dir/?${parameters.toString()}`
+  },
+
+  openExternalUrl(url: string | undefined): void {
+    if (!url) return
+    window.location.assign(url)
   }
 }

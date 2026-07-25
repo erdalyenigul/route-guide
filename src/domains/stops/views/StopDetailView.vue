@@ -46,6 +46,9 @@ const navigationUrl = computed(() => stop.value ? mapService.externalRouteUrl([
   previousDetailStop.value ? mapService.coordinate(previousDetailStop.value.coordinates) : null,
   mapService.coordinate(stop.value.coordinates)
 ]) : undefined)
+function openNavigation(): void {
+  mapService.openExternalUrl(navigationUrl.value)
+}
 const detailMapStops = computed(() => routeStops.value.map(item => ({ id: item.id, label: t(item.title), status: item.status, coordinate: mapService.coordinate(item.coordinates) })))
 const services = computed(() => stop.value ? [
   { key: 'water', icon: 'mdi-water-outline', value: stop.value.waterRefill },
@@ -267,7 +270,7 @@ onUnmounted(() => {
         <span>{{ t('stop.previousStop') }}</span>
       </v-btn>
       <span v-else class="stop-jump-spacer" />
-      <v-btn class="directions-action" color="primary" size="x-large" prepend-icon="mdi-navigation-variant" :href="navigationUrl" target="_blank" rel="noopener" :disabled="!navigationUrl">{{ t('map.navigate') }}</v-btn>
+      <v-btn class="directions-action" color="primary" size="x-large" prepend-icon="mdi-navigation-variant" :disabled="!navigationUrl" @click="openNavigation">{{ t('map.navigate') }}</v-btn>
       <v-btn
         v-if="nextDetailStop"
         class="stop-jump"
