@@ -24,7 +24,7 @@ const navigationDestination = computed(() => {
 })
 const activities = computed(() => stop.value ? store.activitiesForStop(stop.value.id) : [])
 const notes = computed(() => activities.value.filter(item => item.type === 'note'))
-const hiddenPlaces = computed(() => activities.value.filter(item => item.type === 'hidden_place'))
+const exploreActivities = computed(() => activities.value.filter(item => item.type !== 'note'))
 const selectedPhotoIndex = ref<number | null>(null)
 const viewerPhotos = computed(() => stop.value?.photos.map(photo => ({
   id: photo.id,
@@ -59,15 +59,29 @@ const services = computed(() => stop.value ? [
   { key: 'market', icon: 'mdi-cart-outline', value: stop.value.nearbyMarket },
   { key: 'fuel', icon: 'mdi-gas-station-outline', value: stop.value.fuelStation }
 ] : [])
-const availableServices = computed(() => services.value.filter(service => service.value.available))
-const hasEssentials = computed(() => Boolean(stop.value?.municipalityFacilities.available || availableServices.value.length))
-const conditionItems = computed(() => stop.value ? [
-  stop.value.internetScore === null ? null : { key: 'internet', value: score(stop.value.internetScore) },
-  stop.value.ducatoAccessibility === null ? null : { key: 'ducatoAccess', value: level(stop.value.ducatoAccessibility) },
-  stop.value.solarSuitability === null ? null : { key: 'solar', value: level(stop.value.solarSuitability) },
-  stop.value.droneSuitability === null ? null : { key: 'drone', value: level(stop.value.droneSuitability) }
-].filter((item): item is { key: string; value: string } => item !== null) : [])
-type DetailSectionKey = 'why' | 'camping' | 'essentials' | 'conditions' | 'warnings' | 'photography' | 'notes' | 'experience' | 'links'
+const freecampSpots = computed(() => campingSpots.value
+  .filter(spot => spot.type === 'freecamp')
+  .sort((a, b) => Number(b.beachfront) - Number(a.beachfront) || Number(b.seaView) - Number(a.seaView) || Number(b.recommended) - Number(a.recommended)))
+const paidSpots = computed(() => campingSpots.value.filter(spot => spot.type !== 'freecamp'))
+const ducatoDecision = computed(() => stop.value?.ducatoAccess ?? null)
+const ducatoDecisionColor = computed(() => {
+  const colors: Record<string, string> = { comfortable: 'success', caution: 'warning', leave_above: 'orange', do_not_enter: 'error' }
+  return colors[ducatoDecision.value ?? ''] ?? 'default'
+})
+const roadChips = computed(() => {
+  if (!stop.value) return []
+  return [
+    stop.value.roadSurface ? stop.value.roadSurface : null,
+    stop.value.roadWidth ? stop.value.roadWidth : null,
+    stop.value.steepGrade ? 'steepGrade' : null,
+    stop.value.hairpins ? 'hairpins' : null,
+    stop.value.cliffExposure ? 'cliffExposure' : null,
+    stop.value.guardrails === false ? 'noGuardrails' : null,
+    stop.value.turnaroundPossible === true ? 'turnaroundPossible' : null
+  ].filter((item): item is string => item !== null)
+})
+const stopWarnings = computed(() => stop.value?.warnings ?? [])
+type DetailSectionKey = 'road' | 'camping' | 'risks' | 'essentials' | 'explore' | 'summary'
 interface DetailSection {
   key: DetailSectionKey
   icon: string
@@ -77,16 +91,14 @@ interface DetailSection {
 }
 const detailSections = computed<DetailSection[]>(() => {
   if (!stop.value) return []
-  const sections: DetailSection[] = [{ key: 'why', icon: 'mdi-compass-outline', title: 'stop.whyVisit' }]
-  if (campingSpots.value.length) sections.push({ key: 'camping', icon: 'mdi-tent', title: 'stop.campOptions', badge: campingSpots.value.length })
-  if (hasEssentials.value) sections.push({ key: 'essentials', icon: 'mdi-shower', title: 'stop.essentials' })
-  if (conditionItems.value.length) sections.push({ key: 'conditions', icon: 'mdi-signal', title: 'stop.conditions' })
-  if (stop.value.roadWarnings.length) sections.push({ key: 'warnings', icon: 'mdi-alert-outline', title: 'stop.roadWarnings', badge: stop.value.roadWarnings.length, badgeColor: 'warning' })
-  sections.push({ key: 'photography', icon: 'mdi-camera-iris', title: 'stop.photography' })
-  if (notes.value.length) sections.push({ key: 'notes', icon: 'mdi-notebook-outline', title: 'stop.ourNotes' })
-  if (publishedExperience.value) sections.push({ key: 'experience', icon: 'mdi-book-open-page-variant-outline', title: 'stop.ourExperience' })
-  if (resourceLinks.value.length) sections.push({ key: 'links', icon: 'mdi-link-variant', title: 'stop.usefulLinks', badge: resourceLinks.value.length })
-  return sections
+  return [
+    { key: 'road', icon: 'mdi-van-utility', title: 'van.roadAndDucato' },
+    { key: 'camping', icon: 'mdi-tent', title: 'van.freecampAndOvernight', badge: campingSpots.value.length },
+    ...(stopWarnings.value.length ? [{ key: 'risks' as const, icon: 'mdi-alert-outline', title: 'van.risks', badge: stopWarnings.value.length, badgeColor: 'warning' }] : []),
+    { key: 'essentials', icon: 'mdi-water-outline', title: 'van.essentials' },
+    { key: 'explore', icon: 'mdi-compass-outline', title: 'van.explore' },
+    { key: 'summary', icon: 'mdi-text-box-check-outline', title: 'van.summary' }
+  ]
 })
 const detailColumns = computed(() => {
   const columns = Array.from({ length: detailColumnCount.value }, () => [] as DetailSection[])
@@ -94,7 +106,12 @@ const detailColumns = computed(() => {
   return columns
 })
 function score(value: number | null): string { return value === null ? t('common.unknown') : `${value}/5` }
-function level(value: string | null | undefined): string { return value ? t(`common.${value}`) : t('common.unknown') }
+function decision(value: string | null | undefined): string { return value ? t(`van.ducato.${value}`) : t('common.unknown') }
+function booleanLabel(value: boolean | null | undefined): string { return value === true ? t('common.yes') : value === false ? t('common.no') : t('common.unknown') }
+function openSpotNavigation(spotId: string): void {
+  const spot = campingSpots.value.find(item => item.id === spotId)
+  if (spot) mapService.openExternalUrl(mapService.externalNavigationUrl(mapService.coordinate(spot.coordinates)))
+}
 function resourceHost(url: string): string { return globalThis.URL ? new globalThis.URL(url).hostname.replace(/^www\./, '') : url }
 function updateDetailColumnCount(): void {
   detailColumnCount.value = window.innerWidth >= 700 ? 2 : 1
@@ -188,16 +205,22 @@ onUnmounted(() => {
 
       <section class="intro">
         <p>{{ t(stop.overview) }}</p>
-        <div class="summary-row">
-          <div v-if="isAccommodationStop"><v-icon icon="mdi-weather-night" /><strong>{{ stop.recommendedNights }}</strong><span>{{ t('common.nights') }}</span></div>
-          <div v-if="stop.internetScore!==null"><v-icon icon="mdi-wifi" /><strong>{{ score(stop.internetScore) }}</strong><span>{{ t('stop.internet') }}</span></div>
-          <div v-if="stop.ducatoAccessibility!==null"><v-icon icon="mdi-van-utility" /><strong>{{ level(stop.ducatoAccessibility) }}</strong><span>{{ t('stop.ducatoAccess') }}</span></div>
+        <div class="van-summary">
+          <div class="van-summary-heading"><span>{{ t('van.quickDecision') }}</span><strong>{{ t(stop.title) }}</strong></div>
+          <div class="van-summary-grid">
+            <div><v-icon icon="mdi-van-utility" /><span>{{ t('van.ducatoLabel') }}</span><v-chip size="small" :color="ducatoDecisionColor">{{ decision(ducatoDecision) }}</v-chip></div>
+            <div><v-icon icon="mdi-tent" /><span>{{ t('van.freecampLabel') }}</span><strong>{{ freecampSpots.length ? t('van.suitableSpotCount', { count: freecampSpots.length }) : t('common.unknown') }}</strong></div>
+            <div><v-icon icon="mdi-waves" /><span>{{ t('van.seaLabel') }}</span><strong>{{ freecampSpots.some(spot=>spot.beachfront) ? t('van.beachfront') : freecampSpots.some(spot=>spot.seaView) ? t('van.seaView') : t('common.unknown') }}</strong></div>
+            <div><v-icon icon="mdi-water-outline" /><span>{{ t('van.waterLabel') }}</span><strong>{{ stop.waterRefill.available ? t('common.yes') : t('van.fillBeforeArrival') }}</strong></div>
+            <div><v-icon icon="mdi-weather-night" /><span>{{ t('van.overnightLabel') }}</span><strong>{{ freecampSpots.some(spot=>spot.overnightStatus==='allowed'||spot.overnightStatus==='tolerated') ? t('van.spotChoiceMatters') : t('common.unknown') }}</strong></div>
+          </div>
+          <p v-if="stop.verificationStatus !== 'verified'" class="verification-note"><v-icon icon="mdi-shield-alert-outline" />{{ t('van.verifyCurrentConditions') }}</p>
         </div>
       </section>
 
       <div class="detail-panels">
         <v-expansion-panels v-for="(column, columnIndex) in detailColumns" :key="columnIndex" class="detail-column" multiple variant="accordion">
-          <v-expansion-panel v-for="section in column" :key="section.key" :value="section.key" :class="{ 'experience-panel': section.key === 'experience' }">
+          <v-expansion-panel v-for="section in column" :key="section.key" :value="section.key" :class="{ 'road-panel': section.key === 'road' }">
             <v-expansion-panel-title>
               <v-icon :icon="section.icon" />
               <span class="section-title-copy">
@@ -206,54 +229,69 @@ onUnmounted(() => {
               </span>
             </v-expansion-panel-title>
             <v-expansion-panel-text>
-              <template v-if="section.key === 'why'">
-                <p class="body-copy">{{ t(stop.whyVisit) }}</p>
-                <div v-if="hiddenPlaces.length" class="stack-list"><div v-for="item in hiddenPlaces" :key="item.id"><strong>{{ t(item.title) }}</strong><p>{{ t(item.description) }}</p></div></div>
+              <template v-if="section.key === 'road'">
+                <v-chip class="ducato-decision" :color="ducatoDecisionColor" size="large">{{ decision(ducatoDecision) }}</v-chip>
+                <div v-if="roadChips.length" class="road-chips"><v-chip v-for="chip in roadChips" :key="chip" size="small" variant="tonal">{{ t(`van.road.${chip}`) }}</v-chip></div>
+                <div class="condition-list">
+                  <div><span>{{ t('van.roadSurface') }}</span><strong>{{ stop.roadSurface ? t(`van.road.${stop.roadSurface}`) : t('common.unknown') }}</strong></div>
+                  <div><span>{{ t('van.roadWidth') }}</span><strong>{{ stop.roadWidth ? t(`van.road.${stop.roadWidth}`) : t('common.unknown') }}</strong></div>
+                  <div><span>{{ t('van.turnaround') }}</span><strong>{{ booleanLabel(stop.turnaroundPossible) }}</strong></div>
+                </div>
+                <p v-if="stop.lastMileNote" class="operational-callout"><v-icon icon="mdi-road-variant" />{{ t(stop.lastMileNote) }}</p>
               </template>
-              <div v-else-if="section.key === 'camping'" class="stack-list"><div v-for="spot in campingSpots" :key="spot.id"><div class="list-heading"><v-chip size="x-small">{{ t(`common.${spot.type}`) }}</v-chip><strong>{{ t(spot.title) }}</strong></div><p>{{ t(spot.overview) }}</p><small>{{ t(spot.accessNote) }}</small></div></div>
+              <template v-else-if="section.key === 'camping'">
+                <h3 class="spot-group-title">{{ t('van.freecampSpots') }}</h3>
+                <div v-if="freecampSpots.length" class="spot-list">
+                  <article v-for="spot in freecampSpots" :key="spot.id" class="spot-card">
+                    <div class="list-heading"><v-chip size="x-small" color="success">{{ t('common.freecamp') }}</v-chip><strong>{{ t(spot.title) }}</strong></div>
+                    <div class="spot-tags"><v-chip v-if="spot.beachfront" size="x-small">{{ t('van.beachfront') }}</v-chip><v-chip v-if="spot.seaView" size="x-small">{{ t('van.seaView') }}</v-chip><v-chip v-if="spot.levelGround" size="x-small">{{ t('van.levelGround') }}</v-chip><v-chip size="x-small" variant="outlined">{{ decision(spot.ducatoAccess) }}</v-chip></div>
+                    <p>{{ t(spot.overview) }}</p><small>{{ t(spot.accessNote) }}</small>
+                    <div class="spot-meta"><span>{{ t('van.waterLabel') }}: {{ booleanLabel(spot.waterAvailable) }}</span><span>{{ t('stop.wc') }}: {{ booleanLabel(spot.toiletAvailable) }}</span><span>{{ t('stop.internet') }}: {{ spot.mobileSignal ? t(`van.signal.${spot.mobileSignal}`) : t('common.unknown') }}</span></div>
+                    <p v-if="spot.verificationStatus !== 'verified'" class="spot-verification">{{ t('verification.unverified') }}</p>
+                    <v-btn block variant="tonal" prepend-icon="mdi-navigation-variant" @click="openSpotNavigation(spot.id)">{{ t('van.openNavigation') }}</v-btn>
+                  </article>
+                </div><p v-else class="empty-copy">{{ t('van.noVerifiedFreecamp') }}</p>
+                <template v-if="paidSpots.length"><h3 class="spot-group-title paid-title">{{ t('van.paidAlternatives') }}</h3><div class="spot-list"><article v-for="spot in paidSpots" :key="spot.id" class="spot-card"><div class="list-heading"><v-chip size="x-small">{{ t(`common.${spot.type}`) }}</v-chip><strong>{{ t(spot.title) }}</strong></div><p>{{ t(spot.overview) }}</p><small>{{ t(spot.accessNote) }}</small><v-btn block variant="tonal" prepend-icon="mdi-navigation-variant" @click="openSpotNavigation(spot.id)">{{ t('van.openNavigation') }}</v-btn></article></div></template>
+              </template>
+              <div v-else-if="section.key === 'risks'" class="warning-list"><p v-for="warning in stopWarnings" :key="warning.id" :class="`severity-${warning.severity}`"><v-icon :icon="warning.severity==='danger'?'mdi-alert-octagon':'mdi-alert-circle-outline'" />{{ t(warning.body) }}</p></div>
               <template v-else-if="section.key === 'essentials'">
+                <p v-if="stop.supplyNote" class="operational-callout supply"><v-icon icon="mdi-alert-outline" />{{ t(stop.supplyNote) }}</p>
                 <div class="facility-grid">
                   <template v-if="stop.municipalityFacilities.available">
                     <div><v-icon icon="mdi-shower" /><span>{{ t('stop.shower') }}</span><strong>{{ stop.municipalityFacilities.shower?t('common.yes'):t('common.no') }}</strong></div>
                     <div><v-icon icon="mdi-toilet" /><span>{{ t('stop.wc') }}</span><strong>{{ stop.municipalityFacilities.wc?t('common.yes'):t('common.no') }}</strong></div>
                   </template>
-                  <div v-for="service in availableServices" :key="service.key"><v-icon :icon="service.icon" /><span>{{ t(`stop.${service.key}`) }}</span><strong>{{ t(service.value.name) }}</strong></div>
+                  <div v-for="service in services" :key="service.key"><v-icon :icon="service.icon" /><span>{{ t(`stop.${service.key}`) }}</span><strong>{{ service.value.available ? t(service.value.name) : t('common.unknown') }}</strong></div>
+                  <div><v-icon icon="mdi-signal" /><span>{{ t('stop.internet') }}</span><strong>{{ score(stop.internetScore) }}</strong></div>
                 </div>
                 <p v-if="stop.municipalityFacilities.available" class="source-copy">{{ t(stop.municipalityFacilities.notes) }}</p>
               </template>
-              <div v-else-if="section.key === 'conditions'" class="condition-list"><div v-for="item in conditionItems" :key="item.key"><span>{{ t(`stop.${item.key}`) }}</span><strong>{{ item.value }}</strong></div></div>
-              <div v-else-if="section.key === 'warnings'" class="warning-list"><p v-for="warning in stop.roadWarnings" :key="warning"><v-icon icon="mdi-alert-circle-outline" />{{ t(warning) }}</p></div>
-              <template v-else-if="section.key === 'photography'">
+              <template v-else-if="section.key === 'explore'">
+                <p class="body-copy">{{ t(stop.whyVisit) }}</p>
+                <div v-if="exploreActivities.length" class="stack-list"><div v-for="item in exploreActivities" :key="item.id"><strong>{{ t(item.title) }}</strong><p>{{ t(item.description) }}</p></div></div>
                 <div class="sun-grid"><div><v-icon icon="mdi-weather-sunset-up" /><span>{{ t('stop.sunrise') }}</span><p>{{ t(stop.bestSunrise) }}</p></div><div><v-icon icon="mdi-weather-sunset-down" /><span>{{ t('stop.sunset') }}</span><p>{{ t(stop.bestSunset) }}</p></div></div>
-                <div v-if="stop.lunaUltraRecommendations.length" class="stack-list"><div v-for="tip in stop.lunaUltraRecommendations" :key="tip.subject"><strong>{{ t(tip.subject) }}</strong><p>{{ t(tip.lens) }} · {{ t(tip.timing) }}</p><small>{{ t(tip.fieldNote) }}</small></div></div>
+                <div v-if="resourceLinks.length" class="resource-links">
+                  <a
+                    v-for="link in resourceLinks"
+                    :key="link.url"
+                    :href="link.url"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <span>
+                      <small>{{ t(`stopLinks.${link.label}`) }}</small>
+                      <strong>{{ link.title }}</strong>
+                      <em>{{ resourceHost(link.url) }}</em>
+                    </span>
+                    <v-icon icon="mdi-open-in-new" />
+                  </a>
+                </div>
               </template>
-              <div v-else-if="section.key === 'notes'" class="stack-list"><div v-for="note in notes" :key="note.id"><strong>{{ t(note.title) }}</strong><p>{{ t(note.description) }}</p></div></div>
-              <template v-else-if="section.key === 'experience'">
-                <p v-if="publishedExperience" class="experience-copy">{{ publishedExperience.body }}</p>
-                <p v-if="publishedExperience?.authorName" class="experience-author">
-                  <v-icon icon="mdi-account-outline" />
-                  {{ t('stop.experienceBy', {
-                    name: publishedExperience.authorName,
-                    date: formatDateTime(publishedExperience.updatedAt)
-                  }) }}
-                </p>
+              <template v-else-if="section.key === 'summary'">
+                <p class="body-copy">{{ t(stop.decisionSummary ?? stop.overview) }}</p>
+                <div v-if="notes.length" class="stack-list"><div v-for="note in notes" :key="note.id"><strong>{{ t(note.title) }}</strong><p>{{ t(note.description) }}</p></div></div>
+                <div v-if="publishedExperience" class="trip-note"><strong>{{ t('stop.ourExperience') }}</strong><p class="experience-copy">{{ publishedExperience.body }}</p><p v-if="publishedExperience.authorName" class="experience-author"><v-icon icon="mdi-account-outline" />{{ t('stop.experienceBy', { name: publishedExperience.authorName, date: formatDateTime(publishedExperience.updatedAt) }) }}</p></div>
               </template>
-              <div v-else-if="section.key === 'links'" class="resource-links">
-                <a
-                  v-for="link in resourceLinks"
-                  :key="link.url"
-                  :href="link.url"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <span>
-                    <small>{{ t(`stopLinks.${link.label}`) }}</small>
-                    <strong>{{ link.title }}</strong>
-                    <em>{{ resourceHost(link.url) }}</em>
-                  </span>
-                  <v-icon icon="mdi-open-in-new" />
-                </a>
-              </div>
             </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>
@@ -392,4 +430,7 @@ onUnmounted(() => {
 .summary-row>.stage-completion{width:100%;font:inherit;color:inherit;text-align:left;appearance:none}.summary-row>.stage-completion.editable{cursor:pointer;touch-action:manipulation}.summary-row>.stage-completion.editable:active{transform:scale(.99)}.summary-row>.stage-completion.expanded{border-color:rgba(var(--v-theme-primary),.6);box-shadow:0 0 0 3px rgba(var(--v-theme-primary),.08),0 14px 36px rgba(0,0,0,.1)}.summary-row>.stage-completion>.stage-action-icon{display:grid;width:52px;height:52px;grid-column:1;grid-row:1/3;align-self:center;justify-self:center;place-items:center;margin:0;overflow:visible;border-radius:16px;color:rgb(var(--v-theme-primary));background:rgba(var(--v-theme-primary),.12)}.summary-row>.stage-completion>.stage-action-icon .v-icon{display:block;grid-column:auto;grid-row:auto;margin:0!important;font-size:1.7rem!important}.summary-row>.stage-completion>.stage-action-chevron{grid-column:3!important;grid-row:1/3!important;align-self:center;justify-self:center;margin:0!important;font-size:1.35rem!important}.completion-editor{width:min(100%,960px);margin-top:12px;padding:24px;border:1px solid rgba(var(--v-theme-primary),.3);border-radius:var(--app-radius-md)!important;background:linear-gradient(145deg,rgba(var(--v-theme-primary),.08),rgb(var(--v-theme-surface)))!important;box-shadow:0 18px 44px rgba(0,0,0,.12)!important}.completion-editor :deep(.v-input){width:100%;min-width:0}.completion-editor :deep(.v-field__field){min-width:0}@media(max-width:520px){.completion-editor{padding:20px 16px}.completion-dialog-actions{grid-template-columns:1fr}.completion-dialog-actions .v-btn{min-height:48px}}
 .completion-section{width:min(100%,960px);margin-top:30px}.completion-section>.stage-completion{display:grid;width:100%;max-width:none;min-height:92px;grid-template-columns:58px minmax(0,1fr) 34px;grid-template-rows:auto auto;align-content:center;align-items:center;column-gap:14px;margin:0;padding:16px 18px;font:inherit;color:inherit;text-align:left;appearance:none}.completion-section>.stage-completion.editable{cursor:pointer;touch-action:manipulation}.completion-section>.stage-completion.editable:active{transform:scale(.99)}.completion-section>.stage-completion.expanded{border-color:rgba(var(--v-theme-primary),.6);box-shadow:0 0 0 3px rgba(var(--v-theme-primary),.08),0 14px 36px rgba(0,0,0,.1)}.completion-section .stage-completion-copy{grid-column:2;grid-row:1/3}.completion-section .stage-completion-copy strong,.completion-section .stage-completion-copy span{overflow:visible;white-space:normal;text-overflow:clip}.completion-section>.stage-completion>.stage-action-icon{display:grid;width:52px;height:52px;grid-column:1;grid-row:1/3;align-self:center;justify-self:center;place-items:center;margin:0;border-radius:16px;color:rgb(var(--v-theme-primary));background:rgba(var(--v-theme-primary),.12)}.completion-section>.stage-completion>.stage-action-icon .v-icon{margin:0!important;font-size:1.7rem!important}.completion-section>.stage-completion>.stage-action-chevron{grid-column:3;grid-row:1/3;align-self:center;justify-self:center;margin:0!important;font-size:1.35rem!important}.completion-section>.completion-editor{width:100%}@media(max-width:520px){.completion-section{margin-top:24px}.completion-section>.stage-completion{min-height:88px;padding:15px 14px}}
 .resource-links{display:grid;gap:9px}.resource-links a{display:flex;min-width:0;align-items:center;justify-content:space-between;gap:14px;padding:14px 15px;border:1px solid rgba(var(--v-border-color),.08);border-radius:14px;color:inherit;text-decoration:none;background:rgba(var(--v-theme-on-surface),.045);transition:border-color .18s,background .18s,transform .18s}.resource-links a:hover{border-color:rgba(var(--v-theme-primary),.36);background:rgba(var(--v-theme-primary),.09);transform:translateY(-1px)}.resource-links a>span{display:grid;min-width:0;gap:3px}.resource-links small{color:rgb(var(--v-theme-primary));font-size:.68rem;font-weight:760;letter-spacing:.05em;text-transform:uppercase}.resource-links strong{overflow:hidden;font-size:.9rem;line-height:1.35;text-overflow:ellipsis;white-space:nowrap}.resource-links em{overflow:hidden;color:rgba(var(--v-theme-on-surface),.5);font-size:.68rem;font-style:normal;text-overflow:ellipsis;white-space:nowrap}.resource-links .v-icon{flex:0 0 auto;color:rgba(var(--v-theme-on-surface),.58);font-size:1.15rem}
+.van-summary{margin-top:24px;padding:18px;border:1px solid rgba(var(--v-theme-primary),.25);border-radius:var(--app-radius-md);background:linear-gradient(145deg,rgba(var(--v-theme-primary),.11),rgba(var(--v-theme-surface),.95) 56%);box-shadow:0 16px 44px rgba(0,0,0,.1)}.van-summary-heading{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:14px}.van-summary-heading span{color:rgb(var(--v-theme-primary));font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase}.van-summary-heading strong{overflow:hidden;font-size:1rem;text-overflow:ellipsis;white-space:nowrap}.van-summary-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}.van-summary-grid>div{display:grid;min-width:0;align-content:start;gap:6px;padding:13px;border:1px solid rgba(var(--v-border-color),.08);border-radius:15px;background:rgba(var(--v-theme-on-surface),.04)}.van-summary-grid .v-icon{color:rgb(var(--v-theme-primary));font-size:1.2rem}.van-summary-grid span{color:rgba(var(--v-theme-on-surface),.57);font-size:.7rem}.van-summary-grid strong{font-size:.84rem;line-height:1.35;overflow-wrap:anywhere}.van-summary-grid .v-chip{width:max-content;max-width:100%;font-weight:750}.verification-note{display:flex;align-items:flex-start;gap:8px;margin-top:13px;color:rgba(var(--v-theme-on-surface),.64);font-size:.78rem;line-height:1.5}.verification-note .v-icon{flex:0 0 auto;margin-top:1px;color:rgb(var(--v-theme-warning));font-size:1rem}.road-panel{border-color:rgba(var(--v-theme-primary),.24)!important}.ducato-decision{margin-bottom:14px;font-weight:800}.road-chips,.spot-tags{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px}.operational-callout{display:flex;align-items:flex-start;gap:10px;margin-top:14px;padding:14px;border-left:3px solid rgb(var(--v-theme-warning));border-radius:4px 14px 14px 4px;color:rgba(var(--v-theme-on-surface),.82);background:rgba(var(--v-theme-warning),.09);font-size:.9rem;line-height:1.55}.operational-callout.supply{margin:0 0 15px}.operational-callout .v-icon{flex:0 0 auto;margin-top:2px;color:rgb(var(--v-theme-warning));font-size:1.12rem}.spot-group-title{margin:0 0 12px;font-size:.95rem}.paid-title{margin-top:24px;padding-top:20px;border-top:1px solid rgba(var(--v-border-color),.1)}.spot-list{display:grid;gap:12px}.spot-card{padding:16px;border:1px solid rgba(var(--v-border-color),.1);border-radius:17px;background:rgba(var(--v-theme-on-surface),.04)}.spot-card .list-heading{margin-bottom:10px}.spot-card>p{color:rgba(var(--v-theme-on-surface),.78);font-size:.9rem;line-height:1.58}.spot-card>small{display:block;margin:8px 0 14px;color:rgba(var(--v-theme-on-surface),.58);font-size:.78rem;line-height:1.5}.spot-meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:13px 0}.spot-meta span{padding:8px;border-radius:10px;color:rgba(var(--v-theme-on-surface),.69);background:rgba(var(--v-theme-on-surface),.045);font-size:.68rem;line-height:1.35}.spot-verification{margin:0 0 12px!important;color:rgb(var(--v-theme-warning))!important;font-size:.72rem!important;font-weight:700}.warning-list .severity-info{color:rgba(var(--v-theme-on-surface),.76);background:rgba(var(--v-theme-primary),.08)}.warning-list .severity-caution{color:rgb(var(--v-theme-warning));background:rgba(var(--v-theme-warning),.1)}.warning-list .severity-danger{color:rgb(var(--v-theme-error));background:rgba(var(--v-theme-error),.1)}.trip-note{margin-top:18px;padding:17px;border:1px solid rgba(var(--v-theme-primary),.25);border-radius:16px;background:rgba(var(--v-theme-primary),.08)}.trip-note>strong{color:rgb(var(--v-theme-primary));font-size:.78rem;text-transform:uppercase;letter-spacing:.06em}
+@media(max-width:760px){.van-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.van-summary-grid>div:first-child{grid-column:1/-1}.spot-meta{grid-template-columns:1fr}.van-summary-heading{align-items:flex-start;flex-direction:column;gap:5px}}
+@media(max-width:400px){.van-summary{padding:15px}.van-summary-grid>div{padding:11px}.van-summary-heading strong{max-width:100%}}
 </style>

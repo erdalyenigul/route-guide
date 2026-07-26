@@ -1,4 +1,4 @@
-import type { Accessibility, CampingType, ContentTranslationKey, Level, RouteDataset, RouteStatus, StopExperience, StopStatus, VerificationStatus } from '@/content/types'
+import type { Accessibility, CampingType, ContentTranslationKey, DucatoAccess, Level, OvernightStatus, RouteDataset, RouteStatus, StopExperience, StopStatus, VerificationStatus, WarningSeverity } from '@/content/types'
 import { departureChecklist } from '@/content/checklists/departure'
 import { supabase } from '@/infrastructure/supabase/client'
 import type { FacilityRow, GalleryRow, StopRow, TipRow } from '@/infrastructure/supabase/database.types'
@@ -20,6 +20,18 @@ function accessibility(value: string | null): Accessibility | null {
   if (value === null) return null
   if (!['difficult', 'caution', 'good', 'excellent'].includes(value)) throw new Error(`Invalid accessibility: ${value}`)
   return value as Accessibility
+}
+
+function ducatoAccess(value: string | null | undefined, fallback: Accessibility | null): DucatoAccess | null {
+  if (value && ['comfortable', 'caution', 'leave_above', 'do_not_enter'].includes(value)) return value as DucatoAccess
+  if (fallback === 'excellent' || fallback === 'good') return 'comfortable'
+  if (fallback === 'caution') return 'caution'
+  if (fallback === 'difficult') return 'leave_above'
+  return null
+}
+
+function optionalContentKey(value: string | null | undefined): ContentTranslationKey | null {
+  return value?.startsWith('content.') ? value as ContentTranslationKey : null
 }
 
 function publicMediaUrl(gallery: GalleryRow): string {
@@ -118,6 +130,7 @@ export const supabaseRouteContentRepository: RouteContentRepository = {
         authorName: experienceRow.author_name,
         updatedAt: experienceRow.updated_at
       } : undefined
+      const legacyDucatoAccess = accessibility(row.ducato_accessibility)
       return {
         id: row.slug,
         routeId: routeSlugById.get(routeStop.route_id) ?? routeStop.route_id,
@@ -140,7 +153,18 @@ export const supabaseRouteContentRepository: RouteContentRepository = {
         solarSuitability: level(row.solar_suitability),
         shade: level(row.shade),
         crowdLevel: level(row.crowd_level),
-        ducatoAccessibility: accessibility(row.ducato_accessibility),
+        ducatoAccessibility: legacyDucatoAccess,
+        ducatoAccess: ducatoAccess(row.ducato_access, legacyDucatoAccess),
+        roadSurface: row.road_surface ?? null,
+        roadWidth: row.road_width ?? null,
+        steepGrade: row.steep_grade ?? null,
+        hairpins: row.hairpins ?? null,
+        cliffExposure: row.cliff_exposure ?? null,
+        guardrails: row.guardrails ?? null,
+        turnaroundPossible: row.turnaround_possible ?? null,
+        lastMileNote: optionalContentKey(row.last_mile_note_key),
+        supplyNote: optionalContentKey(row.supply_note_key),
+        decisionSummary: optionalContentKey(row.decision_summary_key),
         droneSuitability: accessibility(row.drone_suitability),
         lunaUltraRecommendations: lunaTips(tipRows, row),
         municipalityFacilities: {
@@ -158,6 +182,14 @@ export const supabaseRouteContentRepository: RouteContentRepository = {
         freecampSpotIds: stopSpotRows.filter((spot) => spot.spot_type === 'freecamp').map((spot) => spot.slug),
         paidAlternativeIds: stopSpotRows.filter((spot) => spot.spot_type !== 'freecamp').map((spot) => spot.slug),
         roadWarnings: warningRows.filter((warning) => warning.stop_id === row.id).map((warning) => contentKey(warning.body_key)),
+        warnings: warningRows.filter((warning) => warning.stop_id === row.id).map((warning) => ({
+          id: warning.id,
+          type: warning.warning_type,
+          severity: warning.severity as WarningSeverity,
+          body: contentKey(warning.body_key),
+          verificationStatus: warning.verification_status as VerificationStatus,
+          lastVerifiedAt: warning.last_verified_at
+        })),
         bestSunrise: contentKey(row.best_sunrise_key),
         bestSunset: contentKey(row.best_sunset_key),
         photos: stopGalleries.map((gallery) => ({
@@ -189,7 +221,26 @@ export const supabaseRouteContentRepository: RouteContentRepository = {
       rating: row.rating,
       recommended: row.recommended,
       facilities: facilityRows.filter((facility) => facility.camping_spot_id === row.id && facility.name_key).map((facility) => contentKey(facility.name_key)),
-      accessNote: contentKey(row.access_note_key)
+      accessNote: contentKey(row.access_note_key),
+      ducatoAccess: ducatoAccess(row.ducato_access, null),
+      overnightStatus: row.overnight_status as OvernightStatus | null,
+      beachfront: row.beachfront ?? null,
+      seaView: row.sea_view ?? null,
+      distanceToSeaM: row.distance_to_sea_m ?? null,
+      groundSurface: row.ground_surface ?? null,
+      levelGround: row.level_ground ?? null,
+      capacityVehicles: row.capacity_vehicles ?? null,
+      shadeAvailable: row.shade_available ?? null,
+      waterAvailable: row.water_available ?? null,
+      toiletAvailable: row.toilet_available ?? null,
+      showerAvailable: row.shower_available ?? null,
+      wasteAvailable: row.waste_available ?? null,
+      mobileSignal: row.mobile_signal ?? null,
+      crowdLevel: row.crowd_level ?? null,
+      nightQuiet: row.night_quiet ?? null,
+      safetyNote: optionalContentKey(row.safety_note_key),
+      verificationStatus: row.verification_status as VerificationStatus,
+      lastVerifiedAt: row.last_verified_at
     }))
 
     const activities = activityRows.map((row) => ({

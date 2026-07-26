@@ -5,6 +5,9 @@ export type Level = 'none' | 'low' | 'medium' | 'high' | 'excellent'
 export type Accessibility = 'difficult' | 'caution' | 'good' | 'excellent'
 export type ContentTranslationKey = `content.${string}`
 export type VerificationStatus = 'unverified' | 'partially_verified' | 'verified'
+export type DucatoAccess = 'comfortable' | 'caution' | 'leave_above' | 'do_not_enter'
+export type OvernightStatus = 'allowed' | 'tolerated' | 'restricted' | 'prohibited' | 'unknown'
+export type WarningSeverity = 'info' | 'warning' | 'danger'
 
 export interface Coordinates {
   latitude: number | null
@@ -65,6 +68,34 @@ export interface SpotContent {
   recommended: boolean
   facilities: ContentTranslationKey[]
   accessNote: ContentTranslationKey
+  ducatoAccess?: DucatoAccess | null
+  overnightStatus?: OvernightStatus | null
+  beachfront?: boolean | null
+  seaView?: boolean | null
+  distanceToSeaM?: number | null
+  groundSurface?: string | null
+  levelGround?: boolean | null
+  capacityVehicles?: number | null
+  shadeAvailable?: boolean | null
+  waterAvailable?: boolean | null
+  toiletAvailable?: boolean | null
+  showerAvailable?: boolean | null
+  wasteAvailable?: boolean | null
+  mobileSignal?: string | null
+  crowdLevel?: string | null
+  nightQuiet?: boolean | null
+  safetyNote?: ContentTranslationKey | null
+  verificationStatus?: VerificationStatus
+  lastVerifiedAt?: string | null
+}
+
+export interface StopWarning {
+  id: string
+  type: string
+  severity: WarningSeverity
+  body: ContentTranslationKey
+  verificationStatus?: VerificationStatus
+  lastVerifiedAt?: string | null
 }
 
 export interface StopContent {
@@ -90,6 +121,17 @@ export interface StopContent {
   shade: Level | null
   crowdLevel: Level | null
   ducatoAccessibility: Accessibility | null
+  ducatoAccess?: DucatoAccess | null
+  roadSurface?: string | null
+  roadWidth?: string | null
+  steepGrade?: boolean | null
+  hairpins?: boolean | null
+  cliffExposure?: boolean | null
+  guardrails?: boolean | null
+  turnaroundPossible?: boolean | null
+  lastMileNote?: ContentTranslationKey | null
+  supplyNote?: ContentTranslationKey | null
+  decisionSummary?: ContentTranslationKey | null
   droneSuitability: Accessibility | null
   lunaUltraRecommendations: LunaUltraRecommendation[]
   municipalityFacilities: MunicipalityFacilities
@@ -100,6 +142,7 @@ export interface StopContent {
   freecampSpotIds: string[]
   paidAlternativeIds: string[]
   roadWarnings: ContentTranslationKey[]
+  warnings?: StopWarning[]
   bestSunrise: ContentTranslationKey
   bestSunset: ContentTranslationKey
   photos: PhotoAsset[]
