@@ -52,8 +52,7 @@ export const mapService = {
     const parameters = new URLSearchParams({
       api: '1',
       destination: `${coordinate.latitude},${coordinate.longitude}`,
-      travelmode: 'driving',
-      dir_action: 'navigate'
+      travelmode: 'driving'
     })
     return `https://www.google.com/maps/dir/?${parameters.toString()}`
   },
@@ -71,8 +70,7 @@ export const mapService = {
       api: '1',
       origin: `${origin.latitude},${origin.longitude}`,
       destination: `${destination.latitude},${destination.longitude}`,
-      travelmode: 'driving',
-      dir_action: 'navigate'
+      travelmode: 'driving'
     })
     if (waypoints.length) {
       parameters.set('waypoints', waypoints.map((coordinate) => `${coordinate.latitude},${coordinate.longitude}`).join('|'))
