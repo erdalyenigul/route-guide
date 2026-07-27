@@ -59,10 +59,13 @@ const services = computed(() => stop.value ? [
   { key: 'market', icon: 'mdi-cart-outline', value: stop.value.nearbyMarket },
   { key: 'fuel', icon: 'mdi-gas-station-outline', value: stop.value.fuelStation }
 ] : [])
+const visibleServices = computed(() => services.value.filter(service => service.value.available))
 const freecampSpots = computed(() => campingSpots.value
-  .filter(spot => spot.type === 'freecamp')
+  .filter(spot => spot.type === 'freecamp' && spot.overnightStatus !== 'prohibited')
   .sort((a, b) => Number(b.beachfront) - Number(a.beachfront) || Number(b.seaView) - Number(a.seaView) || Number(b.recommended) - Number(a.recommended)))
 const paidSpots = computed(() => campingSpots.value.filter(spot => spot.type !== 'freecamp'))
+const visibleCampingSpots = computed(() => [...freecampSpots.value, ...paidSpots.value])
+const coastalSpots = computed(() => visibleCampingSpots.value.filter(spot => spot.beachfront || spot.seaView))
 const ducatoDecision = computed(() => stop.value?.ducatoAccess ?? null)
 const ducatoDecisionColor = computed(() => {
   const colors: Record<string, string> = { comfortable: 'success', caution: 'warning', leave_above: 'orange', do_not_enter: 'error' }
@@ -81,6 +84,21 @@ const roadChips = computed(() => {
   ].filter((item): item is string => item !== null)
 })
 const stopWarnings = computed(() => stop.value?.warnings ?? [])
+function usefulContent(key: string): boolean {
+  const value = t(key).trim().toLocaleLowerCase().replace(/[.!]$/g, '')
+  return Boolean(value) && ![
+    'unknown', 'bilinmiyor', 'not added', 'eklenmedi',
+    'not verified', 'doğrulanmadı', 'henüz eklenmedi'
+  ].some(marker => value === marker || value.startsWith(`${marker} `))
+}
+const hasSunrise = computed(() => Boolean(stop.value && usefulContent(stop.value.bestSunrise)))
+const hasSunset = computed(() => Boolean(stop.value && usefulContent(stop.value.bestSunset)))
+const hasEssentials = computed(() => Boolean(stop.value && (
+  stop.value.supplyNote
+  || stop.value.municipalityFacilities.available
+  || visibleServices.value.length
+  || stop.value.internetScore !== null
+)))
 type DetailSectionKey = 'road' | 'camping' | 'risks' | 'essentials' | 'explore' | 'summary'
 interface DetailSection {
   key: DetailSectionKey
@@ -93,9 +111,9 @@ const detailSections = computed<DetailSection[]>(() => {
   if (!stop.value) return []
   return [
     { key: 'road', icon: 'mdi-van-utility', title: 'van.roadAndDucato' },
-    { key: 'camping', icon: 'mdi-tent', title: 'van.freecampAndOvernight', badge: campingSpots.value.length },
+    ...(visibleCampingSpots.value.length ? [{ key: 'camping' as const, icon: 'mdi-tent', title: 'van.freecampAndOvernight', badge: visibleCampingSpots.value.length }] : []),
     ...(stopWarnings.value.length ? [{ key: 'risks' as const, icon: 'mdi-alert-outline', title: 'van.risks', badge: stopWarnings.value.length, badgeColor: 'warning' }] : []),
-    { key: 'essentials', icon: 'mdi-water-outline', title: 'van.essentials' },
+    ...(hasEssentials.value ? [{ key: 'essentials' as const, icon: 'mdi-water-outline', title: 'van.essentials' }] : []),
     { key: 'explore', icon: 'mdi-compass-outline', title: 'van.explore' },
     { key: 'summary', icon: 'mdi-text-box-check-outline', title: 'van.summary' }
   ]
@@ -208,13 +226,12 @@ onUnmounted(() => {
         <div class="van-summary">
           <div class="van-summary-heading"><span>{{ t('van.quickDecision') }}</span><strong>{{ t(stop.title) }}</strong></div>
           <div class="van-summary-grid">
-            <div><v-icon icon="mdi-van-utility" /><span>{{ t('van.ducatoLabel') }}</span><v-chip size="small" :color="ducatoDecisionColor">{{ decision(ducatoDecision) }}</v-chip></div>
-            <div><v-icon icon="mdi-tent" /><span>{{ t('van.freecampLabel') }}</span><strong>{{ freecampSpots.length ? t('van.suitableSpotCount', { count: freecampSpots.length }) : t('common.unknown') }}</strong></div>
-            <div><v-icon icon="mdi-waves" /><span>{{ t('van.seaLabel') }}</span><strong>{{ freecampSpots.some(spot=>spot.beachfront) ? t('van.beachfront') : freecampSpots.some(spot=>spot.seaView) ? t('van.seaView') : t('common.unknown') }}</strong></div>
+            <div v-if="ducatoDecision"><v-icon icon="mdi-van-utility" /><span>{{ t('van.ducatoLabel') }}</span><v-chip size="small" :color="ducatoDecisionColor">{{ decision(ducatoDecision) }}</v-chip></div>
+            <div v-if="freecampSpots.length"><v-icon icon="mdi-tent" /><span>{{ t('van.freecampLabel') }}</span><strong>{{ t('van.suitableSpotCount', { count: freecampSpots.length }) }}</strong></div>
+            <div v-if="coastalSpots.length"><v-icon icon="mdi-waves" /><span>{{ t('van.seaLabel') }}</span><strong>{{ coastalSpots.some(spot=>spot.beachfront) ? t('van.beachfront') : t('van.seaView') }}</strong></div>
             <div><v-icon icon="mdi-water-outline" /><span>{{ t('van.waterLabel') }}</span><strong>{{ stop.waterRefill.available ? t('common.yes') : t('van.fillBeforeArrival') }}</strong></div>
-            <div><v-icon icon="mdi-weather-night" /><span>{{ t('van.overnightLabel') }}</span><strong>{{ freecampSpots.some(spot=>spot.overnightStatus==='allowed'||spot.overnightStatus==='tolerated') ? t('van.spotChoiceMatters') : t('common.unknown') }}</strong></div>
+            <div v-if="freecampSpots.some(spot=>spot.overnightStatus==='allowed'||spot.overnightStatus==='tolerated')"><v-icon icon="mdi-weather-night" /><span>{{ t('van.overnightLabel') }}</span><strong>{{ t('van.spotChoiceMatters') }}</strong></div>
           </div>
-          <p v-if="stop.verificationStatus !== 'verified'" class="verification-note"><v-icon icon="mdi-shield-alert-outline" />{{ t('van.verifyCurrentConditions') }}</p>
         </div>
       </section>
 
@@ -232,10 +249,10 @@ onUnmounted(() => {
               <template v-if="section.key === 'road'">
                 <v-chip class="ducato-decision" :color="ducatoDecisionColor" size="large">{{ decision(ducatoDecision) }}</v-chip>
                 <div v-if="roadChips.length" class="road-chips"><v-chip v-for="chip in roadChips" :key="chip" size="small" variant="tonal">{{ t(`van.road.${chip}`) }}</v-chip></div>
-                <div class="condition-list">
-                  <div><span>{{ t('van.roadSurface') }}</span><strong>{{ stop.roadSurface ? t(`van.road.${stop.roadSurface}`) : t('common.unknown') }}</strong></div>
-                  <div><span>{{ t('van.roadWidth') }}</span><strong>{{ stop.roadWidth ? t(`van.road.${stop.roadWidth}`) : t('common.unknown') }}</strong></div>
-                  <div><span>{{ t('van.turnaround') }}</span><strong>{{ booleanLabel(stop.turnaroundPossible) }}</strong></div>
+                <div v-if="stop.roadSurface || stop.roadWidth || stop.turnaroundPossible !== null" class="condition-list">
+                  <div v-if="stop.roadSurface"><span>{{ t('van.roadSurface') }}</span><strong>{{ t(`van.road.${stop.roadSurface}`) }}</strong></div>
+                  <div v-if="stop.roadWidth"><span>{{ t('van.roadWidth') }}</span><strong>{{ t(`van.road.${stop.roadWidth}`) }}</strong></div>
+                  <div v-if="stop.turnaroundPossible !== null"><span>{{ t('van.turnaround') }}</span><strong>{{ booleanLabel(stop.turnaroundPossible) }}</strong></div>
                 </div>
                 <p v-if="stop.lastMileNote" class="operational-callout"><v-icon icon="mdi-road-variant" />{{ t(stop.lastMileNote) }}</p>
               </template>
@@ -246,8 +263,7 @@ onUnmounted(() => {
                     <div class="list-heading"><v-chip size="x-small" color="success">{{ t('common.freecamp') }}</v-chip><strong>{{ t(spot.title) }}</strong></div>
                     <div class="spot-tags"><v-chip v-if="spot.beachfront" size="x-small">{{ t('van.beachfront') }}</v-chip><v-chip v-if="spot.seaView" size="x-small">{{ t('van.seaView') }}</v-chip><v-chip v-if="spot.levelGround" size="x-small">{{ t('van.levelGround') }}</v-chip><v-chip size="x-small" variant="outlined">{{ decision(spot.ducatoAccess) }}</v-chip></div>
                     <p>{{ t(spot.overview) }}</p><small>{{ t(spot.accessNote) }}</small>
-                    <div class="spot-meta"><span>{{ t('van.waterLabel') }}: {{ booleanLabel(spot.waterAvailable) }}</span><span>{{ t('stop.wc') }}: {{ booleanLabel(spot.toiletAvailable) }}</span><span>{{ t('stop.internet') }}: {{ spot.mobileSignal ? t(`van.signal.${spot.mobileSignal}`) : t('common.unknown') }}</span></div>
-                    <p v-if="spot.verificationStatus !== 'verified'" class="spot-verification">{{ t('verification.unverified') }}</p>
+                    <div v-if="spot.waterAvailable !== null || spot.toiletAvailable !== null || (spot.mobileSignal && spot.mobileSignal !== 'unknown')" class="spot-meta"><span v-if="spot.waterAvailable !== null">{{ t('van.waterLabel') }}: {{ booleanLabel(spot.waterAvailable) }}</span><span v-if="spot.toiletAvailable !== null">{{ t('stop.wc') }}: {{ booleanLabel(spot.toiletAvailable) }}</span><span v-if="spot.mobileSignal && spot.mobileSignal !== 'unknown'">{{ t('stop.internet') }}: {{ t(`van.signal.${spot.mobileSignal}`) }}</span></div>
                     <v-btn block variant="tonal" prepend-icon="mdi-navigation-variant" @click="openSpotNavigation(spot.id)">{{ t('van.openNavigation') }}</v-btn>
                   </article>
                 </div><p v-else class="empty-copy">{{ t('van.noVerifiedFreecamp') }}</p>
@@ -261,15 +277,15 @@ onUnmounted(() => {
                     <div><v-icon icon="mdi-shower" /><span>{{ t('stop.shower') }}</span><strong>{{ stop.municipalityFacilities.shower?t('common.yes'):t('common.no') }}</strong></div>
                     <div><v-icon icon="mdi-toilet" /><span>{{ t('stop.wc') }}</span><strong>{{ stop.municipalityFacilities.wc?t('common.yes'):t('common.no') }}</strong></div>
                   </template>
-                  <div v-for="service in services" :key="service.key"><v-icon :icon="service.icon" /><span>{{ t(`stop.${service.key}`) }}</span><strong>{{ service.value.available ? t(service.value.name) : t('common.unknown') }}</strong></div>
-                  <div><v-icon icon="mdi-signal" /><span>{{ t('stop.internet') }}</span><strong>{{ score(stop.internetScore) }}</strong></div>
+                  <div v-for="service in visibleServices" :key="service.key"><v-icon :icon="service.icon" /><span>{{ t(`stop.${service.key}`) }}</span><strong>{{ t(service.value.name) }}</strong></div>
+                  <div v-if="stop.internetScore !== null"><v-icon icon="mdi-signal" /><span>{{ t('stop.internet') }}</span><strong>{{ score(stop.internetScore) }}</strong></div>
                 </div>
                 <p v-if="stop.municipalityFacilities.available" class="source-copy">{{ t(stop.municipalityFacilities.notes) }}</p>
               </template>
               <template v-else-if="section.key === 'explore'">
                 <p class="body-copy">{{ t(stop.whyVisit) }}</p>
                 <div v-if="exploreActivities.length" class="stack-list"><div v-for="item in exploreActivities" :key="item.id"><strong>{{ t(item.title) }}</strong><p>{{ t(item.description) }}</p></div></div>
-                <div class="sun-grid"><div><v-icon icon="mdi-weather-sunset-up" /><span>{{ t('stop.sunrise') }}</span><p>{{ t(stop.bestSunrise) }}</p></div><div><v-icon icon="mdi-weather-sunset-down" /><span>{{ t('stop.sunset') }}</span><p>{{ t(stop.bestSunset) }}</p></div></div>
+                <div v-if="hasSunrise || hasSunset" class="sun-grid"><div v-if="hasSunrise"><v-icon icon="mdi-weather-sunset-up" /><span>{{ t('stop.sunrise') }}</span><p>{{ t(stop.bestSunrise) }}</p></div><div v-if="hasSunset"><v-icon icon="mdi-weather-sunset-down" /><span>{{ t('stop.sunset') }}</span><p>{{ t(stop.bestSunset) }}</p></div></div>
                 <div v-if="resourceLinks.length" class="resource-links">
                   <a
                     v-for="link in resourceLinks"
