@@ -61,7 +61,7 @@ const services = computed(() => stop.value ? [
 ] : [])
 const visibleServices = computed(() => services.value.filter(service => service.value.available))
 const freecampSpots = computed(() => campingSpots.value
-  .filter(spot => spot.type === 'freecamp' && spot.overnightStatus !== 'prohibited')
+  .filter(spot => spot.type === 'freecamp' && ['allowed', 'tolerated', 'restricted'].includes(spot.overnightStatus ?? ''))
   .sort((a, b) => Number(b.beachfront) - Number(a.beachfront) || Number(b.seaView) - Number(a.seaView) || Number(b.recommended) - Number(a.recommended)))
 const paidSpots = computed(() => campingSpots.value.filter(spot => spot.type !== 'freecamp'))
 const visibleCampingSpots = computed(() => [...freecampSpots.value, ...paidSpots.value])
@@ -257,16 +257,18 @@ onUnmounted(() => {
                 <p v-if="stop.lastMileNote" class="operational-callout"><v-icon icon="mdi-road-variant" />{{ t(stop.lastMileNote) }}</p>
               </template>
               <template v-else-if="section.key === 'camping'">
-                <h3 class="spot-group-title">{{ t('van.freecampSpots') }}</h3>
-                <div v-if="freecampSpots.length" class="spot-list">
-                  <article v-for="spot in freecampSpots" :key="spot.id" class="spot-card">
-                    <div class="list-heading"><v-chip size="x-small" color="success">{{ t('common.freecamp') }}</v-chip><strong>{{ t(spot.title) }}</strong></div>
-                    <div class="spot-tags"><v-chip v-if="spot.beachfront" size="x-small">{{ t('van.beachfront') }}</v-chip><v-chip v-if="spot.seaView" size="x-small">{{ t('van.seaView') }}</v-chip><v-chip v-if="spot.levelGround" size="x-small">{{ t('van.levelGround') }}</v-chip><v-chip size="x-small" variant="outlined">{{ decision(spot.ducatoAccess) }}</v-chip></div>
-                    <p>{{ t(spot.overview) }}</p><small>{{ t(spot.accessNote) }}</small>
-                    <div v-if="spot.waterAvailable !== null || spot.toiletAvailable !== null || (spot.mobileSignal && spot.mobileSignal !== 'unknown')" class="spot-meta"><span v-if="spot.waterAvailable !== null">{{ t('van.waterLabel') }}: {{ booleanLabel(spot.waterAvailable) }}</span><span v-if="spot.toiletAvailable !== null">{{ t('stop.wc') }}: {{ booleanLabel(spot.toiletAvailable) }}</span><span v-if="spot.mobileSignal && spot.mobileSignal !== 'unknown'">{{ t('stop.internet') }}: {{ t(`van.signal.${spot.mobileSignal}`) }}</span></div>
-                    <v-btn block variant="tonal" prepend-icon="mdi-navigation-variant" @click="openSpotNavigation(spot.id)">{{ t('van.openNavigation') }}</v-btn>
-                  </article>
-                </div><p v-else class="empty-copy">{{ t('van.noVerifiedFreecamp') }}</p>
+                <template v-if="freecampSpots.length">
+                  <h3 class="spot-group-title">{{ t('van.freecampSpots') }}</h3>
+                  <div class="spot-list">
+                    <article v-for="spot in freecampSpots" :key="spot.id" class="spot-card">
+                      <div class="list-heading"><v-chip size="x-small" color="success">{{ t('common.freecamp') }}</v-chip><strong>{{ t(spot.title) }}</strong></div>
+                      <div class="spot-tags"><v-chip v-if="spot.beachfront" size="x-small">{{ t('van.beachfront') }}</v-chip><v-chip v-if="spot.seaView" size="x-small">{{ t('van.seaView') }}</v-chip><v-chip v-if="spot.levelGround" size="x-small">{{ t('van.levelGround') }}</v-chip><v-chip size="x-small" variant="outlined">{{ decision(spot.ducatoAccess) }}</v-chip></div>
+                      <p>{{ t(spot.overview) }}</p><small>{{ t(spot.accessNote) }}</small>
+                      <div v-if="spot.waterAvailable !== null || spot.toiletAvailable !== null || (spot.mobileSignal && spot.mobileSignal !== 'unknown')" class="spot-meta"><span v-if="spot.waterAvailable !== null">{{ t('van.waterLabel') }}: {{ booleanLabel(spot.waterAvailable) }}</span><span v-if="spot.toiletAvailable !== null">{{ t('stop.wc') }}: {{ booleanLabel(spot.toiletAvailable) }}</span><span v-if="spot.mobileSignal && spot.mobileSignal !== 'unknown'">{{ t('stop.internet') }}: {{ t(`van.signal.${spot.mobileSignal}`) }}</span></div>
+                      <v-btn block variant="tonal" prepend-icon="mdi-navigation-variant" @click="openSpotNavigation(spot.id)">{{ t('van.openNavigation') }}</v-btn>
+                    </article>
+                  </div>
+                </template>
                 <template v-if="paidSpots.length"><h3 class="spot-group-title paid-title">{{ t('van.paidAlternatives') }}</h3><div class="spot-list"><article v-for="spot in paidSpots" :key="spot.id" class="spot-card"><div class="list-heading"><v-chip size="x-small">{{ t(`common.${spot.type}`) }}</v-chip><strong>{{ t(spot.title) }}</strong></div><p>{{ t(spot.overview) }}</p><small>{{ t(spot.accessNote) }}</small><v-btn block variant="tonal" prepend-icon="mdi-navigation-variant" @click="openSpotNavigation(spot.id)">{{ t('van.openNavigation') }}</v-btn></article></div></template>
               </template>
               <div v-else-if="section.key === 'risks'" class="warning-list"><p v-for="warning in stopWarnings" :key="warning.id" :class="`severity-${warning.severity}`"><v-icon :icon="warning.severity==='danger'?'mdi-alert-octagon':'mdi-alert-circle-outline'" />{{ t(warning.body) }}</p></div>
