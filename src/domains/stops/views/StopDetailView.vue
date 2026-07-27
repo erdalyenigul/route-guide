@@ -185,6 +185,11 @@ onMounted(async () => {
   updateDetailColumnCount()
   window.addEventListener('resize', updateDetailColumnCount)
   try {
+    await store.refreshContent()
+  } catch {
+    // Keep the already loaded dataset available when a background refresh fails.
+  }
+  try {
     isEditor.value = Boolean(await adminContentService.currentUser())
   } catch {
     isEditor.value = false

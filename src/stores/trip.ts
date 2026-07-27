@@ -52,6 +52,16 @@ export const useTripStore = defineStore('trip', () => {
     }
   }
 
+  async function refreshContent(): Promise<void> {
+    try {
+      dataset.value = await routeContentService.load()
+      loadError.value = null
+    } catch (error) {
+      loadError.value = error instanceof Error ? error.message : 'content_load_failed'
+      throw error
+    }
+  }
+
   function toStopViewModel(stop: StopContent): StopViewModel {
     return {
       ...stop,
@@ -235,5 +245,5 @@ export const useTripStore = defineStore('trip', () => {
     }
   }
 
-  return { activeTrip, activeStops, currentStop, currentStopIndex, nextStop, remainingDistance, remainingNights, totalDistance, completedDistance, totalNights, nightsStayed, routeProgress, favoriteStops, checklist, checklistProgress, dataSource, isLoading, loadError, stateSyncError, initialize, refreshTripState, clearStateSyncError, routeById, stopsForRoute, stopById, campingSpotsForStop, activitiesForStop, toggleFavorite, setStopCompletion, skipStop, toggleChecklistItem }
+  return { activeTrip, activeStops, currentStop, currentStopIndex, nextStop, remainingDistance, remainingNights, totalDistance, completedDistance, totalNights, nightsStayed, routeProgress, favoriteStops, checklist, checklistProgress, dataSource, isLoading, loadError, stateSyncError, initialize, refreshContent, refreshTripState, clearStateSyncError, routeById, stopsForRoute, stopById, campingSpotsForStop, activitiesForStop, toggleFavorite, setStopCompletion, skipStop, toggleChecklistItem }
 })
