@@ -409,7 +409,7 @@ export default {
         region: 'Muğla · Datça',
         overview: 'Berrak suyu ve geniş batı ufkuyla korunaklı bir koy.',
         description:
-          'Yarımadanın sessizleştiği çamların yanına yerleş. Son yaklaşım asfalt, zemin çoğunlukla düz ve ilçe ihtiyaçları geceyi bozmayacak kadar yakın.',
+          'Yarımadanın kalabalıktan uzaklaşan bölümünde, çamların yanında konaklayın. Son yol asfalt, zemin çoğunlukla düz; temel ihtiyaçlar için Datça merkeze ulaşmak da kolay.',
         photoAlt: 'Sakin kumlu koyun yanında turkuaz su',
         cameraTip:
           'Gün batımından hemen önce 24 mm lens kullan; sudaki parlak alanları koru ve öndeki kayaları silüette bırak.',
@@ -437,7 +437,7 @@ export default {
           'Rotayı geleneksel ahşap tekneler ve sakin liman yansımaları arasında bitir. Belediye alanına erişim kolay ve eve dönüşten önce konforlu bir yenilenme sunuyor.',
         photoAlt: 'Altın saatte dağlara bakan karavan manzarası',
         cameraTip:
-          'Gün batımından sonra tekneleri dağ katmanlarıyla sıkıştırmak için 70 mm lensi dene.',
+          'Gün batımından sonra 70 mm kamerayı kullanarak tekneleri arka plandaki dağlarla aynı kadrajda daha yakın gösterin.',
         safety: 'İşaretli geceleme alanlarını kullan ve kıyı servis yolunu açık bırak.'
       }
     },

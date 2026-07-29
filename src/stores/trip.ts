@@ -102,7 +102,9 @@ export const useTripStore = defineStore('trip', () => {
   }
 
   const activeStops = computed(() => (activeTrip.value ? stopsForRoute(activeTrip.value.id) : []))
-  const accommodationStops = computed(() => activeStops.value.slice(1, -1))
+  const accommodationStops = computed(() =>
+    activeStops.value.slice(1, -1).filter((stop) => stop.id !== 'izmir-restart')
+  )
   const lastProgressedStopIndex = computed(() =>
     activeStops.value.reduce(
       (latest, stop, index) =>
@@ -110,10 +112,12 @@ export const useTripStore = defineStore('trip', () => {
       -1
     )
   )
-  const currentStop = computed(() =>
-    lastProgressedStopIndex.value >= 0
-      ? activeStops.value[lastProgressedStopIndex.value]
-      : (activeStops.value.find((stop) => stop.status === 'current') ?? activeStops.value[0])
+  const currentStop = computed(
+    () =>
+      activeStops.value.find((stop) => stop.status === 'current') ??
+      (lastProgressedStopIndex.value >= 0
+        ? activeStops.value[lastProgressedStopIndex.value]
+        : activeStops.value[0])
   )
   const currentStopIndex = computed(() =>
     currentStop.value

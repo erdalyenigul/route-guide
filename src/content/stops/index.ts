@@ -9,6 +9,7 @@ import { guzelcamli } from './guzelcamli'
 import { cesmePalmiye } from './cesmePalmiye'
 import { torba } from './torba'
 import { izmir } from './izmir'
+import { izmirRestart } from './izmirRestart'
 import { karaotBeach } from './karaotBeach'
 import { kas } from './kas'
 import { lara } from './lara'
@@ -19,6 +20,7 @@ export const stops: StopContent[] = [
   izmir,
   guzelcamli,
   bafaLake,
+  izmirRestart,
   cesmePalmiye,
   torba,
   gumusluk,

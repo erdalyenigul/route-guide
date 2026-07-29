@@ -9,6 +9,9 @@ export const initialCaravanRoute = {
   status: 'active',
   stopIds: [
     'izmir',
+    'guzelcamli',
+    'bafa-lake',
+    'izmir-restart',
     'cesme-palmiye',
     'torba',
     'gumusluk',
@@ -22,5 +25,5 @@ export const initialCaravanRoute = {
     'cirali',
     'lara'
   ],
-  totalDistanceKm: 1068
+  totalDistanceKm: 1453
 } satisfies RouteContent

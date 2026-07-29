@@ -241,6 +241,42 @@ export default {
           'Use the paved Kapıkırı approach in daylight and go directly to a pre-arranged host such as Selenes. Do not drive onto the lakeshore and do not use the protected shore or Herakleia as freecamp. Carry water and complete food and fuel on D525 before turning off. Explore the lake and ruins on foot from established village access.'
       }
     },
+    izmirRestart: {
+      title: 'Home Return — Bayraklı TOKİ 7th Stage',
+      region: 'Bayraklı TOKİ 7th Stage, İzmir',
+      overview: 'The home return point after travelling back from Bafa Lake for technical reasons.',
+      whyVisit:
+        'Resolve the vehicle issue at home, complete preparations and start the next leg toward Palmiye Beach.',
+      luna: {
+        subject: 'Departure morning and caravan preparation',
+        lens: '24 mm main camera',
+        timing: 'Before departure',
+        settings: 'RAW or standard photo mode',
+        note: 'Use this stop as a journey marker rather than a sightseeing destination.'
+      },
+      municipality:
+        'This is the home return and restart point, not an overnight or motorhome service destination.',
+      marketName: 'İzmir supermarkets',
+      marketNotes: 'Complete food and household shopping before departure.',
+      fuelName: 'Main-road fuel stations',
+      fuelNotes: 'Refuel before joining the Çeşme motorway.',
+      waterName: 'Home water preparation',
+      waterNotes: 'Fill the potable-water tank from the known home supply before departure.',
+      dumpName: 'Dump point not applicable',
+      dumpNotes: 'Complete waste preparation before leaving home.',
+      warning1: 'Check the technical issue that caused the return before beginning the new leg.',
+      warning2:
+        'Secure the interior and complete the normal departure checklist before motorway driving.',
+      sunrise: 'Use the departure moment as a documentary frame if desired.',
+      sunset: 'Not planned as a photography stop.',
+      photoAlt: 'The caravan prepared for a new departure from İzmir',
+      ops: {
+        lastMile: 'Navigate to the home return point at Bayraklı TOKİ 7th Stage.',
+        supply: 'Complete food, water, fuel and vehicle checks at home before setting out.',
+        decision:
+          'Return home from Bafa Lake, then start the next leg from Bayraklı TOKİ 7th Stage. Continue to Palmiye Beach, Torba Public Beach and then rejoin the route at Gümüşlük.'
+      }
+    },
     cesmePalmiye: {
       title: 'Palmiye Beach',
       region: 'Çeşme, İzmir',

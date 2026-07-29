@@ -69,14 +69,14 @@ const content = {
       demreNoel: 'Demre — Noel Baba Caddesi',
       demreAkdeniz: 'Demre — Akdeniz Bulvarı',
       finikeRoad: 'Finike — Demre–Finike Yolu',
-      ciraliBeach: 'Çıralı sahili yerinde kontrol noktası',
+      ciraliBeach: 'Çıralı sahilinde varışta değerlendirilecek park alanı',
       lara261: 'Lara — 261 Lara Caddesi'
     }
   },
   prices: {
     permitted: 'Park izni olan yerlerde ücretsiz',
     permission: 'Yerel izinle ücretsiz',
-    seasonal: 'Sezonluk ücret; doğrudan teyit edin',
+    seasonal: 'Sezonluk ücret; güncel tutarı işletmeden öğrenin',
     reserve: 'Sezonluk ücret; rezervasyon önerilir',
     premium: 'Yüksek sezon ücreti; önceden ayırtın',
     local: 'Yerinde sorun; ücretler değişebilir'
@@ -125,7 +125,7 @@ const content = {
             'Milli Park Caddesi’nde, plaja yaklaşık 50 metre ve millî park girişine 700 metre mesafedeki işletmeli karavan alanı. İşletme su, elektrik, sıcak duş ve ortak mutfak hizmetlerini listeliyor.',
           price: 'Sezon ücreti ve kapasite değişebilir; gelmeden arayın.',
           access:
-            'Milli Park Caddesi’ni ve 34 numaradaki işaretli girişi kullanın. Kasaba yaklaşımı asfalt ve Ducato için uygundur; kapıya gitmeden yer ayırtın.',
+            'Milli Park Caddesi üzerinden 34 numaradaki işaretli girişe gidin. Yol asfalt ve Ducato için uygundur; tesise gitmeden yer ayırtın.',
           safety:
             'Yasal geceleme üssü burasıdır. Millî park otoparkları gündüz ziyareti içindir ve kampın uzantısı değildir.'
         },
@@ -136,7 +136,7 @@ const content = {
           price: 'Kamu alanı durumu ve güncel ücret kontrol edilmelidir.',
           access:
             'Güzelçamlı–Davutlar yolunu kullanın; koordinat yaklaşık olduğundan levhayı izleyin.',
-          safety: 'Güncel işletim ve yerel kuralları teyit edin.'
+          safety: 'Alanın açık olup olmadığını, ücretini ve güncel kuralları gitmeden sorun.'
         }
       },
       luna: {
@@ -173,9 +173,9 @@ const content = {
         lastMile:
           'Güzelçamlı ve Milli Park Caddesi asfalt olup normal şartlarda Ducato için rahattır. Park içinde ana ziyaretçi yolundan ayrılmayın, yalnızca işaretli koy otoparklarını kullanın; kapasite dolunca kuyruk veya giriş durdurma bekleyin.',
         supply:
-          'Parka girmeden Güzelçamlı’da alışveriş yapın ve 24 saat açık Shell Davutlar Çıkışı’nda yakıt alın. Hayal Bahçesi karavan misafirlerine su sağlıyor; doldurmadan içilebilirliği teyit edin.',
+          'Parka girmeden Güzelçamlı’da alışveriş yapın ve 24 saat açık Shell Davutlar Çıkışı’nda yakıt alın. Hayal Bahçesi karavan misafirlerine su sağlıyor; tanka doldurmadan önce içilebilir olup olmadığını sorun.',
         decision:
-          'Güzelçamlı’ya asfalt ana yoldan girin ve geceleme üssü olarak Hayal Bahçesi’ni kullanın. Dilek Yarımadası’nı yalnızca gündüz ziyaret edin, işaretli koy otoparklarına park edin ve kapanıştan önce çıkın. Millî park içindeki hiçbir cep veya plaj otoparkını freecamp saymayın. Korunan alana girmeden yiyecek, yakıt ve su işini bitirin.'
+          'Güzelçamlı’ya asfalt ana yoldan girin ve geceyi Hayal Bahçesi’nde geçirin. Dilek Yarımadası’nı yalnızca gündüz ziyaret edin, işaretli koy otoparklarına park edin ve kapanıştan önce çıkın. Millî park içindeki yol ceplerinde veya plaj otoparklarında gecelemeyin. Korunan alana girmeden yiyecek, yakıt ve su işini tamamlayın.'
       }
     },
     bafaLake: {
@@ -235,6 +235,44 @@ const content = {
           'Kapıkırı’ya gündüz gidin ve önceden ayarladığınız tesise doğrudan geçin. Göl kıyısına araçla inmeyin; koruma alanını ve Herakleia çevresini serbest kamp yeri olarak kullanmayın. Aracı bıraktıktan sonra gölü ve kalıntıları yürüyerek keşfedin.'
       }
     },
+    izmirRestart: {
+      title: 'Eve Dönüş — Bayraklı TOKİ 7. Etap',
+      region: 'Bayraklı TOKİ 7. Etap, İzmir',
+      overview:
+        'Bafa Gölü’nden teknik sorunlar nedeniyle İzmir Bayraklı TOKİ 7. Etap’taki eve dönüş noktası.',
+      whyVisit:
+        'Araçtaki sorunu evde çözüp hazırlıkları tamamladıktan sonra Palmiye Beach’e uzanan yeni bölüme başlamak için.',
+      luna: {
+        subject: 'Yola çıkış sabahı ve karavan hazırlığı',
+        lens: '24 mm ana kamera',
+        timing: 'Hareket etmeden hemen önce',
+        settings: 'RAW veya standart fotoğraf modu',
+        note: 'Bu noktayı gezi durağından çok yolculuğun yeni başlangıcını belgelemek için kullanın.'
+      },
+      municipality:
+        'Burası eve dönüş ve yeniden hareket noktasını gösterir; gezi amaçlı geceleme veya karavan hizmet durağı değildir.',
+      marketName: 'İzmir marketleri',
+      marketNotes: 'Yiyecek ve ev alışverişini yola çıkmadan tamamlayın.',
+      fuelName: 'Ana yol üzerindeki akaryakıt istasyonları',
+      fuelNotes: 'Çeşme otoyoluna girmeden önce yakıt alın.',
+      waterName: 'Evde temiz su hazırlığı',
+      waterNotes: 'Temiz su tankını yola çıkmadan, bildiğiniz ev kaynağından doldurun.',
+      dumpName: 'Bu durak için atık noktası gerekmiyor',
+      dumpNotes: 'Atık ve tuvalet hazırlığını evden ayrılmadan tamamlayın.',
+      warning1:
+        'Bafa’dan dönmenize neden olan teknik sorunun giderildiğini yeni etaba başlamadan kontrol edin.',
+      warning2:
+        'Otoyola çıkmadan dolapları, çekmeceleri ve araç içindeki serbest eşyaları sabitleyin.',
+      sunrise: 'İsterseniz hareket anını yolculuk günlüğü için fotoğraflayın.',
+      sunset: 'Bu nokta fotoğraf durağı olarak planlanmadı.',
+      photoAlt: 'İzmir’den yeniden yola çıkmak için hazırlanan karavan',
+      ops: {
+        lastMile: 'Navigasyonda İzmir Bayraklı TOKİ 7. Etap’taki evi hedefleyin.',
+        supply: 'Evden yeniden çıkmadan yiyecek, temiz su, yakıt ve araç kontrollerini tamamlayın.',
+        decision:
+          'Bafa Gölü’nden Bayraklı TOKİ 7. Etap’taki eve dönün. Buradan Palmiye Beach’e, ardından Torba Halk Plajı’na gidin ve Gümüşlük’ten ana rotaya devam edin.'
+      }
+    },
     cesmePalmiye: {
       title: 'Palmiye Beach',
       region: 'Çeşme, İzmir',
@@ -261,12 +299,13 @@ const content = {
       dumpName: 'Atık boşaltma noktası doğrulanmadı',
       dumpNotes: 'Lisanslı bir tesis bulunana kadar gri ve siyah su tanklarını kapalı tutun.',
       warning1:
-        'Son yaklaşım şehir içindeki bir plaj sokağından geçiyor ve yazın otopark hızla dolabilir; gündüz varın.',
+        'Plaja ulaşan son bölüm şehir içindeki dar bir sokaktan geçiyor ve yazın otopark hızla dolabilir; gündüz varın.',
       warning2:
-        'Plaja giriş veya sıradan bir park yeri geceleme izni anlamına gelmez. Tabelaları kontrol edip varışta teyit alın.',
+        'Plaja giriş veya sıradan bir park yeri geceleme izni anlamına gelmez. Tabelaları kontrol edin ve gece kalmadan önce işletmeden ya da yetkiliden izin alın.',
       sunrise:
         'Gün doğumu için yalnızca gündüzden kontrol edilmiş, erişimi açık kıyı noktalarını kullanın.',
-      sunset: 'Akşam için en pratik konu plaj ve Ege yönündeki gün batımı ışığıdır.',
+      sunset:
+        'Akşam fotoğrafı için plajı ve Ege üzerinde batan güneşin kıyıya vuran ışığını kullanın.',
       photoAlt: 'Çeşme kıyısındaki Palmiye Beach',
       ops: {
         lastMile:
@@ -285,8 +324,8 @@ const content = {
       whyVisit:
         'Uzun Çeşme etabından sonra deniz kıyısında dinlenmek ve ertesi gün Gümüşlük’e büyük bir sapma yapmadan devam etmek için.',
       luna: {
-        subject: 'Torba Koyu, küçük tekneler ve sakin sabah suyu',
-        lens: '24 mm ana kamera; kıyı katmanları için 70 mm',
+        subject: 'Torba Koyu, küçük tekneler ve sabahın sakin denizi',
+        lens: 'Geniş koy manzarası için 24 mm; uzaktaki kıyı ve tekneler için 70 mm',
         timing: 'Sabah erken veya öğleden sonra sonu',
         settings: 'RAW, hafif eksi pozlama',
         note: 'Halka açık alandan çekim yapın; denize giren insanları rahatsız edecek kadrajlardan kaçının.'
@@ -304,7 +343,7 @@ const content = {
       dumpName: 'Atık boşaltma noktası doğrulanmadı',
       dumpNotes: 'Plajda kaset veya gri su boşaltımı için lisanslı bir nokta doğrulanmadı.',
       warning1:
-        'Resmî sayfada karavan kapasitesi yazması geceleme iznini garanti etmez. Güncel uygulamayı kalmadan önce teyit edin.',
+        'Resmî sayfada karavan kapasitesi yazması geceleme iznini garanti etmez. Gece kalmadan önce güncel uygulamayı görevliye sorun.',
       warning2: 'Yazın otopark yoğun olabilir; giriş yolunu ve aracın çıkış alanını açık bırakın.',
       sunrise:
         'Koyu sabah erken saatte, yalnızca halka açık ve düzenlenmiş plaj erişiminden değerlendirin.',
@@ -329,17 +368,17 @@ const content = {
           title: 'Mandi Camping',
           overview:
             'Gümüşlük’e dört kilometre, denize kısa yürüyüş mesafesinde; temiz su, gri su gideri, elektrik ve kaset boşaltım terminalleri bulunan güvenlikli karavan kampı.',
-          price: 'Rezervasyonu ve güncel sezon ücretini doğrudan teyit edin.',
+          price: 'Gitmeden yer ayırtın ve güncel sezon ücretini işletmeden öğrenin.',
           access:
-            'Sahil kestirmesi yerine işletmenin ana yol yaklaşımını kullanın. Son iniş dardır; 15 m³ Ducato için yer durumunu önceden sorun.'
+            'Sahil içindeki kestirmeler yerine işletmenin tarif ettiği ana giriş yolunu kullanın. Son iniş dardır; 15 m³ Ducato için yer ve manevra durumunu önceden sorun.'
         }
       },
       luna: {
-        subject: 'Tavşan Adası ve kıyı katmanları',
+        subject: 'Tavşan Adası ile sahilin üst üste gelen görünümü',
         lens: '70 mm telefoto',
         timing: 'Gün batımından mavi saate',
         settings: 'RAW, -0,7 EV, telefonu sabitleyin',
-        note: 'Ada ile kıyı katmanlarını sıkıştırın.'
+        note: '70 mm kamerayla Tavşan Adası’nı sahile daha yakın görünüyormuş gibi kadrajlayın.'
       },
       municipality: 'Gümüşlük’te karavanlara özel bir belediye hizmet noktası bulunmuyor.',
       marketName: 'Gümüşlük Çarşamba Pazarı',
@@ -378,18 +417,21 @@ const content = {
       whyVisit: 'Rahat bir yüzme günü geçirin, rüzgâr sörfçülerini fotoğraflayın.',
       spots: {
         cuce: {
-          title: 'Cüce Camping Akyarlar',
+          title: 'Akyarlar Karavan Kampı (Cüce Camping)',
           overview:
-            'Alanlarda su, elektrik ve atık su; ayrıca duş, WC, çamaşırhane ve güvenlik sunan deniz kıyısı karavan kampı.',
-          price: '2026 ücretini ve yer durumunu teyit edin.',
-          access: 'Ducato ölçülerini bildirip işaretli ana yaklaşımı kullanın.'
+            '“Cüce Camping” işletmenin adıdır. Deniz kıyısındaki karavan alanında su, elektrik, atık su gideri, duş, WC, çamaşırhane ve güvenlik hizmetleri bulunuyor.',
+          price: 'Güncel ücreti ve Ducato için boş yer olup olmadığını gitmeden sorun.',
+          access:
+            'Ducato’nun ölçülerini işletmeye bildirin ve tarif ettikleri ana giriş yolunu kullanın.'
         },
         fenerburnu: {
-          title: 'Fenerburnu yerinde kontrol adayı',
+          title: 'Fenerburnu ücretsiz geceleme seçeneği',
           overview:
-            'Kos manzaralı, karışık ve hafif eğimli zeminde topluluk kaynaklı ücretsiz geceleme adayı.',
-          price: 'Ücretsiz bildiriliyor; yasal durum ve levhalar varışta kontrol edilmelidir.',
-          access: 'Gündüz yaklaşın; rüzgârı, zemini, levhayı ve çıkışı kontrol edin.',
+            'Diğer karavancıların ücretsiz konakladığını bildirdiği, Kos manzaralı bir sahil noktası. Zemin yer yer bozuk ve hafif eğimli olabilir.',
+          price:
+            'Ücretsiz kullanıldığı bildiriliyor; güncel levhaları ve geceleme iznini vardığınızda kontrol edin.',
+          access:
+            'Hava kararmadan gidin; rüzgârı, zemini, levhaları ve rahat çıkış imkânını kontrol edin.',
           safety: 'Uzun süreli kamp düzeni kurmayın; geceleme yasaksa ayrılın.'
         }
       },
@@ -406,9 +448,9 @@ const content = {
       marketNotes: 'Dar plaj sokaklarına girmeden önce temel ihtiyaçları alın.',
       fuelName: 'Yakıtı Akyarlar’a girmeden alın',
       fuelNotes: 'Ana yarımada yolu üzerindeki geniş bir istasyonu kullanın.',
-      waterName: 'Cüce Camping’de su',
+      waterName: 'Akyarlar Cüce Camping’de su',
       waterNotes: 'Kampta konaklayan misafirler su kullanabiliyor.',
-      dumpName: 'Cüce Camping’de atık su',
+      dumpName: 'Akyarlar Cüce Camping’de atık su boşaltımı',
       dumpNotes: 'Tuvalet kasetinin nereye ve nasıl boşaltılacağını işletmeye sorun.',
       warning1:
         'Fenerburnu rüzgârlı; zemin yer yer bozuk ve hafif eğimli. Hava kararmadan gidip park edeceğiniz yeri inceleyin.',
@@ -421,16 +463,18 @@ const content = {
       photoAlt: 'Akyarlar kıyısı ve açık Ege manzarası',
       ops: {
         lastMile: 'Akyarlar’a girilir; plaj sokakları ve yaz parkı dikkat gerektirir.',
-        supply: 'Cüce su, elektrik, atık su, WC ve duş için güçlü yedektir.',
+        supply:
+          'Ücretsiz geceleme uygun değilse Akyarlar Cüce Camping; su, elektrik, atık su gideri, WC ve duş ihtiyacını tek yerde karşılayan ücretli seçenektir.',
         decision:
-          'Fenerburnu’nu gündüz kontrol edin; garanti freecamp saymayın. Uygun değilse Cüce’ye geçin.'
+          'Fenerburnu’na gündüz gidip levhaları, rüzgârı ve zemini kontrol edin. Gecelemeye izin verilmiyorsa veya zemin güvenli değilse Akyarlar Cüce Camping’e geçin.'
       }
     },
     mazi: {
       title: 'Mazı',
       region: 'Bodrum, Muğla',
-      overview: 'Dik dağ yollarıyla ulaşılan çamlarla çevrili uzak koylar.',
-      whyVisit: 'Tatil Bodrum’unun ötesinde berrak su, karanlık gökyüzü ve sessizlik bulun.',
+      overview: 'Dik ve virajlı dağ yollarının sonunda, çamlarla çevrili sakin koylar.',
+      whyVisit:
+        'Bodrum’un kalabalığından uzaklaşıp berrak deniz, yıldızlı gökyüzü ve sessiz bir akşam geçirmek için.',
       luna: {
         subject: 'Çam sırtları, koylar ve Samanyolu',
         lens: '24 mm ana kamera',
@@ -460,30 +504,31 @@ const content = {
           'Her koy inişini ayrı değerlendirin; genişlik, zemin ve dönüşü gündüz kontrol edin.',
         supply: 'Yiyecek, yakıt ve suyla hazırlıklı gelin.',
         decision:
-          'Mazı’yı gündüz keşif durağı tutun; doğrulanmamış sahil veya orman freecamp’i aramayın.'
+          'Mazı koylarını yalnızca gündüz keşfedin. Gecelemek için rastgele sahil veya orman boşluğu aramak yerine, Ducato kabul ettiğini önceden doğruladığınız bir işletmeye gidin.'
       }
     },
     akbuk: {
       title: 'Akbük Koyu',
       region: 'Gökova Körfezi, Muğla',
       overview: 'Gökova tepeleriyle çevrili berrak sulu geniş koy.',
-      whyVisit: 'İyi yüzme, açık körfez manzarası ve güçlü güneş verimini birleştirin.',
+      whyVisit:
+        'Berrak denizde yüzmek, açık körfez manzarasını izlemek ve güneş panellerinden iyi verim almak için.',
       spots: {
         pasali: {
           title: 'Paşalı Camping & Caravan',
           overview:
             'Akbük kıyısına yakın, zeytin ağaçları altında ve kendi karavanıyla gelen misafirleri açıkça kabul eden küçük işletmeli karavan parkı.',
-          price: 'Kapasite sınırlı olduğundan rezervasyon yapın ve güncel ücreti teyit edin.',
+          price: 'Kapasite sınırlı olduğundan yer ayırtın ve güncel ücreti işletmeden öğrenin.',
           access:
             'Güvenlik bariyeri rezervasyon teyidi isteyebilir. Gündüz varın ve 15 m³ Ducato için dönüş alanını önceden sorun.'
         }
       },
       luna: {
-        subject: 'Gökova su renkleri ve dağ katmanları',
+        subject: 'Gökova’nın turkuaz suyu ve arka plandaki dağ sıraları',
         lens: '24 mm ana kamera',
         timing: 'Gün doğumundan sonraki ilk saat',
         settings: 'RAW, -0,3 EV, isteğe bağlı polarize filtre',
-        note: 'Pus oluşmadan belirlenmiş seyirleri kullanın.'
+        note: 'Sabah sisi ve sıcak hava puslanması başlamadan, güvenli ve halka açık bir seyir noktasından çekim yapın.'
       },
       municipality:
         'Akbük koruma alanı içinde; kıyıdaki boş alanlar kamp yeri olarak kullanılamaz.',
@@ -497,7 +542,7 @@ const content = {
       dumpNotes: 'İşletme açıkça izin vermedikçe gri su veya tuvalet kaseti boşaltmayın.',
       warning1:
         'Koruma alanındaki boş kıyı parçalarını ücretsiz kamp alanı sanmayın; çevre ve işgal denetimleri yapılıyor.',
-      warning2: 'Yola çıkmadan son yaklaşımın durumunu ve kampın açık olduğunu sorun.',
+      warning2: 'Yola çıkmadan kıyıya inen son yolun durumunu ve kampın açık olduğunu sorun.',
       sunrise: 'Gün doğumu için belirli bir nokta önermiyoruz.',
       sunset: 'Gün batımını yalnızca halka açık ve güvenli kıyı erişiminden izleyin.',
       photoAlt: 'Gökova kıyısındaki Akbük Koyu',
@@ -519,16 +564,17 @@ const content = {
           title: 'Sarıgerme Belediye Karavan Alanı',
           overview:
             'Dalyan etabının pratik geceleme üssü olarak seçilen, Sarıgerme kıyısındaki belediye işletmeli çadır ve karavan alanı.',
-          price: 'Güncel sezon ücreti Ortaca Belediyesi ile doğrudan teyit edilmelidir.',
+          price:
+            'Sezon ücretini ve alanın açık olup olmadığını Ortaca Belediyesinden gitmeden öğrenin.',
           access:
-            'İşaretli Sarıgerme plajı yaklaşımını kullanın. Yola çıkmadan sezon açılışını ve Ducato için yer durumunu teyit edin.'
+            'Sarıgerme Plajı’na giden işaretli ana yolu kullanın. Yola çıkmadan tesisin açık olduğunu ve Ducato için yer bulunduğunu sorun.'
         }
       },
       luna: {
         subject: 'Dalyan Nehri üzerindeki Likya mezarları',
         lens: '70 mm telefoto',
         timing: 'Öğleden sonra',
-        settings: 'RAW, -0,3 EV, izinli umumi seyirden sabitleyin',
+        settings: 'RAW, -0,3 EV; telefonu halka açık seyir alanında sabitleyin',
         note: 'Ducato’yu yasal alanda bırakın. Tekne gezisi karavan rotası değil, yalnızca isteğe bağlı günübirlik etkinliktir.'
       },
       municipality:
@@ -551,8 +597,9 @@ const content = {
       photoAlt: 'Dalyan’ın koruma altındaki sazlık kanalları',
       ops: {
         lastMile:
-          'Ana yaklaşım rahattır; nehir merkezi dardır. Merkez sokaklarından önce park edin.',
-        supply: 'Kasabada market ve yakıt vardır; karavan servisi için teyitli kamp kullanın.',
+          'Dalyan’a ana yoldan ulaşım rahattır; nehir kıyısındaki merkez sokakları ise dardır. Merkeze girmeden park edin.',
+        supply:
+          'Dalyan’da market ve akaryakıt bulunur. Su ve atık boşaltımı için hizmet verdiğini önceden doğruladığınız bir karavan alanını kullanın.',
         decision:
           'Ducato’yu geniş yasal alan veya kampta bırakıp Dalyan ve İztuzu’yu ayrı gezin. İztuzu’da gecelemeyin.'
       }
@@ -566,16 +613,18 @@ const content = {
         onur: {
           title: 'Onur Kamping ve Karavan Alanı',
           overview: 'Yanıklar’daki işletmeli deniz kıyısı karavan kampı.',
-          price: 'Güncel ücreti teyit edin.',
-          access: 'Yanıklar ana yaklaşımını kullanın.'
+          price: 'Güncel ücreti ve boş yer durumunu gitmeden sorun.',
+          access: 'Yanıklar üzerinden gelen ana giriş yolunu kullanın.'
         },
         karaotFree: {
-          title: 'Karaot halk plajı adayı',
+          title: 'Karaot Halk Plajı ücretsiz geceleme seçeneği',
           overview:
-            'Su, WC, duş ve çöp hizmetleri yakınında güçlü topluluk kanıtlı ücretsiz geceleme adayı.',
+            'Diğer karavancıların ücretsiz konakladığını bildirdiği halk plajı otoparkı. Yakınında su, WC, duş ve çöp konteynerleri bulunduğu aktarılıyor.',
           price: 'Ücretsiz bildiriliyor; araç ücreti ve geceleme levhasını kontrol edin.',
-          access: 'Gündüz gelin, sağlam yerleşik parkta kalın; kumul ve erişimi açık tutun.',
-          safety: 'Güncel levha eski kayıttan önceliklidir.'
+          access:
+            'Hava kararmadan gidin ve yalnızca mevcut sert zeminli otoparkı kullanın. Kumullara girmeyin; plaj ve acil geçiş yollarını kapatmayın.',
+          safety:
+            'Vardığınızda gördüğünüz levhalar ve yetkililerin yönlendirmesi eski kullanıcı yorumlarından daha geçerlidir.'
         }
       },
       luna: {
@@ -609,7 +658,7 @@ const content = {
         supply:
           'Su, WC, duş ve çöp konteyneri bulunduğu bildiriliyor. Tesislerin açık olduğunu ve suyun içilebilirliğini yerinde sorun.',
         decision:
-          'Karaot, bu rotadaki en güçlü ücretsiz geceleme seçeneği. Hava kararmadan gidin, güncel levhaları kontrol edin; koruma alanına girmeyin ve geçiş yollarını açık bırakın.'
+          'Karaot, bu rota üzerindeki daha uygulanabilir ücretsiz geceleme seçeneklerinden biri. Hava kararmadan gidin, levhaları kontrol edin, koruma alanına girmeyin ve geçiş yollarını açık bırakın.'
       }
     },
     faralya: {
@@ -617,15 +666,15 @@ const content = {
       region: 'Fethiye, Muğla',
       overview: 'Kelebekler Vadisi ve Akdeniz üzerinde yüksek dağ köyü.',
       whyVisit:
-        'Ducato’yu uygun olmayan uçurum yoluna sokmadan rotanın en büyük uçurumlarını, serin akşamlarını ve gün batımını yaşayın.',
+        'Ducato’yu riskli koy yollarına indirmeden Kelebekler Vadisi ve Kabak manzarasını görmek, serin bir akşam ve gün batımı yaşamak için.',
       spots: {
         aydede: {
           title: 'Aydede Camping Ölüdeniz',
           overview:
-            'Büyük Ducato’yu Faralya uçurum yoluna çıkarmak istemeyenler için Ovacık’taki aşağı kotta işletmeli karavan üssü.',
-          price: 'Sezonluk karavan ücretini ve rezervasyonu yeniden teyit edin.',
+            'Faralya’nın dar ve uçurumlu yoluna Ducato ile çıkmak istemeyenler için Ovacık’ta kullanılabilecek karavan kampı.',
+          price: 'Güncel karavan ücretini ve boş yer durumunu gitmeden sorun.',
           access:
-            'Ana Ovacık yaklaşımını kullanın. Yol açıklığı veya trafik uçurum sürüşünü uygun kılmıyorsa Ducato’yu burada bırakıp Faralya–Kabak minibüsüne geçin.',
+            'Ovacık’a ana yoldan girin. Faralya yolundaki trafik, yol genişliği veya hava koşulları güven vermiyorsa Ducato’yu burada bırakıp Faralya–Kabak minibüsüne geçin.',
           safety:
             'Burası güvenli ve temkinli üs seçeneğidir; Faralya’da deniz manzaralı bir yer değildir.'
         },
@@ -641,11 +690,11 @@ const content = {
         }
       },
       luna: {
-        subject: 'Kelebekler Vadisi ve katmanlı burunlar',
+        subject: 'Kelebekler Vadisi ve arka arkaya uzanan kıyı burunları',
         lens: '70 mm telefoto',
         timing: 'Gün batımından önceki kırk dakika',
         settings: 'RAW, -0,7 EV, odak kilidi',
-        note: 'Korkuluksuz uçurum kenarından çok uzakta durun.'
+        note: 'Korkuluk bulunmayan uçurum kenarlarına yaklaşmayın; çekimi güvenli bir terastan yapın.'
       },
       municipality:
         'Faralya’da hizmetler birbirinden uzak; belediyeye ait karavan servis noktası yok.',
@@ -689,7 +738,7 @@ const content = {
           title: 'Kaş Camping',
           overview:
             'Kaş merkezine yaklaşık iki kilometre uzaklıkta, belirlenmiş karavan yerleri ve doğrudan plaj erişimi bulunan işletmeli deniz kıyısı kampı.',
-          price: 'Varıştan önce rezervasyon yapın ve güncel karavan ücretini teyit edin.',
+          price: 'Gitmeden yer ayırtın ve güncel karavan ücretini işletmeden öğrenin.',
           access:
             'İşaretli Kaş–Kalkan ana yol girişini kullanın. Girmeden 15 m³ Ducato için alan uzunluğunu ve dönüş yerini sorun.'
         }
@@ -699,7 +748,7 @@ const content = {
         lens: '70 mm telefoto',
         timing: 'Mavi saat',
         settings: 'RAW, 1/125 sn, -0,7 EV',
-        note: 'Umumi seyirleri kullanın ve sınır bölgesi kurallarına uyun.'
+        note: 'Halka açık seyir noktalarını kullanın ve sınır bölgesindeki çekim kurallarına uyun.'
       },
       municipality:
         'Şehirdeki ziyaretçi tesisleri karavan servisi sunmuyor; geceleme ve araç ihtiyaçları için karavan kabul eden bir kamp kullanın.',
@@ -723,9 +772,10 @@ const content = {
       ops: {
         lastMile:
           'Kaş’a D400 ile girilir; eski şehir büyük Ducato ile park aramaya uygun değildir.',
-        supply: 'Kaş Camping veya Olympos Mocamp geceleme, su ve atık hizmetini birleştirir.',
+        supply:
+          'Kaş Camping veya Olympos Mocamp’te geceleme, temiz su ve karavan atığı boşaltma ihtiyaçlarını aynı yerde karşılayabilirsiniz.',
         decision:
-          'Rezervasyonlu kampa gidip Ducato’yu bırakın, merkezi yürüyün. Yasal merkez freecamp’i doğrulanmadı.'
+          'Önceden yer ayırttığınız kampa gidip Ducato’yu bırakın; Kaş merkezini yürüyerek gezin. Merkezde güvenle önerebildiğimiz yasal bir ücretsiz geceleme alanı yok.'
       }
     },
     cirali: {
@@ -738,9 +788,9 @@ const content = {
           title: '222 Camping & Van',
           overview:
             '220 V bağlantısı, temiz su noktaları, duş, WC ve ortak kullanım alanları bulunan Çıralı’daki işletmeli karavan alanı.',
-          price: 'Güncel karavan ücretini ve alan durumunu doğrudan teyit edin.',
+          price: 'Güncel karavan ücretini ve boş yer durumunu işletmeden öğrenin.',
           access:
-            'Çıralı’ya gündüz inin ve işaretli yaklaşımı kullanın. 15 m³ Ducato için kapı ve dönüş ölçülerini varıştan önce sorun.'
+            'Çıralı’ya hava kararmadan inin ve tesisin işaretli ana girişini kullanın. 15 m³ Ducato’nun kapıdan geçip rahatça dönebileceğini gitmeden sorun.'
         }
       },
       luna: {
@@ -774,14 +824,14 @@ const content = {
         supply:
           '222 Camping misafirlere temiz su ve 220 V sağlar; yakıt ve alışverişi inişten önce tamamlayın.',
         decision:
-          'Sahil freecamp’i aramak yerine karavan kampı kullanın; Ducato’yu bırakıp korunan kıyıyı yürüyün.'
+          'Sahilde rastgele bir geceleme yeri aramak yerine karavan kabul eden bir kamp kullanın. Ducato’yu kampta bırakıp koruma altındaki kıyıyı yürüyerek gezin.'
       }
     },
     lara: {
       title: 'Lara',
       region: 'Muratpaşa, Antalya',
       overview:
-        'Güzeloba’daki yeni resmî belediye karavan parkı projesine sahip şehir-plaj varış bölgesi.',
+        'Antalya’nın doğu kıyısında, şehir ihtiyaçlarına kolay ulaşılabilen ve Güzeloba’daki belediye karavan parkının değerlendirilebileceği son durak.',
       whyVisit:
         'Volkan Konak Karavan Park’ın açıldığını doğrulayıp rotanın son servis üssü olarak kullanın.',
       spots: {
@@ -789,8 +839,9 @@ const content = {
           title: 'Volkan Konak Karavan Parkı',
           overview:
             'Yaklaşık 120 karavan; market, çamaşırhane, duş, WC, kafe ve pis su noktaları planlanan belediye parkı.',
-          price: 'Açılış durumunu ve güncel tarifeyi teyit edin.',
-          access: 'Ana Güzeloba yaklaşımını kullanıp gitmeden arayın.',
+          price: 'Tesisin açılıp açılmadığını ve güncel ücretini gitmeden öğrenin.',
+          access:
+            'Güzeloba’ya ana yoldan gidin ve tesise hareket etmeden önce telefonla bilgi alın.',
           safety:
             'Haziran 2026 kaynakları açılış zamanı konusunda farklı ifade kullandı; çalıştığını doğrulayın.'
         }
@@ -820,10 +871,10 @@ const content = {
       sunset: 'Gün batımı için halka açık kıyı yürüyüş alanlarını kullanın.',
       photoAlt: 'Yumuşak Akdeniz ışığında Lara Halk Plajı',
       ops: {
-        lastMile: 'Lara ve Güzeloba Ducato için rahat şehir yaklaşımıdır.',
+        lastMile: 'Lara ve Güzeloba’ya ana şehir yollarından Ducato ile rahatça ulaşılabilir.',
         supply: 'Açıksa Volkan Konak Park su, WC, duş, pis su ve market hizmetini birleştirir.',
         decision:
-          'Parkın açık olduğunu doğrulayıp rota sonu servis üssü olarak kullanın; normal Lara plaj parkını freecamp saymayın.'
+          'Karavan parkının açık olduğunu doğrularsanız yolculuk sonundaki su, duş ve atık ihtiyaçları için kullanın. Lara Halk Plajı’nın sıradan otoparkında gecelemeyin.'
       }
     }
   },
@@ -850,7 +901,7 @@ const content = {
       practicalTitle: 'Şehir içi sürüş planı',
       practicalDescription:
         'Ana giriş yollarından birinde ikmali tamamlayın, Ducato’yu yasal bir yere park edin ve Konak merkezini yürüyerek veya toplu taşımayla gezin.',
-      freecampPrice: 'Önerilen serbest kamp alanı yok',
+      freecampPrice: 'Önerilen ücretsiz geceleme alanı yok',
       photo1Alt: 'Kordon yürüyüş yolu ve İzmir Körfezi',
       photo2Alt: 'Mavi saatte İzmir Körfezi’nden geçen vapurlar',
       photo3Alt: 'Konak’ın tarihî sokakları ve şehir ışıkları'
@@ -880,7 +931,7 @@ const content = {
       practicalTitle: 'Yola çıkmadan parkı kontrol edin',
       practicalDescription:
         'Güncel saat ve kısıtlamalar için resmî DKMP kaydını inceleyin, getirdiğiniz her şeyi geri çıkarın ve kısıtlı alanların dışındaki doğrulanmış geceleme noktasına dönün.',
-      freecampPrice: 'Önerilen serbest kamp alanı yok',
+      freecampPrice: 'Önerilen ücretsiz geceleme alanı yok',
       photo1Alt: 'Dilek Yarımadası’nda çamlarla çevrili koy',
       photo2Alt: 'Güzelçamlı yakınında kayalık Ege kıyısı ve berrak su',
       photo3Alt: 'Dilek Yarımadası Millî Parkı’nda korunan kıyı habitatı'
@@ -909,8 +960,8 @@ const content = {
         'Halka açık karavan elektrik bağlantısı yok. Enerjinizi önceden planlayın; tesiste bağlantı olup olmadığını rezervasyon sırasında sorun.',
       practicalTitle: 'Hazırlıklı gelin',
       practicalDescription:
-        'Köy yoluna dönmeden suyu, büyük alışverişi ve yakıtı tamamlayın. Son yaklaşımı ve yasal park seçeneğini sakin biçimde değerlendirmek için gündüz varın.',
-      freecampPrice: 'Önerilen serbest kamp alanı yok',
+        'Köy yoluna dönmeden suyu, büyük alışverişi ve yakıtı tamamlayın. Köy içindeki dar yolu ve yasal park seçeneğini rahatça değerlendirebilmek için gündüz varın.',
+      freecampPrice: 'Önerilen ücretsiz geceleme alanı yok',
       photo1Alt: 'Latmos kaya oluşumları altındaki Bafa Gölü',
       photo2Alt: 'Kapıkırı köyü içindeki Herakleia taş kalıntıları',
       photo3Alt: 'Bafa Gölü ve granit kayalarda şafak ışığı'
@@ -928,25 +979,25 @@ const content = {
       viewpointTitle: 'Faralya kıyı panoraması',
       viewpointDescription:
         'Manzarayı güvenli bir işletme terasından veya işaretli halka açık seyir noktasından izleyin. Uçurum yolundaki dar kaçış ceplerinde durmayın ve gecelemeyin.',
-      practicalTitle: 'Yukarıda park et, hafif keşfet',
+      practicalTitle: 'Ducato’yu yukarıda bırakın',
       practicalDescription:
         'Gündüz varın, Ducato’yu önceden ayarlanmış üst alana güvenle bırakın ve dik koy inişlerine araçla girmeden kıyıyı keşfedin.'
     }
   },
   spots: {
     izmirFree: {
-      title: 'Doğrulanmış İzmir serbest kampı yok',
+      title: 'İzmir’de önerilen ücretsiz geceleme alanı yok',
       overview:
         'Bu rehber İzmir’de bir şehir içi serbest kamp koordinatı önermiyor. Sahil parkını kamp alanı saymak yerine yasal ve doğrulanmış geceleme tesisi kullanın.',
       access: 'Gelmeden araç ölçülerini, park levhalarını ve geceleme iznini doğrudan kontrol edin.'
     },
     izmirPaid: {
       title: 'İnciraltı Karavan Tesisi',
-      overview: 'Merkeze kolay ulaşılan servisli şehir üssü.',
+      overview: 'Merkeze ulaşımı kolay, karavan ihtiyaçlarının karşılanabildiği şehir içi tesis.',
       access: 'Rezervasyonda araç uzunluğu sınırını sorun.'
     },
     guzelcamliFree: {
-      title: 'Doğrulanmış Güzelçamlı serbest kampı yok',
+      title: 'Güzelçamlı’da önerilen ücretsiz geceleme alanı yok',
       overview:
         'Kısıtsız bir geceleme noktası önerilmiyor. Yanındaki millî park koruma altındadır; gündüz erişimi kamp izni anlamına gelmez.',
       access:
@@ -954,11 +1005,11 @@ const content = {
     },
     guzelcamliPaid: {
       title: 'Güzelçamlı Kamp Alanı',
-      overview: 'Dilek Yarımadası gezisi için gölgeli üs.',
+      overview: 'Dilek Yarımadası’nı günübirlik gezmek için kullanılabilecek gölgeli kamp alanı.',
       access: 'Ducato için köy erişimi rahattır.'
     },
     bafaFree: {
-      title: 'Doğrulanmış Bafa Gölü serbest kampı yok',
+      title: 'Bafa Gölü’nde önerilen ücretsiz geceleme alanı yok',
       overview:
         'Göl kıyısında serbest kamp koordinatı önerilmiyor. Durak korunan doğal ve arkeolojik peyzaj içindedir.',
       access:
@@ -966,32 +1017,37 @@ const content = {
     },
     bafaPaid: {
       title: 'Kapıkırı Pansiyon Kampı',
-      overview: 'Temel köy imkânları sunan küçük işletmeli seçenek.',
-      access: 'Köye girmeden alan ölçülerini teyit edin.'
+      overview: 'Kapıkırı’da temel ihtiyaçların karşılanabildiği, işletmeye ait küçük kamp alanı.',
+      access:
+        'Köye girmeden önce Ducato için yeterli alan ve dönüş imkânı bulunduğunu işletmeye sorun.'
     },
     gumuslukFree: {
-      title: 'Gümüşlük İç Bölge Geceleme',
-      overview: 'Sahil yoğunluğundan uzakta iç bölge adayı.',
+      title: 'Gümüşlük merkez dışında geceleme seçeneği',
+      overview:
+        'Sahil kalabalığından uzakta, ancak arazi sahibinden açık izin alınmadan kullanılmaması gereken olası park yeri.',
       access: 'Özel arazi yaygındır; açık izin alın.'
     },
     gumuslukPaid: {
       title: 'Gümüşlük Karavan Kampı',
-      overview: 'Köye yakın servisli üs.',
+      overview:
+        'Gümüşlük’e yakın, su ve elektrik gibi karavan ihtiyaçlarının karşılanabildiği kamp alanı.',
       access: 'Sahil kestirmesi yerine ana girişi kullanın.'
     },
     akyarlarFree: {
-      title: 'Akyarlar İç Bölge Geceleme',
-      overview: 'Düzenlemeli plaj parkından uzakta aday.',
+      title: 'Akyarlar merkez dışında geceleme seçeneği',
+      overview:
+        'Plaj otoparklarından uzakta değerlendirilebilecek bir alan; geceleme izni ve zemin varışta kontrol edilmeli.',
       access: 'Levhaları kontrol edin, sert rüzgâra hazırlanın.'
     },
     akyarlarPaid: {
       title: 'Akyarlar Kıyı Kampı',
-      overview: 'Yüzme koyuna yakın pratik kamp.',
+      overview: 'Yüzme koyuna yakın, karavan kabul eden kamp alanı.',
       access: 'Yükseklik ve uzunluk sınırlarını sorun.'
     },
     maziFree: {
-      title: 'Mazı Üst Yol Terası',
-      overview: 'Dik plaj yollarının üzerinde uzak aday.',
+      title: 'Mazı üst yolunda olası park alanı',
+      overview:
+        'Dik koy yollarına inmeden önce değerlendirilebilecek üst yol alanı; izin, sağlam zemin ve güvenli dönüş imkânı yerinde kontrol edilmeli.',
       access: 'Orman ve acil geçiş yollarını tamamen açık bırakın.'
     },
     maziPaid: {
@@ -1000,23 +1056,26 @@ const content = {
       access: 'Yol ve alan için önceden arayın.'
     },
     akbukFree: {
-      title: 'Akbük Üst Koy Geceleme',
-      overview: 'Plaj şeridinden uzakta yüksek aday.',
-      access: 'Yalnızca yerleşik ve sağlam cebi kullanın.'
+      title: 'Akbük üst yolunda olası geceleme alanı',
+      overview:
+        'Plaj şeridinin üzerindeki yolda değerlendirilebilecek bir park alanı; geceleme izni kesin değil.',
+      access: 'Yalnızca yolun dışında kalan sert ve düz bir alan kullanın; geçişi kapatmayın.'
     },
     akbukPaid: {
       title: 'Akbük Koyu Kampı',
-      overview: 'Gökova’nın berrak suyu yanında işletmeli seçenek.',
+      overview: 'Gökova’nın berrak denizine yakın, işletmeye ait kamp alanı.',
       access: 'Dik yolu ve dönüş alanını sorun.'
     },
     dalyanFree: {
-      title: 'Dalyan Kırsal Geceleme',
-      overview: 'Sazlık ve korunan plajdan uzakta kırsal aday.',
+      title: 'Dalyan dışında olası kırsal geceleme alanı',
+      overview:
+        'Sazlık ve koruma altındaki plajdan uzakta değerlendirilebilecek kırsal alan; arazi izni olmadan kullanılmamalı.',
       access: 'Sulama yolları ve yumuşak tarlalardan kaçının.'
     },
     dalyanPaid: {
       title: 'Dalyan Bölgesi Kampı',
-      overview: 'Motokaravanı bıraktıktan sonra Dalyan’ı ziyaret etmek için servisli üs.',
+      overview:
+        'Ducato’yu güvenle bırakıp Dalyan’ı daha küçük bir araçla veya yürüyerek gezmek için kullanılabilecek kamp alanı.',
       access: 'Dar nehir merkezinden kaçının.'
     },
     karaotFree: {
@@ -1026,32 +1085,36 @@ const content = {
     },
     karaotPaid: {
       title: 'Karaot Ekolojik Kampı',
-      overview: 'Plaja yakın, doğa odaklı işletmeli seçenek.',
-      access: 'Açılış tarihini ve araç kapasitesini teyit edin.'
+      overview: 'Plaja yakın, doğa odaklı çalışan kamp işletmesi.',
+      access:
+        'Tesisin açık olduğu tarihleri ve Ducato için yer bulunup bulunmadığını gitmeden sorun.'
     },
     faralyaFree: {
-      title: 'Faralya Üst Köy Geceleme',
-      overview: 'Uçurum kenarlarından uzakta dağ adayı.',
+      title: 'Faralya üst köyde olası geceleme alanı',
+      overview:
+        'Uçurum kenarlarından uzakta değerlendirilebilecek bir dağlık alan; geceleme ve arazi izni kesin değil.',
       access: 'Kıyı yolundaki geçiş ceplerini kapatmayın.'
     },
     faralyaPaid: {
       title: 'Faralya Manzara Terası Kampı',
-      overview: 'Güvenli seyirli işletmeli uçurum üstü.',
+      overview: 'Güvenli manzara alanı bulunan, işletmeye ait uçurum üstü kamp.',
       access: 'Ducato ölçülerini önceden bildirin.'
     },
     kasFree: {
-      title: 'Kaş İç Yayla Geceleme',
-      overview: 'Yoğun kıyıdan uzakta serin aday.',
-      access: 'Yerel izinle yerleşik zemini kullanın.'
+      title: 'Kaş yaylasında olası geceleme alanı',
+      overview:
+        'Kıyı kalabalığından uzakta ve daha serin bir park seçeneği; yalnızca arazi sahibinin izniyle kullanılmalı.',
+      access: 'Yalnızca arazi sahibinin izin verdiği sert ve düz zemini kullanın.'
     },
     kasPaid: {
       title: 'Kaş Yarımada Kampı',
-      overview: 'Deniz erişimli manzaralı servisli üs.',
+      overview: 'Denize ulaşımı olan, karavan hizmetleri sunan manzaralı kamp alanı.',
       access: 'Yarımada yolu yoğun ve dardır.'
     },
     ciraliFree: {
-      title: 'Çıralı Üst Köy Geceleme',
-      overview: 'Yuvalama plajından uzakta köy kenarı adayı.',
+      title: 'Çıralı üst köyde olası geceleme alanı',
+      overview:
+        'Kaplumbağa yuvalama sahilinden uzakta değerlendirilebilecek köy kenarı alanı; izin ve yangın kuralları kontrol edilmeli.',
       access: 'Yangın kapanışlarına ve özel araziye uyun.'
     },
     ciraliPaid: {
@@ -1060,13 +1123,15 @@ const content = {
       access: 'Bazı bahçe girişleri dardır.'
     },
     laraFree: {
-      title: 'Lara İç Bölge Geceleme',
-      overview: 'Havalimanı hassasiyetinden uzakta kısa şehir adayı.',
+      title: 'Lara merkez dışında olası geceleme alanı',
+      overview:
+        'Havalimanı ve yoğun sahil bölgesinden uzakta değerlendirilebilecek şehir dışı park alanı; geceleme izni kesin değil.',
       access: 'Bariyerleri ve park denetimini kontrol edin.'
     },
     laraPaid: {
       title: 'Antalya Doğu Karavan Tesisi',
-      overview: 'Yolculuk sonrası için servisli son gece üssü.',
+      overview:
+        'Yolculuk sonunda su, duş ve atık ihtiyaçlarını karşılamak için kullanılabilecek karavan tesisi.',
       access: 'Otel transfer yoğunluğundan kaçının.'
     }
   }
