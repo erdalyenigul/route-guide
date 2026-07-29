@@ -3,6 +3,7 @@ import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { StopViewModel } from '@/content/types'
 import { useTripStore } from '@/stores/trip'
+import { terrainProfile } from '@/utils/terrainProfile'
 
 const { t } = useI18n(); const store = useTripStore()
 const trip = computed(() => store.activeTrip)
@@ -130,6 +131,7 @@ onUnmounted(() => {
                     <div v-if="index > 0"><span>{{ t('trip.distance') }}</span><strong>{{ stop.drivingDistanceFromPreviousKm ?? '—' }} {{ t('common.km') }}</strong></div>
                     <div v-if="index > 0 && stop.status === 'visited'"><span>{{ t('home.actualDistance') }}</span><strong>{{ stop.actualDistanceKm ?? 0 }} {{ t('common.km') }}</strong></div>
                     <div v-if="index > 0"><span>{{ t('home.driveTime') }}</span><strong>{{ stop.estimatedDriveTimeMinutes ?? '—' }} {{ t('common.min') }}</strong></div>
+                    <div v-if="index > 0 && terrainProfile(stop)"><span>{{ t('van.terrainProfile') }}</span><strong>{{ t(`van.road.terrain.${terrainProfile(stop)}`) }}</strong></div>
                   </div>
                 </div>
               </v-expand-transition>

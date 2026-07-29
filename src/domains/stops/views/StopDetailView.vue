@@ -9,6 +9,7 @@ import { adminContentService } from '@/domains/admin/services/adminContentServic
 import { mapService } from '@/services/mapService'
 import { useTripStore } from '@/stores/trip'
 import { formatDateTime } from '@/utils/dateTime'
+import { terrainProfile } from '@/utils/terrainProfile'
 
 const { t } = useI18n(); const route = useRoute(); const store = useTripStore()
 const stop = computed(() => store.stopById(String(route.params.stopId)))
@@ -83,6 +84,7 @@ const roadChips = computed(() => {
     stop.value.turnaroundPossible === true ? 'turnaroundPossible' : null
   ].filter((item): item is string => item !== null)
 })
+const stopTerrainProfile = computed(() => stop.value ? terrainProfile(stop.value) : undefined)
 const stopWarnings = computed(() => stop.value?.warnings ?? [])
 function usefulContent(key: string): boolean {
   const value = t(key).trim().toLocaleLowerCase().replace(/[.!]$/g, '')
@@ -269,7 +271,8 @@ onUnmounted(() => {
               <template v-if="section.key === 'road'">
                 <v-chip class="ducato-decision" :color="ducatoDecisionColor" size="large">{{ decision(ducatoDecision) }}</v-chip>
                 <div v-if="roadChips.length" class="road-chips"><v-chip v-for="chip in roadChips" :key="chip" size="small" variant="tonal">{{ t(`van.road.${chip}`) }}</v-chip></div>
-                <div v-if="stop.roadSurface || stop.roadWidth || stop.turnaroundPossible !== null" class="condition-list">
+                <div v-if="stopTerrainProfile || stop.roadSurface || stop.roadWidth || stop.turnaroundPossible !== null" class="condition-list">
+                  <div v-if="stopTerrainProfile"><span>{{ t('van.terrainProfile') }}</span><strong>{{ t(`van.road.terrain.${stopTerrainProfile}`) }}</strong></div>
                   <div v-if="stop.roadSurface"><span>{{ t('van.roadSurface') }}</span><strong>{{ t(`van.road.${stop.roadSurface}`) }}</strong></div>
                   <div v-if="stop.roadWidth"><span>{{ t('van.roadWidth') }}</span><strong>{{ t(`van.road.${stop.roadWidth}`) }}</strong></div>
                   <div v-if="stop.turnaroundPossible !== null"><span>{{ t('van.turnaround') }}</span><strong>{{ booleanLabel(stop.turnaroundPossible) }}</strong></div>
