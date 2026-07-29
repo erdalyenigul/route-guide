@@ -7,7 +7,10 @@ const darkRasterStyle: StyleSpecification = {
   sources: {
     osm: {
       type: 'raster',
-      tiles: ['https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', 'https://b.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png'],
+      tiles: [
+        'https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
+        'https://b.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png'
+      ],
       tileSize: 256,
       attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
     }
@@ -16,7 +19,16 @@ const darkRasterStyle: StyleSpecification = {
 }
 
 function isFiniteCoordinate(latitude: number | null, longitude: number | null): latitude is number {
-  return latitude !== null && longitude !== null && Number.isFinite(latitude) && Number.isFinite(longitude) && latitude >= -90 && latitude <= 90 && longitude >= -180 && longitude <= 180
+  return (
+    latitude !== null &&
+    longitude !== null &&
+    Number.isFinite(latitude) &&
+    Number.isFinite(longitude) &&
+    latitude >= -90 &&
+    latitude <= 90 &&
+    longitude >= -180 &&
+    longitude <= 180
+  )
 }
 
 export const mapService = {
@@ -34,16 +46,26 @@ export const mapService = {
   },
 
   routeFeature(stops: MapStop[]): MapRouteFeature | null {
-    const coordinates = this.validStops(stops).map((stop) => [stop.coordinate!.longitude, stop.coordinate!.latitude] satisfies [number, number])
-    return coordinates.length >= 2 ? { type: 'Feature', properties: {}, geometry: { type: 'LineString', coordinates } } : null
+    const coordinates = this.validStops(stops).map(
+      (stop) => [stop.coordinate!.longitude, stop.coordinate!.latitude] satisfies [number, number]
+    )
+    return coordinates.length >= 2
+      ? { type: 'Feature', properties: {}, geometry: { type: 'LineString', coordinates } }
+      : null
   },
 
   bounds(stops: MapStop[]): MapBounds | null {
     const coordinates = this.validStops(stops).map((stop) => stop.coordinate!)
     if (!coordinates.length) return null
     return {
-      southWest: [Math.min(...coordinates.map(item => item.longitude)), Math.min(...coordinates.map(item => item.latitude))],
-      northEast: [Math.max(...coordinates.map(item => item.longitude)), Math.max(...coordinates.map(item => item.latitude))]
+      southWest: [
+        Math.min(...coordinates.map((item) => item.longitude)),
+        Math.min(...coordinates.map((item) => item.latitude))
+      ],
+      northEast: [
+        Math.max(...coordinates.map((item) => item.longitude)),
+        Math.max(...coordinates.map((item) => item.latitude))
+      ]
     }
   },
 
@@ -58,7 +80,9 @@ export const mapService = {
   },
 
   externalRouteUrl(coordinates: Array<MapCoordinate | null | undefined>): string | undefined {
-    const validCoordinates = coordinates.filter((coordinate): coordinate is MapCoordinate => coordinate !== null && coordinate !== undefined)
+    const validCoordinates = coordinates.filter(
+      (coordinate): coordinate is MapCoordinate => coordinate !== null && coordinate !== undefined
+    )
     if (!validCoordinates.length) return undefined
     if (validCoordinates.length === 1) return this.externalNavigationUrl(validCoordinates[0]!)
 
@@ -73,7 +97,10 @@ export const mapService = {
       travelmode: 'driving'
     })
     if (waypoints.length) {
-      parameters.set('waypoints', waypoints.map((coordinate) => `${coordinate.latitude},${coordinate.longitude}`).join('|'))
+      parameters.set(
+        'waypoints',
+        waypoints.map((coordinate) => `${coordinate.latitude},${coordinate.longitude}`).join('|')
+      )
     }
     return `https://www.google.com/maps/dir/?${parameters.toString()}`
   },

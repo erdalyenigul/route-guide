@@ -11,65 +11,115 @@ import { useTripStore } from '@/stores/trip'
 import { formatDateTime } from '@/utils/dateTime'
 import { terrainProfile } from '@/utils/terrainProfile'
 
-const { t } = useI18n(); const route = useRoute(); const store = useTripStore()
+const { t } = useI18n()
+const route = useRoute()
+const store = useTripStore()
 const stop = computed(() => store.stopById(String(route.params.stopId)))
 const publishedExperience = computed(() => {
   const experience = stop.value?.experience
   return experience?.isPublished && experience.body.trim() ? experience : undefined
 })
-const resourceLinks = computed(() => stop.value ? stopResourceLinks[stop.value.slug] ?? [] : [])
-const campingSpots = computed(() => stop.value ? store.campingSpotsForStop(stop.value.id) : [])
+const resourceLinks = computed(() => (stop.value ? (stopResourceLinks[stop.value.slug] ?? []) : []))
+const campingSpots = computed(() => (stop.value ? store.campingSpotsForStop(stop.value.id) : []))
 const navigationDestination = computed(() => {
-  const preferredSpot = campingSpots.value.find(spot => spot.recommended)
-  return preferredSpot ? mapService.coordinate(preferredSpot.coordinates) : (stop.value ? mapService.coordinate(stop.value.coordinates) : null)
+  const preferredSpot = campingSpots.value.find((spot) => spot.recommended)
+  return preferredSpot
+    ? mapService.coordinate(preferredSpot.coordinates)
+    : stop.value
+      ? mapService.coordinate(stop.value.coordinates)
+      : null
 })
-const activities = computed(() => stop.value ? store.activitiesForStop(stop.value.id) : [])
-const notes = computed(() => activities.value.filter(item => item.type === 'note'))
-const exploreActivities = computed(() => activities.value.filter(item => item.type !== 'note'))
+const activities = computed(() => (stop.value ? store.activitiesForStop(stop.value.id) : []))
+const notes = computed(() => activities.value.filter((item) => item.type === 'note'))
+const exploreActivities = computed(() => activities.value.filter((item) => item.type !== 'note'))
 const selectedPhotoIndex = ref<number | null>(null)
-const viewerPhotos = computed(() => stop.value?.photos.map(photo => ({
-  id: photo.id,
-  url: photo.url,
-  alt: photo.caption || t(photo.alt),
-  caption: photo.caption
-})) ?? [])
+const viewerPhotos = computed(
+  () =>
+    stop.value?.photos.map((photo) => ({
+      id: photo.id,
+      url: photo.url,
+      alt: photo.caption || t(photo.alt),
+      caption: photo.caption
+    })) ?? []
+)
 const isEditor = ref(false)
 const completionEditorOpen = ref(false)
 const stayedNightsInput = ref(0)
 const actualDistanceInput = ref(0)
 const isSavingCompletion = ref(false)
 const detailColumnCount = ref(1)
-const routeStops = computed(() => stop.value ? store.stopsForRoute(stop.value.routeId) : [])
-const stopIndex = computed(() => routeStops.value.findIndex(item => item.id === stop.value?.id))
+const routeStops = computed(() => (stop.value ? store.stopsForRoute(stop.value.routeId) : []))
+const stopIndex = computed(() => routeStops.value.findIndex((item) => item.id === stop.value?.id))
 const isRouteOrigin = computed(() => stopIndex.value === 0)
 const isRouteDestination = computed(() => stopIndex.value === routeStops.value.length - 1)
 const isAccommodationStop = computed(() => !isRouteOrigin.value && !isRouteDestination.value)
-const previousDetailStop = computed(() => stopIndex.value > 0 ? routeStops.value[stopIndex.value - 1] : undefined)
-const nextDetailStop = computed(() => stopIndex.value >= 0 && stopIndex.value < routeStops.value.length - 1 ? routeStops.value[stopIndex.value + 1] : undefined)
-const navigationUrl = computed(() => stop.value ? mapService.externalRouteUrl([
-  previousDetailStop.value ? mapService.coordinate(previousDetailStop.value.coordinates) : null,
-  navigationDestination.value
-]) : undefined)
+const previousDetailStop = computed(() =>
+  stopIndex.value > 0 ? routeStops.value[stopIndex.value - 1] : undefined
+)
+const nextDetailStop = computed(() =>
+  stopIndex.value >= 0 && stopIndex.value < routeStops.value.length - 1
+    ? routeStops.value[stopIndex.value + 1]
+    : undefined
+)
+const navigationUrl = computed(() =>
+  stop.value
+    ? mapService.externalRouteUrl([
+        previousDetailStop.value
+          ? mapService.coordinate(previousDetailStop.value.coordinates)
+          : null,
+        navigationDestination.value
+      ])
+    : undefined
+)
 function openNavigation(): void {
   mapService.openExternalUrl(navigationUrl.value)
 }
-const detailMapStops = computed(() => routeStops.value.map(item => ({ id: item.id, label: t(item.title), status: item.status, coordinate: mapService.coordinate(item.coordinates) })))
-const services = computed(() => stop.value ? [
-  { key: 'water', icon: 'mdi-water-outline', value: stop.value.waterRefill },
-  { key: 'dumpStation', icon: 'mdi-delete-empty-outline', value: stop.value.dumpStation },
-  { key: 'market', icon: 'mdi-cart-outline', value: stop.value.nearbyMarket },
-  { key: 'fuel', icon: 'mdi-gas-station-outline', value: stop.value.fuelStation }
-] : [])
-const visibleServices = computed(() => services.value.filter(service => service.value.available))
-const freecampSpots = computed(() => campingSpots.value
-  .filter(spot => spot.type === 'freecamp' && ['allowed', 'tolerated', 'restricted'].includes(spot.overnightStatus ?? ''))
-  .sort((a, b) => Number(b.beachfront) - Number(a.beachfront) || Number(b.seaView) - Number(a.seaView) || Number(b.recommended) - Number(a.recommended)))
-const paidSpots = computed(() => campingSpots.value.filter(spot => spot.type !== 'freecamp'))
+const detailMapStops = computed(() =>
+  routeStops.value.map((item) => ({
+    id: item.id,
+    label: t(item.title),
+    status: item.status,
+    coordinate: mapService.coordinate(item.coordinates)
+  }))
+)
+const services = computed(() =>
+  stop.value
+    ? [
+        { key: 'water', icon: 'mdi-water-outline', value: stop.value.waterRefill },
+        { key: 'dumpStation', icon: 'mdi-delete-empty-outline', value: stop.value.dumpStation },
+        { key: 'market', icon: 'mdi-cart-outline', value: stop.value.nearbyMarket },
+        { key: 'fuel', icon: 'mdi-gas-station-outline', value: stop.value.fuelStation }
+      ]
+    : []
+)
+const visibleServices = computed(() => services.value.filter((service) => service.value.available))
+const freecampSpots = computed(() =>
+  campingSpots.value
+    .filter(
+      (spot) =>
+        spot.type === 'freecamp' &&
+        ['allowed', 'tolerated', 'restricted'].includes(spot.overnightStatus ?? '')
+    )
+    .sort(
+      (a, b) =>
+        Number(b.beachfront) - Number(a.beachfront) ||
+        Number(b.seaView) - Number(a.seaView) ||
+        Number(b.recommended) - Number(a.recommended)
+    )
+)
+const paidSpots = computed(() => campingSpots.value.filter((spot) => spot.type !== 'freecamp'))
 const visibleCampingSpots = computed(() => [...freecampSpots.value, ...paidSpots.value])
-const coastalSpots = computed(() => visibleCampingSpots.value.filter(spot => spot.beachfront || spot.seaView))
+const coastalSpots = computed(() =>
+  visibleCampingSpots.value.filter((spot) => spot.beachfront || spot.seaView)
+)
 const ducatoDecision = computed(() => stop.value?.ducatoAccess ?? null)
 const ducatoDecisionColor = computed(() => {
-  const colors: Record<string, string> = { comfortable: 'success', caution: 'warning', leave_above: 'orange', do_not_enter: 'error' }
+  const colors: Record<string, string> = {
+    comfortable: 'success',
+    caution: 'warning',
+    leave_above: 'orange',
+    do_not_enter: 'error'
+  }
   return colors[ducatoDecision.value ?? ''] ?? 'default'
 })
 const roadChips = computed(() => {
@@ -84,23 +134,34 @@ const roadChips = computed(() => {
     stop.value.turnaroundPossible === true ? 'turnaroundPossible' : null
   ].filter((item): item is string => item !== null)
 })
-const stopTerrainProfile = computed(() => stop.value ? terrainProfile(stop.value) : undefined)
+const stopTerrainProfile = computed(() => (stop.value ? terrainProfile(stop.value) : undefined))
 const stopWarnings = computed(() => stop.value?.warnings ?? [])
 function usefulContent(key: string): boolean {
   const value = t(key).trim().toLocaleLowerCase().replace(/[.!]$/g, '')
-  return Boolean(value) && ![
-    'unknown', 'bilinmiyor', 'not added', 'eklenmedi',
-    'not verified', 'doğrulanmadı', 'henüz eklenmedi'
-  ].some(marker => value === marker || value.startsWith(`${marker} `))
+  return (
+    Boolean(value) &&
+    ![
+      'unknown',
+      'bilinmiyor',
+      'not added',
+      'eklenmedi',
+      'not verified',
+      'doğrulanmadı',
+      'henüz eklenmedi'
+    ].some((marker) => value === marker || value.startsWith(`${marker} `))
+  )
 }
 const hasSunrise = computed(() => Boolean(stop.value && usefulContent(stop.value.bestSunrise)))
 const hasSunset = computed(() => Boolean(stop.value && usefulContent(stop.value.bestSunset)))
-const hasEssentials = computed(() => Boolean(stop.value && (
-  stop.value.supplyNote
-  || stop.value.municipalityFacilities.available
-  || visibleServices.value.length
-  || stop.value.internetScore !== null
-)))
+const hasEssentials = computed(() =>
+  Boolean(
+    stop.value &&
+    (stop.value.supplyNote ||
+      stop.value.municipalityFacilities.available ||
+      visibleServices.value.length ||
+      stop.value.internetScore !== null)
+  )
+)
 type DetailSectionKey = 'road' | 'camping' | 'risks' | 'essentials' | 'explore' | 'summary'
 interface DetailSection {
   key: DetailSectionKey
@@ -113,47 +174,89 @@ const detailSections = computed<DetailSection[]>(() => {
   if (!stop.value) return []
   return [
     { key: 'road', icon: 'mdi-van-utility', title: 'van.roadAndDucato' },
-    ...(visibleCampingSpots.value.length ? [{ key: 'camping' as const, icon: 'mdi-tent', title: 'van.freecampAndOvernight', badge: visibleCampingSpots.value.length }] : []),
-    ...(stopWarnings.value.length ? [{ key: 'risks' as const, icon: 'mdi-alert-outline', title: 'van.risks', badge: stopWarnings.value.length, badgeColor: 'warning' }] : []),
-    ...(hasEssentials.value ? [{ key: 'essentials' as const, icon: 'mdi-water-outline', title: 'van.essentials' }] : []),
+    ...(visibleCampingSpots.value.length
+      ? [
+          {
+            key: 'camping' as const,
+            icon: 'mdi-tent',
+            title: 'van.freecampAndOvernight',
+            badge: visibleCampingSpots.value.length
+          }
+        ]
+      : []),
+    ...(stopWarnings.value.length
+      ? [
+          {
+            key: 'risks' as const,
+            icon: 'mdi-alert-outline',
+            title: 'van.risks',
+            badge: stopWarnings.value.length,
+            badgeColor: 'warning'
+          }
+        ]
+      : []),
+    ...(hasEssentials.value
+      ? [{ key: 'essentials' as const, icon: 'mdi-water-outline', title: 'van.essentials' }]
+      : []),
     { key: 'explore', icon: 'mdi-compass-outline', title: 'van.explore' },
     { key: 'summary', icon: 'mdi-text-box-check-outline', title: 'van.summary' }
   ]
 })
 const detailColumns = computed(() => {
   const columns = Array.from({ length: detailColumnCount.value }, () => [] as DetailSection[])
-  detailSections.value.forEach((section, index) => columns[index % detailColumnCount.value]?.push(section))
+  detailSections.value.forEach((section, index) =>
+    columns[index % detailColumnCount.value]?.push(section)
+  )
   return columns
 })
-function score(value: number | null): string { return value === null ? t('common.unknown') : `${value}/5` }
-function decision(value: string | null | undefined): string { return value ? t(`van.ducato.${value}`) : t('common.unknown') }
-function booleanLabel(value: boolean | null | undefined): string { return value === true ? t('common.yes') : value === false ? t('common.no') : t('common.unknown') }
-function openSpotNavigation(spotId: string): void {
-  const spot = campingSpots.value.find(item => item.id === spotId)
-  if (spot) mapService.openExternalUrl(mapService.externalNavigationUrl(mapService.coordinate(spot.coordinates)))
+function score(value: number | null): string {
+  return value === null ? t('common.unknown') : `${value}/5`
 }
-function resourceHost(url: string): string { return globalThis.URL ? new globalThis.URL(url).hostname.replace(/^www\./, '') : url }
+function decision(value: string | null | undefined): string {
+  return value ? t(`van.ducato.${value}`) : t('common.unknown')
+}
+function booleanLabel(value: boolean | null | undefined): string {
+  return value === true ? t('common.yes') : value === false ? t('common.no') : t('common.unknown')
+}
+function openSpotNavigation(spotId: string): void {
+  const spot = campingSpots.value.find((item) => item.id === spotId)
+  if (spot)
+    mapService.openExternalUrl(
+      mapService.externalNavigationUrl(mapService.coordinate(spot.coordinates))
+    )
+}
+function resourceHost(url: string): string {
+  return globalThis.URL ? new globalThis.URL(url).hostname.replace(/^www\./, '') : url
+}
 function updateDetailColumnCount(): void {
   detailColumnCount.value = window.innerWidth >= 700 ? 2 : 1
 }
 function syncCompletionInputs(): void {
   if (!stop.value) return
   stayedNightsInput.value = stop.value.nightsStayed ?? stop.value.recommendedNights
-  actualDistanceInput.value = stop.value.actualDistanceKm ?? stop.value.drivingDistanceFromPreviousKm ?? 0
+  actualDistanceInput.value =
+    stop.value.actualDistanceKm ?? stop.value.drivingDistanceFromPreviousKm ?? 0
 }
 function openCompletionEditor(): void {
   if (!isEditor.value || !stop.value) return
   if (!completionEditorOpen.value) syncCompletionInputs()
   completionEditorOpen.value = !completionEditorOpen.value
 }
-watch(() => stop.value?.id, () => {
-  syncCompletionInputs()
-  selectedPhotoIndex.value = null
-})
+watch(
+  () => stop.value?.id,
+  () => {
+    syncCompletionInputs()
+    selectedPhotoIndex.value = null
+  }
+)
 async function saveCompletion(): Promise<void> {
   if (!isEditor.value || !stop.value) return
-  const nights = isAccommodationStop.value ? Math.min(Math.max(Math.trunc(Number(stayedNightsInput.value) || 0), 0), 365) : null
-  const distance = isRouteOrigin.value ? null : Math.min(Math.max(Math.trunc(Number(actualDistanceInput.value) || 0), 0), 5000)
+  const nights = isAccommodationStop.value
+    ? Math.min(Math.max(Math.trunc(Number(stayedNightsInput.value) || 0), 0), 365)
+    : null
+  const distance = isRouteOrigin.value
+    ? null
+    : Math.min(Math.max(Math.trunc(Number(actualDistanceInput.value) || 0), 0), 5000)
   isSavingCompletion.value = true
   try {
     await store.setStopCompletion(stop.value.id, true, nights, distance)
@@ -203,12 +306,32 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <main v-if="stop" class="stop-detail">
+  <main
+    v-if="stop"
+    class="stop-detail"
+  >
     <section class="cover">
-      <button v-if="stop.photos[0]" class="cover-photo-trigger" type="button" :aria-label="t('gallery.openPhoto')" @click="selectedPhotoIndex=0">
-        <img :src="stop.photos[0].url" :alt="stop.photos[0].caption || t(stop.photos[0].alt)" />
+      <button
+        v-if="stop.photos[0]"
+        class="cover-photo-trigger"
+        type="button"
+        :aria-label="t('gallery.openPhoto')"
+        @click="selectedPhotoIndex = 0"
+      >
+        <img
+          :src="stop.photos[0].url"
+          :alt="stop.photos[0].caption || t(stop.photos[0].alt)"
+        />
       </button>
-      <div v-else class="cover-placeholder"><v-icon icon="mdi-image-outline" size="48" /></div>
+      <div
+        v-else
+        class="cover-placeholder"
+      >
+        <v-icon
+          icon="mdi-image-outline"
+          size="48"
+        />
+      </div>
       <div class="cover-shade" />
       <v-btn
         v-if="isEditor && !stop.photos.length"
@@ -220,29 +343,100 @@ onUnmounted(() => {
       >
         {{ t('admin.uploadCoverPhoto') }}
       </v-btn>
-      <v-btn class="back" icon="mdi-chevron-left" size="large" :aria-label="t('nav.back')" @click="$router.back()" />
-      <v-btn class="favorite" :icon="stop.favorite?'mdi-heart':'mdi-heart-outline'" size="large" :aria-label="t(stop.favorite?'stop.unfavorite':'stop.favorite')" @click="store.toggleFavorite(stop.id)" />
-      <div class="cover-copy"><p>{{ t(stop.region) }}</p><h1>{{ t(stop.title) }}</h1></div>
+      <v-btn
+        class="back"
+        icon="mdi-chevron-left"
+        size="large"
+        :aria-label="t('nav.back')"
+        @click="$router.back()"
+      />
+      <v-btn
+        class="favorite"
+        :icon="stop.favorite ? 'mdi-heart' : 'mdi-heart-outline'"
+        size="large"
+        :aria-label="t(stop.favorite ? 'stop.unfavorite' : 'stop.favorite')"
+        @click="store.toggleFavorite(stop.id)"
+      />
+      <div class="cover-copy">
+        <p>{{ t(stop.region) }}</p>
+        <h1>{{ t(stop.title) }}</h1>
+      </div>
     </section>
 
     <div class="content">
-      <section v-if="stop.photos.length" class="photo-strip" :aria-label="t('gallery.title')"><button v-for="(photo,index) in stop.photos" :key="photo.id" type="button" :aria-label="t('gallery.openPhoto')" @click="selectedPhotoIndex=index"><img :src="photo.url" :alt="photo.caption || t(photo.alt)" loading="lazy" /></button></section>
+      <section
+        v-if="stop.photos.length"
+        class="photo-strip"
+        :aria-label="t('gallery.title')"
+      >
+        <button
+          v-for="(photo, index) in stop.photos"
+          :key="photo.id"
+          type="button"
+          :aria-label="t('gallery.openPhoto')"
+          @click="selectedPhotoIndex = index"
+        >
+          <img
+            :src="photo.url"
+            :alt="photo.caption || t(photo.alt)"
+            loading="lazy"
+          />
+        </button>
+      </section>
 
       <section class="intro">
         <p>{{ t(stop.overview) }}</p>
         <div class="van-summary">
-          <div class="van-summary-heading"><span>{{ t('van.quickDecision') }}</span><strong>{{ t(stop.title) }}</strong></div>
+          <div class="van-summary-heading">
+            <span>{{ t('van.quickDecision') }}</span
+            ><strong>{{ t(stop.title) }}</strong>
+          </div>
           <div class="van-summary-grid">
-            <div v-if="ducatoDecision"><v-icon icon="mdi-van-utility" /><span>{{ t('van.ducatoLabel') }}</span><v-chip size="small" :color="ducatoDecisionColor">{{ decision(ducatoDecision) }}</v-chip></div>
-            <div v-if="freecampSpots.length"><v-icon icon="mdi-tent" /><span>{{ t('van.freecampLabel') }}</span><strong>{{ t('van.suitableSpotCount', { count: freecampSpots.length }) }}</strong></div>
-            <div v-if="coastalSpots.length"><v-icon icon="mdi-waves" /><span>{{ t('van.seaLabel') }}</span><strong>{{ coastalSpots.some(spot=>spot.beachfront) ? t('van.beachfront') : t('van.seaView') }}</strong></div>
-            <div><v-icon icon="mdi-water-outline" /><span>{{ t('van.waterLabel') }}</span><strong>{{ stop.waterRefill.available ? t('common.yes') : t('van.fillBeforeArrival') }}</strong></div>
-            <div v-if="freecampSpots.some(spot=>spot.overnightStatus==='allowed'||spot.overnightStatus==='tolerated')"><v-icon icon="mdi-weather-night" /><span>{{ t('van.overnightLabel') }}</span><strong>{{ t('van.spotChoiceMatters') }}</strong></div>
+            <div v-if="ducatoDecision">
+              <v-icon icon="mdi-van-utility" /><span>{{ t('van.ducatoLabel') }}</span
+              ><v-chip
+                size="small"
+                :color="ducatoDecisionColor"
+                >{{ decision(ducatoDecision) }}</v-chip
+              >
+            </div>
+            <div v-if="freecampSpots.length">
+              <v-icon icon="mdi-tent" /><span>{{ t('van.freecampLabel') }}</span
+              ><strong>{{ t('van.suitableSpotCount', { count: freecampSpots.length }) }}</strong>
+            </div>
+            <div v-if="coastalSpots.length">
+              <v-icon icon="mdi-waves" /><span>{{ t('van.seaLabel') }}</span
+              ><strong>{{
+                coastalSpots.some((spot) => spot.beachfront)
+                  ? t('van.beachfront')
+                  : t('van.seaView')
+              }}</strong>
+            </div>
+            <div>
+              <v-icon icon="mdi-water-outline" /><span>{{ t('van.waterLabel') }}</span
+              ><strong>{{
+                stop.waterRefill.available ? t('common.yes') : t('van.fillBeforeArrival')
+              }}</strong>
+            </div>
+            <div
+              v-if="
+                freecampSpots.some(
+                  (spot) =>
+                    spot.overnightStatus === 'allowed' || spot.overnightStatus === 'tolerated'
+                )
+              "
+            >
+              <v-icon icon="mdi-weather-night" /><span>{{ t('van.overnightLabel') }}</span
+              ><strong>{{ t('van.spotChoiceMatters') }}</strong>
+            </div>
           </div>
         </div>
       </section>
 
-      <article v-if="publishedExperience" class="experience-card">
+      <article
+        v-if="publishedExperience"
+        class="experience-card"
+      >
         <header class="experience-card-header">
           <span class="experience-card-icon"><v-icon icon="mdi-notebook-heart-outline" /></span>
           <div>
@@ -251,67 +445,278 @@ onUnmounted(() => {
           </div>
         </header>
         <p class="experience-copy">{{ publishedExperience.body }}</p>
-        <footer v-if="publishedExperience.authorName" class="experience-author">
+        <footer
+          v-if="publishedExperience.authorName"
+          class="experience-author"
+        >
           <v-icon icon="mdi-account-outline" />
-          {{ t('stop.experienceBy', { name: publishedExperience.authorName, date: formatDateTime(publishedExperience.updatedAt) }) }}
+          {{
+            t('stop.experienceBy', {
+              name: publishedExperience.authorName,
+              date: formatDateTime(publishedExperience.updatedAt)
+            })
+          }}
         </footer>
       </article>
 
       <div class="detail-panels">
-        <v-expansion-panels v-for="(column, columnIndex) in detailColumns" :key="columnIndex" class="detail-column" multiple variant="accordion">
-          <v-expansion-panel v-for="section in column" :key="section.key" :value="section.key" :class="{ 'road-panel': section.key === 'road' }">
+        <v-expansion-panels
+          v-for="(column, columnIndex) in detailColumns"
+          :key="columnIndex"
+          class="detail-column"
+          multiple
+          variant="accordion"
+        >
+          <v-expansion-panel
+            v-for="section in column"
+            :key="section.key"
+            :value="section.key"
+            :class="{ 'road-panel': section.key === 'road' }"
+          >
             <v-expansion-panel-title>
               <v-icon :icon="section.icon" />
               <span class="section-title-copy">
                 <strong>{{ t(section.title) }}</strong>
-                <v-chip v-if="section.badge !== undefined" size="x-small" :color="section.badgeColor">{{ section.badge }}</v-chip>
+                <v-chip
+                  v-if="section.badge !== undefined"
+                  size="x-small"
+                  :color="section.badgeColor"
+                  >{{ section.badge }}</v-chip
+                >
               </span>
             </v-expansion-panel-title>
             <v-expansion-panel-text>
               <template v-if="section.key === 'road'">
-                <v-chip class="ducato-decision" :color="ducatoDecisionColor" size="large">{{ decision(ducatoDecision) }}</v-chip>
-                <div v-if="roadChips.length" class="road-chips"><v-chip v-for="chip in roadChips" :key="chip" size="small" variant="tonal">{{ t(`van.road.${chip}`) }}</v-chip></div>
-                <div v-if="stopTerrainProfile || stop.roadSurface || stop.roadWidth || stop.turnaroundPossible !== null" class="condition-list">
-                  <div v-if="stopTerrainProfile"><span>{{ t('van.terrainProfile') }}</span><strong>{{ t(`van.road.terrain.${stopTerrainProfile}`) }}</strong></div>
-                  <div v-if="stop.roadSurface"><span>{{ t('van.roadSurface') }}</span><strong>{{ t(`van.road.${stop.roadSurface}`) }}</strong></div>
-                  <div v-if="stop.roadWidth"><span>{{ t('van.roadWidth') }}</span><strong>{{ t(`van.road.${stop.roadWidth}`) }}</strong></div>
-                  <div v-if="stop.turnaroundPossible !== null"><span>{{ t('van.turnaround') }}</span><strong>{{ booleanLabel(stop.turnaroundPossible) }}</strong></div>
+                <v-chip
+                  class="ducato-decision"
+                  :color="ducatoDecisionColor"
+                  size="large"
+                  >{{ decision(ducatoDecision) }}</v-chip
+                >
+                <div
+                  v-if="roadChips.length"
+                  class="road-chips"
+                >
+                  <v-chip
+                    v-for="chip in roadChips"
+                    :key="chip"
+                    size="small"
+                    variant="tonal"
+                    >{{ t(`van.road.${chip}`) }}</v-chip
+                  >
                 </div>
-                <p v-if="stop.lastMileNote" class="operational-callout"><v-icon icon="mdi-road-variant" />{{ t(stop.lastMileNote) }}</p>
+                <div
+                  v-if="
+                    stopTerrainProfile ||
+                    stop.roadSurface ||
+                    stop.roadWidth ||
+                    stop.turnaroundPossible !== null
+                  "
+                  class="condition-list"
+                >
+                  <div v-if="stopTerrainProfile">
+                    <span>{{ t('van.terrainProfile') }}</span
+                    ><strong>{{ t(`van.road.terrain.${stopTerrainProfile}`) }}</strong>
+                  </div>
+                  <div v-if="stop.roadSurface">
+                    <span>{{ t('van.roadSurface') }}</span
+                    ><strong>{{ t(`van.road.${stop.roadSurface}`) }}</strong>
+                  </div>
+                  <div v-if="stop.roadWidth">
+                    <span>{{ t('van.roadWidth') }}</span
+                    ><strong>{{ t(`van.road.${stop.roadWidth}`) }}</strong>
+                  </div>
+                  <div v-if="stop.turnaroundPossible !== null">
+                    <span>{{ t('van.turnaround') }}</span
+                    ><strong>{{ booleanLabel(stop.turnaroundPossible) }}</strong>
+                  </div>
+                </div>
+                <p
+                  v-if="stop.lastMileNote"
+                  class="operational-callout"
+                >
+                  <v-icon icon="mdi-road-variant" />{{ t(stop.lastMileNote) }}
+                </p>
               </template>
               <template v-else-if="section.key === 'camping'">
                 <template v-if="freecampSpots.length">
                   <h3 class="spot-group-title">{{ t('van.freecampSpots') }}</h3>
                   <div class="spot-list">
-                    <article v-for="spot in freecampSpots" :key="spot.id" class="spot-card">
-                      <div class="list-heading"><v-chip size="x-small" color="success">{{ t('common.freecamp') }}</v-chip><strong>{{ t(spot.title) }}</strong></div>
-                      <div class="spot-tags"><v-chip v-if="spot.beachfront" size="x-small">{{ t('van.beachfront') }}</v-chip><v-chip v-if="spot.seaView" size="x-small">{{ t('van.seaView') }}</v-chip><v-chip v-if="spot.levelGround" size="x-small">{{ t('van.levelGround') }}</v-chip><v-chip size="x-small" variant="outlined">{{ decision(spot.ducatoAccess) }}</v-chip></div>
-                      <p>{{ t(spot.overview) }}</p><small>{{ t(spot.accessNote) }}</small>
-                      <div v-if="spot.waterAvailable !== null || spot.toiletAvailable !== null || (spot.mobileSignal && spot.mobileSignal !== 'unknown')" class="spot-meta"><span v-if="spot.waterAvailable !== null">{{ t('van.waterLabel') }}: {{ booleanLabel(spot.waterAvailable) }}</span><span v-if="spot.toiletAvailable !== null">{{ t('stop.wc') }}: {{ booleanLabel(spot.toiletAvailable) }}</span><span v-if="spot.mobileSignal && spot.mobileSignal !== 'unknown'">{{ t('stop.internet') }}: {{ t(`van.signal.${spot.mobileSignal}`) }}</span></div>
-                      <v-btn block variant="tonal" prepend-icon="mdi-navigation-variant" @click="openSpotNavigation(spot.id)">{{ t('van.openNavigation') }}</v-btn>
+                    <article
+                      v-for="spot in freecampSpots"
+                      :key="spot.id"
+                      class="spot-card"
+                    >
+                      <div class="list-heading">
+                        <v-chip
+                          size="x-small"
+                          color="success"
+                          >{{ t('common.freecamp') }}</v-chip
+                        ><strong>{{ t(spot.title) }}</strong>
+                      </div>
+                      <div class="spot-tags">
+                        <v-chip
+                          v-if="spot.beachfront"
+                          size="x-small"
+                          >{{ t('van.beachfront') }}</v-chip
+                        ><v-chip
+                          v-if="spot.seaView"
+                          size="x-small"
+                          >{{ t('van.seaView') }}</v-chip
+                        ><v-chip
+                          v-if="spot.levelGround"
+                          size="x-small"
+                          >{{ t('van.levelGround') }}</v-chip
+                        ><v-chip
+                          size="x-small"
+                          variant="outlined"
+                          >{{ decision(spot.ducatoAccess) }}</v-chip
+                        >
+                      </div>
+                      <p>{{ t(spot.overview) }}</p>
+                      <small>{{ t(spot.accessNote) }}</small>
+                      <div
+                        v-if="
+                          spot.waterAvailable !== null ||
+                          spot.toiletAvailable !== null ||
+                          (spot.mobileSignal && spot.mobileSignal !== 'unknown')
+                        "
+                        class="spot-meta"
+                      >
+                        <span v-if="spot.waterAvailable !== null"
+                          >{{ t('van.waterLabel') }}: {{ booleanLabel(spot.waterAvailable) }}</span
+                        ><span v-if="spot.toiletAvailable !== null"
+                          >{{ t('stop.wc') }}: {{ booleanLabel(spot.toiletAvailable) }}</span
+                        ><span v-if="spot.mobileSignal && spot.mobileSignal !== 'unknown'"
+                          >{{ t('stop.internet') }}:
+                          {{ t(`van.signal.${spot.mobileSignal}`) }}</span
+                        >
+                      </div>
+                      <v-btn
+                        block
+                        variant="tonal"
+                        prepend-icon="mdi-navigation-variant"
+                        @click="openSpotNavigation(spot.id)"
+                        >{{ t('van.openNavigation') }}</v-btn
+                      >
                     </article>
                   </div>
                 </template>
-                <template v-if="paidSpots.length"><h3 class="spot-group-title paid-title">{{ t('van.paidAlternatives') }}</h3><div class="spot-list"><article v-for="spot in paidSpots" :key="spot.id" class="spot-card"><div class="list-heading"><v-chip size="x-small">{{ t(`common.${spot.type}`) }}</v-chip><strong>{{ t(spot.title) }}</strong></div><p>{{ t(spot.overview) }}</p><small>{{ t(spot.accessNote) }}</small><v-btn block variant="tonal" prepend-icon="mdi-navigation-variant" @click="openSpotNavigation(spot.id)">{{ t('van.openNavigation') }}</v-btn></article></div></template>
+                <template v-if="paidSpots.length"
+                  ><h3 class="spot-group-title paid-title">{{ t('van.paidAlternatives') }}</h3>
+                  <div class="spot-list">
+                    <article
+                      v-for="spot in paidSpots"
+                      :key="spot.id"
+                      class="spot-card"
+                    >
+                      <div class="list-heading">
+                        <v-chip size="x-small">{{ t(`common.${spot.type}`) }}</v-chip
+                        ><strong>{{ t(spot.title) }}</strong>
+                      </div>
+                      <p>{{ t(spot.overview) }}</p>
+                      <small>{{ t(spot.accessNote) }}</small
+                      ><v-btn
+                        block
+                        variant="tonal"
+                        prepend-icon="mdi-navigation-variant"
+                        @click="openSpotNavigation(spot.id)"
+                        >{{ t('van.openNavigation') }}</v-btn
+                      >
+                    </article>
+                  </div></template
+                >
               </template>
-              <div v-else-if="section.key === 'risks'" class="warning-list"><p v-for="warning in stopWarnings" :key="warning.id" :class="`severity-${warning.severity}`"><v-icon :icon="warning.severity==='danger'?'mdi-alert-octagon':'mdi-alert-circle-outline'" />{{ t(warning.body) }}</p></div>
+              <div
+                v-else-if="section.key === 'risks'"
+                class="warning-list"
+              >
+                <p
+                  v-for="warning in stopWarnings"
+                  :key="warning.id"
+                  :class="`severity-${warning.severity}`"
+                >
+                  <v-icon
+                    :icon="
+                      warning.severity === 'danger'
+                        ? 'mdi-alert-octagon'
+                        : 'mdi-alert-circle-outline'
+                    "
+                  />{{ t(warning.body) }}
+                </p>
+              </div>
               <template v-else-if="section.key === 'essentials'">
-                <p v-if="stop.supplyNote" class="operational-callout supply"><v-icon icon="mdi-alert-outline" />{{ t(stop.supplyNote) }}</p>
+                <p
+                  v-if="stop.supplyNote"
+                  class="operational-callout supply"
+                >
+                  <v-icon icon="mdi-alert-outline" />{{ t(stop.supplyNote) }}
+                </p>
                 <div class="facility-grid">
                   <template v-if="stop.municipalityFacilities.available">
-                    <div><v-icon icon="mdi-shower" /><span>{{ t('stop.shower') }}</span><strong>{{ stop.municipalityFacilities.shower?t('common.yes'):t('common.no') }}</strong></div>
-                    <div><v-icon icon="mdi-toilet" /><span>{{ t('stop.wc') }}</span><strong>{{ stop.municipalityFacilities.wc?t('common.yes'):t('common.no') }}</strong></div>
+                    <div>
+                      <v-icon icon="mdi-shower" /><span>{{ t('stop.shower') }}</span
+                      ><strong>{{
+                        stop.municipalityFacilities.shower ? t('common.yes') : t('common.no')
+                      }}</strong>
+                    </div>
+                    <div>
+                      <v-icon icon="mdi-toilet" /><span>{{ t('stop.wc') }}</span
+                      ><strong>{{
+                        stop.municipalityFacilities.wc ? t('common.yes') : t('common.no')
+                      }}</strong>
+                    </div>
                   </template>
-                  <div v-for="service in visibleServices" :key="service.key"><v-icon :icon="service.icon" /><span>{{ t(`stop.${service.key}`) }}</span><strong>{{ t(service.value.name) }}</strong></div>
-                  <div v-if="stop.internetScore !== null"><v-icon icon="mdi-signal" /><span>{{ t('stop.internet') }}</span><strong>{{ score(stop.internetScore) }}</strong></div>
+                  <div
+                    v-for="service in visibleServices"
+                    :key="service.key"
+                  >
+                    <v-icon :icon="service.icon" /><span>{{ t(`stop.${service.key}`) }}</span
+                    ><strong>{{ t(service.value.name) }}</strong>
+                  </div>
+                  <div v-if="stop.internetScore !== null">
+                    <v-icon icon="mdi-signal" /><span>{{ t('stop.internet') }}</span
+                    ><strong>{{ score(stop.internetScore) }}</strong>
+                  </div>
                 </div>
-                <p v-if="stop.municipalityFacilities.available" class="source-copy">{{ t(stop.municipalityFacilities.notes) }}</p>
+                <p
+                  v-if="stop.municipalityFacilities.available"
+                  class="source-copy"
+                >
+                  {{ t(stop.municipalityFacilities.notes) }}
+                </p>
               </template>
               <template v-else-if="section.key === 'explore'">
                 <p class="body-copy">{{ t(stop.whyVisit) }}</p>
-                <div v-if="exploreActivities.length" class="stack-list"><div v-for="item in exploreActivities" :key="item.id"><strong>{{ t(item.title) }}</strong><p>{{ t(item.description) }}</p></div></div>
-                <div v-if="hasSunrise || hasSunset" class="sun-grid"><div v-if="hasSunrise"><v-icon icon="mdi-weather-sunset-up" /><span>{{ t('stop.sunrise') }}</span><p>{{ t(stop.bestSunrise) }}</p></div><div v-if="hasSunset"><v-icon icon="mdi-weather-sunset-down" /><span>{{ t('stop.sunset') }}</span><p>{{ t(stop.bestSunset) }}</p></div></div>
-                <div v-if="resourceLinks.length" class="resource-links">
+                <div
+                  v-if="exploreActivities.length"
+                  class="stack-list"
+                >
+                  <div
+                    v-for="item in exploreActivities"
+                    :key="item.id"
+                  >
+                    <strong>{{ t(item.title) }}</strong>
+                    <p>{{ t(item.description) }}</p>
+                  </div>
+                </div>
+                <div
+                  v-if="hasSunrise || hasSunset"
+                  class="sun-grid"
+                >
+                  <div v-if="hasSunrise">
+                    <v-icon icon="mdi-weather-sunset-up" /><span>{{ t('stop.sunrise') }}</span>
+                    <p>{{ t(stop.bestSunrise) }}</p>
+                  </div>
+                  <div v-if="hasSunset">
+                    <v-icon icon="mdi-weather-sunset-down" /><span>{{ t('stop.sunset') }}</span>
+                    <p>{{ t(stop.bestSunset) }}</p>
+                  </div>
+                </div>
+                <div
+                  v-if="resourceLinks.length"
+                  class="resource-links"
+                >
                   <a
                     v-for="link in resourceLinks"
                     :key="link.url"
@@ -330,20 +735,50 @@ onUnmounted(() => {
               </template>
               <template v-else-if="section.key === 'summary'">
                 <p class="body-copy">{{ t(stop.decisionSummary ?? stop.overview) }}</p>
-                <div v-if="notes.length" class="stack-list"><div v-for="note in notes" :key="note.id"><strong>{{ t(note.title) }}</strong><p>{{ t(note.description) }}</p></div></div>
+                <div
+                  v-if="notes.length"
+                  class="stack-list"
+                >
+                  <div
+                    v-for="note in notes"
+                    :key="note.id"
+                  >
+                    <strong>{{ t(note.title) }}</strong>
+                    <p>{{ t(note.description) }}</p>
+                  </div>
+                </div>
               </template>
             </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>
       </div>
 
-      <section class="detail-map-section"><div class="map-section-title"><v-icon icon="mdi-map-outline" /><div><strong>{{ t('stop.interactiveMap') }}</strong><p>{{ t('map.subtitle') }}</p></div></div><div class="detail-map"><AppMap :stops="detailMapStops" :selected-id="stop.id" compact /></div></section>
+      <section class="detail-map-section">
+        <div class="map-section-title">
+          <v-icon icon="mdi-map-outline" />
+          <div>
+            <strong>{{ t('stop.interactiveMap') }}</strong>
+            <p>{{ t('map.subtitle') }}</p>
+          </div>
+        </div>
+        <div class="detail-map">
+          <AppMap
+            :stops="detailMapStops"
+            :selected-id="stop.id"
+            compact
+          />
+        </div>
+      </section>
 
       <section class="completion-section">
         <component
           :is="isEditor ? 'button' : 'div'"
           class="stage-completion"
-          :class="{ completed: stop.status === 'visited', editable: isEditor, expanded: completionEditorOpen }"
+          :class="{
+            completed: stop.status === 'visited',
+            editable: isEditor,
+            expanded: completionEditorOpen
+          }"
           :type="isEditor ? 'button' : undefined"
           :disabled="isEditor ? isSavingCompletion : undefined"
           :aria-expanded="isEditor ? completionEditorOpen : undefined"
@@ -351,27 +786,61 @@ onUnmounted(() => {
           @click="isEditor && openCompletionEditor()"
         >
           <span class="stage-action-icon">
-            <v-icon :icon="stop.status === 'visited' ? 'mdi-check-circle' : stop.status === 'skipped' ? 'mdi-skip-next-circle' : 'mdi-flag-checkered'" />
+            <v-icon
+              :icon="
+                stop.status === 'visited'
+                  ? 'mdi-check-circle'
+                  : stop.status === 'skipped'
+                    ? 'mdi-skip-next-circle'
+                    : 'mdi-flag-checkered'
+              "
+            />
           </span>
           <div class="stage-completion-copy">
-            <strong>{{ t(stop.status === 'visited' ? 'stop.stageComplete' : stop.status === 'skipped' ? 'stop.routeSkipped' : 'stop.stageIncomplete') }}</strong>
+            <strong>{{
+              t(
+                stop.status === 'visited'
+                  ? 'stop.stageComplete'
+                  : stop.status === 'skipped'
+                    ? 'stop.routeSkipped'
+                    : 'stop.stageIncomplete'
+              )
+            }}</strong>
             <span v-if="stop.status === 'visited'">
               <template v-if="isRouteOrigin">{{ t('stop.routeOriginCompleted') }}</template>
-              <template v-else-if="isRouteDestination">{{ t('stop.routeDestinationCompleted', { distance: stop.actualDistanceKm ?? 0 }) }}</template>
-              <template v-else>{{ t('stop.completionSummary', { nights: stop.nightsStayed ?? 0, distance: stop.actualDistanceKm ?? 0 }) }}</template>
+              <template v-else-if="isRouteDestination">{{
+                t('stop.routeDestinationCompleted', { distance: stop.actualDistanceKm ?? 0 })
+              }}</template>
+              <template v-else>{{
+                t('stop.completionSummary', {
+                  nights: stop.nightsStayed ?? 0,
+                  distance: stop.actualDistanceKm ?? 0
+                })
+              }}</template>
             </span>
             <span v-else-if="stop.status === 'skipped'">{{ t('stop.routeSkippedHint') }}</span>
             <span v-else>{{ t('common.upcoming') }}</span>
           </div>
-          <v-icon v-if="isEditor" class="stage-action-chevron" :icon="completionEditorOpen ? 'mdi-chevron-up' : 'mdi-chevron-down'" />
+          <v-icon
+            v-if="isEditor"
+            class="stage-action-chevron"
+            :icon="completionEditorOpen ? 'mdi-chevron-up' : 'mdi-chevron-down'"
+          />
         </component>
         <v-expand-transition>
-          <v-card v-if="completionEditorOpen && isEditor" class="completion-editor">
+          <v-card
+            v-if="completionEditorOpen && isEditor"
+            class="completion-editor"
+          >
             <div class="completion-dialog-heading">
-              <v-icon :icon="isAccommodationStop ? 'mdi-weather-night' : 'mdi-map-marker-check-outline'" />
+              <v-icon
+                :icon="isAccommodationStop ? 'mdi-weather-night' : 'mdi-map-marker-check-outline'"
+              />
               <div class="completion-dialog-copy">
                 <h2>{{ t('stop.completeStopTitle') }}</h2>
-                <p v-if="isAccommodationStop">{{ t('stop.plannedNightsValue', { count: stop.recommendedNights }) }}</p>
+                <p v-if="isAccommodationStop">
+                  {{ t('stop.plannedNightsValue', { count: stop.recommendedNights }) }}
+                </p>
               </div>
             </div>
             <v-text-field
@@ -397,12 +866,19 @@ onUnmounted(() => {
               inputmode="numeric"
               hide-details
               :label="t('stop.actualDistanceTravelled')"
-              :hint="t('stop.plannedDistanceValue', { count: stop.drivingDistanceFromPreviousKm ?? 0 })"
+              :hint="
+                t('stop.plannedDistanceValue', { count: stop.drivingDistanceFromPreviousKm ?? 0 })
+              "
               persistent-hint
               :suffix="t('common.km')"
             />
             <div class="completion-dialog-actions">
-              <v-btn variant="text" :disabled="isSavingCompletion" @click="completionEditorOpen=false">{{ t('common.cancel') }}</v-btn>
+              <v-btn
+                variant="text"
+                :disabled="isSavingCompletion"
+                @click="completionEditorOpen = false"
+                >{{ t('common.cancel') }}</v-btn
+              >
               <v-btn
                 v-if="stop.status === 'visited' || stop.status === 'skipped'"
                 variant="outlined"
@@ -411,27 +887,55 @@ onUnmounted(() => {
               >
                 {{ t('stop.markIncomplete') }}
               </v-btn>
-              <v-btn variant="outlined" color="warning" :disabled="isSavingCompletion" @click="skipCurrentStop">{{ t('stop.skipRoute') }}</v-btn>
-              <v-btn color="primary" :loading="isSavingCompletion" @click="saveCompletion">{{ t('stop.completeAndSave') }}</v-btn>
+              <v-btn
+                variant="outlined"
+                color="warning"
+                :disabled="isSavingCompletion"
+                @click="skipCurrentStop"
+                >{{ t('stop.skipRoute') }}</v-btn
+              >
+              <v-btn
+                color="primary"
+                :loading="isSavingCompletion"
+                @click="saveCompletion"
+                >{{ t('stop.completeAndSave') }}</v-btn
+              >
             </div>
           </v-card>
         </v-expand-transition>
       </section>
     </div>
 
-    <nav class="navigation-bar" :aria-label="t('stop.stopNavigation')">
+    <nav
+      class="navigation-bar"
+      :aria-label="t('stop.stopNavigation')"
+    >
       <v-btn
         v-if="previousDetailStop"
         class="stop-jump"
         variant="tonal"
-        :to="{ name: 'stop-detail', params: { routeId: stop.routeId, stopId: previousDetailStop.id } }"
+        :to="{
+          name: 'stop-detail',
+          params: { routeId: stop.routeId, stopId: previousDetailStop.id }
+        }"
         :aria-label="t('stop.previousStopNamed', { stop: t(previousDetailStop.title) })"
       >
         <v-icon icon="mdi-chevron-left" />
         <span>{{ t('stop.previousStop') }}</span>
       </v-btn>
-      <span v-else class="stop-jump-spacer" />
-      <v-btn class="directions-action" color="primary" size="x-large" prepend-icon="mdi-navigation-variant" :disabled="!navigationUrl" @click="openNavigation">{{ t('map.navigate') }}</v-btn>
+      <span
+        v-else
+        class="stop-jump-spacer"
+      />
+      <v-btn
+        class="directions-action"
+        color="primary"
+        size="x-large"
+        prepend-icon="mdi-navigation-variant"
+        :disabled="!navigationUrl"
+        @click="openNavigation"
+        >{{ t('map.navigate') }}</v-btn
+      >
       <v-btn
         v-if="nextDetailStop"
         class="stop-jump"
@@ -442,35 +946,1590 @@ onUnmounted(() => {
         <v-icon icon="mdi-chevron-right" />
         <span>{{ t('stop.nextStop') }}</span>
       </v-btn>
-      <span v-else class="stop-jump-spacer" />
+      <span
+        v-else
+        class="stop-jump-spacer"
+      />
     </nav>
-    <PhotoViewer v-model="selectedPhotoIndex" :photos="viewerPhotos" />
+    <PhotoViewer
+      v-model="selectedPhotoIndex"
+      :photos="viewerPhotos"
+    />
   </main>
 </template>
 
 <style scoped>
-.stop-detail{width:100%;min-height:100dvh;padding-bottom:calc(104px + env(safe-area-inset-bottom));background:transparent}.cover{position:relative;height:clamp(320px,38vw,510px);overflow:hidden;background:#17191d}.cover>img,.cover-shade,.cover-placeholder{position:absolute;inset:0;width:100%;height:100%}.cover>img{object-fit:cover}.cover-placeholder{display:grid;place-items:center;color:rgba(255,255,255,.3);background:radial-gradient(circle at 70% 20%,rgba(168,182,200,.18),transparent 35%),linear-gradient(145deg,#14161a,#2b2f37)}.cover-shade{background:linear-gradient(180deg,rgba(5,6,8,.38),transparent 36%,rgba(5,6,8,.9))}.cover-upload{position:absolute!important;z-index:2;left:50%;top:50%;min-height:52px!important;transform:translate(-50%,-50%);white-space:nowrap;box-shadow:0 16px 38px rgba(0,0,0,.28)!important}.back,.favorite{position:absolute;top:max(16px,env(safe-area-inset-top));width:48px!important;height:48px!important;color:white!important;background:rgba(14,16,19,.62)!important;box-shadow:0 12px 35px rgba(0,0,0,.22)!important;backdrop-filter:blur(20px)}.back{left:clamp(16px,2.5vw,40px)}.favorite{right:clamp(16px,2.5vw,40px)}.cover-copy{position:absolute;left:clamp(20px,3vw,52px);right:20px;bottom:clamp(22px,3vw,46px);color:white}.cover-copy p{font-size:.84rem;font-weight:720;opacity:.74;text-transform:uppercase;letter-spacing:.1em}.cover-copy h1{margin-top:7px;font-size:clamp(2.35rem,5vw,4.5rem);line-height:.98;letter-spacing:-.055em}.content{width:100%;padding:0 clamp(16px,2.8vw,48px)}.photo-strip{display:flex;gap:12px;margin:20px 0 0;padding:0 0 6px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}.photo-strip::-webkit-scrollbar{display:none}.photo-strip button{flex:0 0 82%;height:220px;padding:0;border:0;border-radius:var(--app-radius-md);overflow:hidden;scroll-snap-align:center;background:rgb(var(--v-theme-surface));box-shadow:0 12px 38px rgba(0,0,0,.13)}.photo-strip img{width:100%;height:100%;object-fit:cover}.intro{padding:30px 4px 26px}.intro>p{max-width:1050px;color:rgba(var(--v-theme-on-background),.82);font-size:clamp(1.05rem,1.4vw,1.25rem);line-height:1.7}.summary-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:24px}.summary-row>div{min-width:0;padding:18px 16px;border:1px solid rgba(var(--v-border-color),.11);border-radius:var(--app-radius-md);background:rgb(var(--v-theme-surface));box-shadow:0 10px 30px rgba(0,0,0,.07)}.summary-row .v-icon{display:block;margin-bottom:13px;font-size:1.35rem;color:rgb(var(--v-theme-primary))}.summary-row strong,.summary-row span{display:block;overflow:hidden;text-overflow:ellipsis}.summary-row strong{font-size:1.08rem;white-space:nowrap}.summary-row span{margin-top:5px;color:rgba(var(--v-theme-on-surface),.58);font-size:.78rem}
-.stage-completion{display:flex;align-items:center;gap:12px;max-width:620px;margin-top:18px;padding:14px 18px;border:1px solid rgba(var(--v-border-color),.12);border-radius:18px;background:rgba(var(--v-theme-on-surface),.035);transition:border-color .2s,background .2s}.stage-completion.completed{border-color:rgba(var(--v-theme-primary),.52);background:rgba(var(--v-theme-primary),.1)}.stage-completion strong,.stage-completion span{display:block}.stage-completion strong{font-size:.98rem}.stage-completion span{margin-top:3px;color:rgba(var(--v-theme-on-background),.58);font-size:.82rem;line-height:1.4}.detail-panels{overflow:hidden;border:1px solid rgba(var(--v-border-color),.11);border-radius:var(--app-radius-md);box-shadow:0 12px 38px rgba(0,0,0,.08)}.detail-panels :deep(.v-expansion-panel-title){min-height:70px;gap:14px;padding:18px 20px;font-size:1rem;font-weight:740}.detail-panels :deep(.v-expansion-panel-title .v-icon){font-size:1.3rem;color:rgb(var(--v-theme-primary))}.detail-panels :deep(.v-expansion-panel-title .v-chip){margin-left:auto}.detail-panels :deep(.v-expansion-panel-text__wrapper){padding:0 20px 24px}.body-copy{color:rgba(var(--v-theme-on-surface),.8);font-size:1rem;line-height:1.7}.empty-copy,.source-copy{color:rgba(var(--v-theme-on-surface),.62);font-size:.9rem;line-height:1.6}.source-copy{margin-top:16px;overflow-wrap:anywhere}.stack-list{display:grid;gap:12px}.stack-list>div{padding:17px;border:1px solid rgba(var(--v-border-color),.07);border-radius:var(--app-radius-sm);background:rgba(var(--v-theme-on-surface),.045)}.stack-list strong{font-size:.98rem}.stack-list p,.stack-list small{display:block;margin-top:7px;color:rgba(var(--v-theme-on-surface),.68);font-size:.92rem;line-height:1.58}.list-heading{display:flex;justify-content:space-between;gap:10px}.facility-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.facility-grid>div{padding:16px;border:1px solid rgba(var(--v-border-color),.06);border-radius:var(--app-radius-sm);background:rgba(var(--v-theme-on-surface),.045)}.facility-grid .v-icon{font-size:1.25rem;color:rgb(var(--v-theme-primary))}.facility-grid span,.facility-grid strong{display:block}.facility-grid span{margin-top:10px;color:rgba(var(--v-theme-on-surface),.58);font-size:.78rem}.facility-grid strong{margin-top:4px;font-size:.92rem}.condition-list{display:grid;gap:2px}.condition-list>div{display:flex;justify-content:space-between;gap:14px;padding:15px 0;border-bottom:1px solid rgba(var(--v-border-color),.08);font-size:.95rem}.condition-list>div:last-child{border:0}.warning-list{display:grid;gap:10px}.warning-list p{display:flex;gap:10px;padding:16px;border-radius:var(--app-radius-sm);color:rgb(var(--v-theme-warning));background:rgba(var(--v-theme-warning),.1);font-size:.92rem;line-height:1.55}.sun-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:15px}.sun-grid>div{padding:16px;border-radius:var(--app-radius-sm);background:rgba(var(--v-theme-on-surface),.045)}.sun-grid .v-icon{font-size:1.3rem;color:rgb(var(--v-theme-secondary))}.sun-grid span{display:block;margin-top:9px;font-size:.78rem}.sun-grid p{margin-top:5px;color:rgba(var(--v-theme-on-surface),.68);font-size:.9rem;line-height:1.5}
-.experience-card{position:relative;overflow:hidden;margin:0 4px 26px;padding:22px;border:1px solid rgba(var(--v-theme-primary),.38);border-radius:var(--app-radius-md);background:linear-gradient(135deg,rgba(var(--v-theme-primary),.15),rgba(var(--v-theme-secondary),.07) 52%,rgb(var(--v-theme-surface)));box-shadow:0 16px 44px rgba(var(--v-theme-primary),.11)}.experience-card:before{position:absolute;top:0;right:0;left:0;height:3px;background:linear-gradient(90deg,rgb(var(--v-theme-primary)),rgb(var(--v-theme-secondary)));content:''}.experience-card-header{display:flex;align-items:center;gap:14px;margin-bottom:18px}.experience-card-icon{display:grid;width:48px;height:48px;flex:0 0 auto;place-items:center;border-radius:15px;color:rgb(var(--v-theme-primary));background:rgba(var(--v-theme-primary),.14)}.experience-card-icon .v-icon{font-size:1.45rem}.experience-card-header div{display:grid;min-width:0;gap:3px}.experience-card-header small{color:rgb(var(--v-theme-primary));font-size:.72rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase}.experience-card-header strong{overflow:hidden;font-size:1.05rem;text-overflow:ellipsis;white-space:nowrap}.experience-copy{white-space:pre-wrap;overflow-wrap:anywhere;color:rgba(var(--v-theme-on-surface),.92);font-size:1.05rem;line-height:1.82}.experience-author{display:flex;align-items:center;gap:8px;margin-top:18px;padding-top:15px;border-top:1px solid rgba(var(--v-theme-primary),.18);color:rgba(var(--v-theme-on-surface),.64);font-size:.84rem;line-height:1.5}.experience-author .v-icon{flex:0 0 auto;font-size:1.05rem;color:rgb(var(--v-theme-primary))}.detail-map-section{margin-top:28px;padding-top:32px;border-top:1px solid rgba(var(--v-border-color),.1)}.map-section-title{display:flex;align-items:center;gap:12px;margin-bottom:16px}.map-section-title .v-icon{font-size:1.45rem;color:rgb(var(--v-theme-primary))}.map-section-title strong{font-size:1.08rem}.map-section-title p{margin-top:3px;color:rgba(var(--v-theme-on-background),.6);font-size:.86rem}.detail-map{position:relative;width:100%;height:360px;overflow:hidden;border:1px solid rgba(var(--v-border-color),.12);border-radius:var(--app-radius-md);box-shadow:var(--app-shadow)}.navigation-bar{position:fixed;z-index:9;left:0;bottom:0;width:100%;padding:12px 16px calc(12px + env(safe-area-inset-bottom));border-top:1px solid rgba(var(--v-border-color),.1);background:rgba(var(--v-theme-surface),.9);box-shadow:0 -14px 42px rgba(0,0,0,.14);backdrop-filter:blur(24px) saturate(140%)}.navigation-bar .v-btn{min-height:58px;font-size:1rem}@media(min-width:700px){.photo-strip button{flex-basis:32%;height:250px}.detail-panels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;border:0;background:transparent;box-shadow:none}.detail-panels :deep(.v-expansion-panel){border:1px solid rgba(var(--v-border-color),.1)!important;border-radius:var(--app-radius-md)!important;box-shadow:0 10px 32px rgba(0,0,0,.07)!important}.detail-map{height:440px}}@media(max-width:520px){.experience-card{margin-inline:0;padding:18px}.experience-copy{font-size:1rem;line-height:1.72}.summary-row{gap:8px}.summary-row>div{padding:15px 10px}.summary-row strong{font-size:.96rem}.sun-grid{grid-template-columns:1fr}}
+.stop-detail {
+  width: 100%;
+  min-height: 100dvh;
+  padding-bottom: calc(104px + env(safe-area-inset-bottom));
+  background: transparent;
+}
+.cover {
+  position: relative;
+  height: clamp(320px, 38vw, 510px);
+  overflow: hidden;
+  background: #17191d;
+}
+.cover > img,
+.cover-shade,
+.cover-placeholder {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.cover > img {
+  object-fit: cover;
+}
+.cover-placeholder {
+  display: grid;
+  place-items: center;
+  color: rgba(255, 255, 255, 0.3);
+  background:
+    radial-gradient(circle at 70% 20%, rgba(168, 182, 200, 0.18), transparent 35%),
+    linear-gradient(145deg, #14161a, #2b2f37);
+}
+.cover-shade {
+  background: linear-gradient(180deg, rgba(5, 6, 8, 0.38), transparent 36%, rgba(5, 6, 8, 0.9));
+}
+.cover-upload {
+  position: absolute !important;
+  z-index: 2;
+  left: 50%;
+  top: 50%;
+  min-height: 52px !important;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+  box-shadow: 0 16px 38px rgba(0, 0, 0, 0.28) !important;
+}
+.back,
+.favorite {
+  position: absolute;
+  top: max(16px, env(safe-area-inset-top));
+  width: 48px !important;
+  height: 48px !important;
+  color: white !important;
+  background: rgba(14, 16, 19, 0.62) !important;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.22) !important;
+  backdrop-filter: blur(20px);
+}
+.back {
+  left: clamp(16px, 2.5vw, 40px);
+}
+.favorite {
+  right: clamp(16px, 2.5vw, 40px);
+}
+.cover-copy {
+  position: absolute;
+  left: clamp(20px, 3vw, 52px);
+  right: 20px;
+  bottom: clamp(22px, 3vw, 46px);
+  color: white;
+}
+.cover-copy p {
+  font-size: 0.84rem;
+  font-weight: 720;
+  opacity: 0.74;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.cover-copy h1 {
+  margin-top: 7px;
+  font-size: clamp(2.35rem, 5vw, 4.5rem);
+  line-height: 0.98;
+  letter-spacing: -0.055em;
+}
+.content {
+  width: 100%;
+  padding: 0 clamp(16px, 2.8vw, 48px);
+}
+.photo-strip {
+  display: flex;
+  gap: 12px;
+  margin: 20px 0 0;
+  padding: 0 0 6px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+.photo-strip::-webkit-scrollbar {
+  display: none;
+}
+.photo-strip button {
+  flex: 0 0 82%;
+  height: 220px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--app-radius-md);
+  overflow: hidden;
+  scroll-snap-align: center;
+  background: rgb(var(--v-theme-surface));
+  box-shadow: 0 12px 38px rgba(0, 0, 0, 0.13);
+}
+.photo-strip img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.intro {
+  padding: 30px 4px 26px;
+}
+.intro > p {
+  max-width: 1050px;
+  color: rgba(var(--v-theme-on-background), 0.82);
+  font-size: clamp(1.05rem, 1.4vw, 1.25rem);
+  line-height: 1.7;
+}
+.summary-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 24px;
+}
+.summary-row > div {
+  min-width: 0;
+  padding: 18px 16px;
+  border: 1px solid rgba(var(--v-border-color), 0.11);
+  border-radius: var(--app-radius-md);
+  background: rgb(var(--v-theme-surface));
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
+}
+.summary-row .v-icon {
+  display: block;
+  margin-bottom: 13px;
+  font-size: 1.35rem;
+  color: rgb(var(--v-theme-primary));
+}
+.summary-row strong,
+.summary-row span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.summary-row strong {
+  font-size: 1.08rem;
+  white-space: nowrap;
+}
+.summary-row span {
+  margin-top: 5px;
+  color: rgba(var(--v-theme-on-surface), 0.58);
+  font-size: 0.78rem;
+}
+.stage-completion {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 620px;
+  margin-top: 18px;
+  padding: 14px 18px;
+  border: 1px solid rgba(var(--v-border-color), 0.12);
+  border-radius: 18px;
+  background: rgba(var(--v-theme-on-surface), 0.035);
+  transition:
+    border-color 0.2s,
+    background 0.2s;
+}
+.stage-completion.completed {
+  border-color: rgba(var(--v-theme-primary), 0.52);
+  background: rgba(var(--v-theme-primary), 0.1);
+}
+.stage-completion strong,
+.stage-completion span {
+  display: block;
+}
+.stage-completion strong {
+  font-size: 0.98rem;
+}
+.stage-completion span {
+  margin-top: 3px;
+  color: rgba(var(--v-theme-on-background), 0.58);
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+.detail-panels {
+  overflow: hidden;
+  border: 1px solid rgba(var(--v-border-color), 0.11);
+  border-radius: var(--app-radius-md);
+  box-shadow: 0 12px 38px rgba(0, 0, 0, 0.08);
+}
+.detail-panels :deep(.v-expansion-panel-title) {
+  min-height: 70px;
+  gap: 14px;
+  padding: 18px 20px;
+  font-size: 1rem;
+  font-weight: 740;
+}
+.detail-panels :deep(.v-expansion-panel-title .v-icon) {
+  font-size: 1.3rem;
+  color: rgb(var(--v-theme-primary));
+}
+.detail-panels :deep(.v-expansion-panel-title .v-chip) {
+  margin-left: auto;
+}
+.detail-panels :deep(.v-expansion-panel-text__wrapper) {
+  padding: 0 20px 24px;
+}
+.body-copy {
+  color: rgba(var(--v-theme-on-surface), 0.8);
+  font-size: 1rem;
+  line-height: 1.7;
+}
+.empty-copy,
+.source-copy {
+  color: rgba(var(--v-theme-on-surface), 0.62);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+.source-copy {
+  margin-top: 16px;
+  overflow-wrap: anywhere;
+}
+.stack-list {
+  display: grid;
+  gap: 12px;
+}
+.stack-list > div {
+  padding: 17px;
+  border: 1px solid rgba(var(--v-border-color), 0.07);
+  border-radius: var(--app-radius-sm);
+  background: rgba(var(--v-theme-on-surface), 0.045);
+}
+.stack-list strong {
+  font-size: 0.98rem;
+}
+.stack-list p,
+.stack-list small {
+  display: block;
+  margin-top: 7px;
+  color: rgba(var(--v-theme-on-surface), 0.68);
+  font-size: 0.92rem;
+  line-height: 1.58;
+}
+.list-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+.facility-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.facility-grid > div {
+  padding: 16px;
+  border: 1px solid rgba(var(--v-border-color), 0.06);
+  border-radius: var(--app-radius-sm);
+  background: rgba(var(--v-theme-on-surface), 0.045);
+}
+.facility-grid .v-icon {
+  font-size: 1.25rem;
+  color: rgb(var(--v-theme-primary));
+}
+.facility-grid span,
+.facility-grid strong {
+  display: block;
+}
+.facility-grid span {
+  margin-top: 10px;
+  color: rgba(var(--v-theme-on-surface), 0.58);
+  font-size: 0.78rem;
+}
+.facility-grid strong {
+  margin-top: 4px;
+  font-size: 0.92rem;
+}
+.condition-list {
+  display: grid;
+  gap: 2px;
+}
+.condition-list > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 15px 0;
+  border-bottom: 1px solid rgba(var(--v-border-color), 0.08);
+  font-size: 0.95rem;
+}
+.condition-list > div:last-child {
+  border: 0;
+}
+.warning-list {
+  display: grid;
+  gap: 10px;
+}
+.warning-list p {
+  display: flex;
+  gap: 10px;
+  padding: 16px;
+  border-radius: var(--app-radius-sm);
+  color: rgb(var(--v-theme-warning));
+  background: rgba(var(--v-theme-warning), 0.1);
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+.sun-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+.sun-grid > div {
+  padding: 16px;
+  border-radius: var(--app-radius-sm);
+  background: rgba(var(--v-theme-on-surface), 0.045);
+}
+.sun-grid .v-icon {
+  font-size: 1.3rem;
+  color: rgb(var(--v-theme-secondary));
+}
+.sun-grid span {
+  display: block;
+  margin-top: 9px;
+  font-size: 0.78rem;
+}
+.sun-grid p {
+  margin-top: 5px;
+  color: rgba(var(--v-theme-on-surface), 0.68);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+.experience-card {
+  position: relative;
+  overflow: hidden;
+  margin: 0 4px 26px;
+  padding: 22px;
+  border: 1px solid rgba(var(--v-theme-primary), 0.38);
+  border-radius: var(--app-radius-md);
+  background: linear-gradient(
+    135deg,
+    rgba(var(--v-theme-primary), 0.15),
+    rgba(var(--v-theme-secondary), 0.07) 52%,
+    rgb(var(--v-theme-surface))
+  );
+  box-shadow: 0 16px 44px rgba(var(--v-theme-primary), 0.11);
+}
+.experience-card:before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, rgb(var(--v-theme-primary)), rgb(var(--v-theme-secondary)));
+  content: '';
+}
+.experience-card-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+.experience-card-icon {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 15px;
+  color: rgb(var(--v-theme-primary));
+  background: rgba(var(--v-theme-primary), 0.14);
+}
+.experience-card-icon .v-icon {
+  font-size: 1.45rem;
+}
+.experience-card-header div {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+.experience-card-header small {
+  color: rgb(var(--v-theme-primary));
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+.experience-card-header strong {
+  overflow: hidden;
+  font-size: 1.05rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.experience-copy {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: rgba(var(--v-theme-on-surface), 0.92);
+  font-size: 1.05rem;
+  line-height: 1.82;
+}
+.experience-author {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 18px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(var(--v-theme-primary), 0.18);
+  color: rgba(var(--v-theme-on-surface), 0.64);
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+.experience-author .v-icon {
+  flex: 0 0 auto;
+  font-size: 1.05rem;
+  color: rgb(var(--v-theme-primary));
+}
+.detail-map-section {
+  margin-top: 28px;
+  padding-top: 32px;
+  border-top: 1px solid rgba(var(--v-border-color), 0.1);
+}
+.map-section-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.map-section-title .v-icon {
+  font-size: 1.45rem;
+  color: rgb(var(--v-theme-primary));
+}
+.map-section-title strong {
+  font-size: 1.08rem;
+}
+.map-section-title p {
+  margin-top: 3px;
+  color: rgba(var(--v-theme-on-background), 0.6);
+  font-size: 0.86rem;
+}
+.detail-map {
+  position: relative;
+  width: 100%;
+  height: 360px;
+  overflow: hidden;
+  border: 1px solid rgba(var(--v-border-color), 0.12);
+  border-radius: var(--app-radius-md);
+  box-shadow: var(--app-shadow);
+}
+.navigation-bar {
+  position: fixed;
+  z-index: 9;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+  border-top: 1px solid rgba(var(--v-border-color), 0.1);
+  background: rgba(var(--v-theme-surface), 0.9);
+  box-shadow: 0 -14px 42px rgba(0, 0, 0, 0.14);
+  backdrop-filter: blur(24px) saturate(140%);
+}
+.navigation-bar .v-btn {
+  min-height: 58px;
+  font-size: 1rem;
+}
+@media (min-width: 700px) {
+  .photo-strip button {
+    flex-basis: 32%;
+    height: 250px;
+  }
+  .detail-panels {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+  .detail-panels :deep(.v-expansion-panel) {
+    border: 1px solid rgba(var(--v-border-color), 0.1) !important;
+    border-radius: var(--app-radius-md) !important;
+    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.07) !important;
+  }
+  .detail-map {
+    height: 440px;
+  }
+}
+@media (max-width: 520px) {
+  .experience-card {
+    margin-inline: 0;
+    padding: 18px;
+  }
+  .experience-copy {
+    font-size: 1rem;
+    line-height: 1.72;
+  }
+  .summary-row {
+    gap: 8px;
+  }
+  .summary-row > div {
+    padding: 15px 10px;
+  }
+  .summary-row strong {
+    font-size: 0.96rem;
+  }
+  .sun-grid {
+    grid-template-columns: 1fr;
+  }
+}
 
 /* Readable, information-first premium scale. */
-.stop-detail{padding-bottom:calc(104px + env(safe-area-inset-bottom));background:transparent}.cover{height:360px}.cover-placeholder{background:radial-gradient(circle at 25% 10%,rgba(168,182,200,.22),transparent 38%),linear-gradient(145deg,#14161a,#2b2f37)}.cover-shade{background:linear-gradient(180deg,rgba(5,6,8,.42),transparent 36%,rgba(5,6,8,.9))}.back,.favorite{top:max(16px,env(safe-area-inset-top));min-width:50px;min-height:50px;border:1px solid rgba(255,255,255,.1);background:rgba(14,16,19,.62)!important;backdrop-filter:blur(20px)}.back{left:clamp(16px,2.6vw,44px)}.favorite{right:clamp(16px,2.6vw,44px)}.cover-copy{left:clamp(20px,3vw,56px);bottom:30px}.cover-copy p{font-size:.84rem;font-weight:740;opacity:.76;letter-spacing:.1em}.cover-copy h1{margin-top:7px;font-size:clamp(2.5rem,5vw,4.25rem)}.content{padding-inline:clamp(16px,3vw,56px)}.photo-strip{gap:12px;margin-top:20px}.photo-strip button{height:230px;border-radius:22px;box-shadow:var(--app-shadow)}.intro{padding:30px 4px 26px}.intro>p{max-width:1100px;font-size:1.08rem;line-height:1.7;color:rgba(var(--v-theme-on-background),.82)}.summary-row{gap:12px;margin-top:24px}.summary-row>div{padding:18px 16px;border-radius:var(--app-radius-md);background:linear-gradient(145deg,rgba(var(--v-theme-primary),.06),rgb(var(--v-theme-surface)));box-shadow:0 10px 32px rgba(0,0,0,.08)}.summary-row .v-icon{font-size:1.35rem}.summary-row strong{font-size:1.05rem}.summary-row span{margin-top:5px;font-size:.78rem}
-.detail-panels{border-radius:var(--app-radius-md);box-shadow:0 14px 42px rgba(0,0,0,.08)}.detail-panels :deep(.v-expansion-panel-title){min-height:72px;gap:14px;padding:18px 20px;font-size:1.02rem;font-weight:740}.detail-panels :deep(.v-expansion-panel-title .v-icon){font-size:1.3rem;color:rgb(var(--v-theme-primary))}.detail-panels :deep(.v-expansion-panel-text__wrapper){padding:0 20px 24px}.body-copy{font-size:.98rem;line-height:1.72}.empty-copy,.source-copy{font-size:.88rem;line-height:1.6}.stack-list{gap:12px}.stack-list>div{padding:17px;border:1px solid rgba(var(--v-border-color),.07);border-radius:16px}.stack-list strong{font-size:.98rem}.stack-list p,.stack-list small{margin-top:7px;font-size:.9rem;line-height:1.58;color:rgba(var(--v-theme-on-surface),.68)}.facility-grid{gap:10px}.facility-grid>div{padding:16px;border-radius:16px}.facility-grid .v-icon{font-size:1.3rem}.facility-grid span{font-size:.78rem}.facility-grid strong{margin-top:4px;font-size:.9rem}.condition-list>div{padding:15px 0;font-size:.92rem}.warning-list p{padding:16px;font-size:.9rem;line-height:1.58}.sun-grid{gap:10px}.sun-grid>div{padding:16px;border-radius:16px}.sun-grid span{font-size:.78rem}.sun-grid p{font-size:.88rem;line-height:1.5}.detail-map-section{margin-top:30px;padding-top:32px}.map-section-title{gap:12px;margin-bottom:16px;font-size:1.05rem}.map-section-title p{font-size:.82rem}.detail-map{height:360px;border-radius:var(--app-radius-md);box-shadow:var(--app-shadow)}.navigation-bar{padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:rgba(var(--v-theme-surface),.9);box-shadow:0 -16px 42px rgba(0,0,0,.13);backdrop-filter:blur(24px) saturate(140%)}.navigation-bar .v-btn{min-height:58px;font-size:.95rem}
-@media(min-width:700px){.cover{height:440px}.photo-strip button{height:270px}.detail-panels{gap:14px;box-shadow:none}.detail-panels :deep(.v-expansion-panel){border-radius:var(--app-radius-md)!important;box-shadow:0 12px 36px rgba(0,0,0,.07)!important}.detail-map{height:440px}.navigation-bar{left:50%;bottom:18px;width:min(680px,calc(100% - 40px));border:1px solid rgba(var(--v-border-color),.13);border-radius:24px;transform:translateX(-50%);box-shadow:var(--app-shadow-float)}}@media(max-width:520px){.cover{height:330px}.summary-row{gap:8px}.summary-row>div{padding:15px 11px}.intro>p{font-size:1rem}.detail-panels :deep(.v-expansion-panel-title){min-height:68px;padding:16px}}
-.summary-row span{font-size:.82rem}
-.summary-row{max-width:960px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}.summary-row>div{display:grid;min-height:86px;grid-template-columns:58px minmax(0,1fr);grid-template-rows:auto auto;align-content:center;column-gap:14px;padding:15px 17px}.summary-row .v-icon{grid-row:1/3;align-self:center;justify-self:center;margin:0}.summary-row strong,.summary-row span{grid-column:2;overflow:visible;text-overflow:clip;white-space:normal}.summary-row strong{align-self:end;font-size:1.05rem;line-height:1.3}.summary-row span{align-self:start;margin-top:2px;font-size:.8rem;line-height:1.35}.detail-panels:empty{display:none}@media(max-width:520px){.summary-row{grid-template-columns:1fr}.summary-row>div{min-height:78px}}
-.detail-panels{display:grid;grid-template-columns:1fr;align-items:start;gap:14px;overflow:visible;border:0;background:transparent;box-shadow:none}.detail-column{align-self:start;overflow:hidden;border:1px solid rgba(var(--v-border-color),.11);border-radius:var(--app-radius-md);box-shadow:0 14px 42px rgba(0,0,0,.08)}.detail-panels :deep(.v-expansion-panel-text__wrapper){padding:20px 20px 26px}
-@media(min-width:700px){.detail-panels{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}.detail-column{gap:14px;overflow:visible;border:0;border-radius:0;box-shadow:none}.detail-column :deep(.v-expansion-panel){align-self:start;overflow:hidden;border:1px solid rgba(var(--v-border-color),.1)!important;border-radius:var(--app-radius-md)!important;box-shadow:0 12px 36px rgba(0,0,0,.07)!important}}
-.summary-row>.stage-completion{display:grid;max-width:none;min-height:86px;grid-template-columns:58px minmax(0,1fr) auto;grid-template-rows:auto auto;align-content:center;align-items:center;column-gap:14px;margin-top:0;padding:15px 17px}.stage-completion-copy{display:flex;width:100%;min-width:0;grid-column:2;grid-row:1/3;flex-direction:column;align-items:flex-start;justify-content:center}.stage-completion-copy strong,.stage-completion-copy span{width:100%;align-self:flex-start;margin-left:0;text-align:left}.stage-checkbox{display:grid;width:52px;height:52px;grid-column:1;grid-row:1/3;align-self:center;justify-self:center;place-items:center;padding:0;border:0;border-radius:16px;color:rgba(var(--v-theme-on-surface),.68);background:rgba(var(--v-theme-on-surface),.07);touch-action:manipulation;-webkit-tap-highlight-color:transparent}.stage-checkbox.editable{cursor:pointer}.stage-checkbox.editable:active{transform:scale(.96)}.stage-checkbox.checked{color:rgb(var(--v-theme-primary));background:rgba(var(--v-theme-primary),.14)}.stage-checkbox:disabled{cursor:default}.stage-checkbox .v-icon{font-size:2rem!important}.completion-edit{grid-column:3;grid-row:1/3;align-self:center}.summary-row>.stage-completion.completed{border-color:rgba(var(--v-theme-primary),.52);background:linear-gradient(145deg,rgba(var(--v-theme-primary),.15),rgb(var(--v-theme-surface)))}@media(max-width:520px){.summary-row>.stage-completion{min-height:82px;padding:14px}}
-.cover-photo-trigger{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;padding:0;border:0;background:transparent;cursor:zoom-in}.cover-photo-trigger img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .35s ease}.cover-photo-trigger:hover img{transform:scale(1.015)}.cover-shade{z-index:1;pointer-events:none}.cover-copy,.back,.favorite{z-index:2}
-.navigation-bar{display:grid;grid-template-columns:82px minmax(0,1fr) 82px;align-items:center;gap:8px}.navigation-bar .v-btn{width:100%;min-width:0;min-height:58px}.directions-action{padding-inline:10px!important}.stop-jump{padding-inline:6px!important}.stop-jump :deep(.v-btn__content){flex-direction:column;gap:1px}.stop-jump .v-icon{font-size:1.25rem}.stop-jump span{font-size:.66rem;line-height:1.1}@media(min-width:700px){.navigation-bar{grid-template-columns:128px minmax(0,1fr) 128px;gap:10px}.stop-jump :deep(.v-btn__content){flex-direction:row;gap:6px}.stop-jump span{font-size:.8rem}}
-.section-title-copy{display:grid;min-width:0;justify-items:start;gap:6px}.section-title-copy strong{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.detail-panels :deep(.section-title-copy .v-chip){margin:0!important}.list-heading{display:grid;justify-items:start;gap:8px}.list-heading strong{display:block;width:100%;line-height:1.35}
-.stop-detail{background:rgb(var(--v-theme-background))!important}
-.completion-dialog-overlay{position:fixed;z-index:10000;inset:0;display:grid;place-items:center;padding:max(20px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(20px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));background:rgba(0,0,0,.68);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}.completion-dialog{width:min(440px,100%);max-height:calc(100dvh - max(40px,env(safe-area-inset-top) + env(safe-area-inset-bottom)));overflow-y:auto;padding:26px;border:1px solid rgba(var(--v-border-color),.12);border-radius:24px!important;box-shadow:0 28px 80px rgba(0,0,0,.42)!important}.completion-dialog-heading{display:grid;grid-template-columns:48px minmax(0,1fr);align-items:center;gap:14px;margin-bottom:24px}.completion-dialog-heading>.v-icon{display:grid;width:48px;height:48px;place-items:center;border-radius:15px;color:rgb(var(--v-theme-primary));background:rgba(var(--v-theme-primary),.1);font-size:1.5rem}.completion-dialog-copy{min-width:0;text-align:left}.completion-dialog-heading h2{margin:0;font-size:1.35rem;line-height:1.2;letter-spacing:-.035em;overflow-wrap:anywhere}.completion-dialog-heading p{margin:4px 0 0;color:rgba(var(--v-theme-on-surface),.6);font-size:.86rem;line-height:1.4}.completion-dialog :deep(.v-input){width:100%;min-width:0}.completion-dialog :deep(.v-field__field){min-width:0}.completion-distance{margin-top:18px}.completion-dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:24px}@media(max-width:430px){.completion-dialog-overlay{place-items:end center;padding:env(safe-area-inset-top) 0 0}.completion-dialog{width:100%;max-height:calc(100dvh - max(12px,env(safe-area-inset-top)));padding:22px 20px calc(20px + env(safe-area-inset-bottom));border-radius:24px 24px 0 0!important}.completion-dialog-heading{grid-template-columns:44px minmax(0,1fr);gap:12px;margin-bottom:20px}.completion-dialog-heading>.v-icon{width:44px;height:44px}.completion-dialog-heading h2{font-size:1.2rem}.completion-dialog-actions{display:grid;grid-template-columns:1fr;margin-top:22px}.completion-dialog-actions .v-btn{width:100%;min-width:0;min-height:48px}}
-.summary-row>.stage-completion{width:100%;font:inherit;color:inherit;text-align:left;appearance:none}.summary-row>.stage-completion.editable{cursor:pointer;touch-action:manipulation}.summary-row>.stage-completion.editable:active{transform:scale(.99)}.summary-row>.stage-completion.expanded{border-color:rgba(var(--v-theme-primary),.6);box-shadow:0 0 0 3px rgba(var(--v-theme-primary),.08),0 14px 36px rgba(0,0,0,.1)}.summary-row>.stage-completion>.stage-action-icon{display:grid;width:52px;height:52px;grid-column:1;grid-row:1/3;align-self:center;justify-self:center;place-items:center;margin:0;overflow:visible;border-radius:16px;color:rgb(var(--v-theme-primary));background:rgba(var(--v-theme-primary),.12)}.summary-row>.stage-completion>.stage-action-icon .v-icon{display:block;grid-column:auto;grid-row:auto;margin:0!important;font-size:1.7rem!important}.summary-row>.stage-completion>.stage-action-chevron{grid-column:3!important;grid-row:1/3!important;align-self:center;justify-self:center;margin:0!important;font-size:1.35rem!important}.completion-editor{width:min(100%,960px);margin-top:12px;padding:24px;border:1px solid rgba(var(--v-theme-primary),.3);border-radius:var(--app-radius-md)!important;background:linear-gradient(145deg,rgba(var(--v-theme-primary),.08),rgb(var(--v-theme-surface)))!important;box-shadow:0 18px 44px rgba(0,0,0,.12)!important}.completion-editor :deep(.v-input){width:100%;min-width:0}.completion-editor :deep(.v-field__field){min-width:0}@media(max-width:520px){.completion-editor{padding:20px 16px}.completion-dialog-actions{grid-template-columns:1fr}.completion-dialog-actions .v-btn{min-height:48px}}
-.completion-section{width:min(100%,960px);margin-top:30px}.completion-section>.stage-completion{display:grid;width:100%;max-width:none;min-height:92px;grid-template-columns:58px minmax(0,1fr) 34px;grid-template-rows:auto auto;align-content:center;align-items:center;column-gap:14px;margin:0;padding:16px 18px;font:inherit;color:inherit;text-align:left;appearance:none}.completion-section>.stage-completion.editable{cursor:pointer;touch-action:manipulation}.completion-section>.stage-completion.editable:active{transform:scale(.99)}.completion-section>.stage-completion.expanded{border-color:rgba(var(--v-theme-primary),.6);box-shadow:0 0 0 3px rgba(var(--v-theme-primary),.08),0 14px 36px rgba(0,0,0,.1)}.completion-section .stage-completion-copy{grid-column:2;grid-row:1/3}.completion-section .stage-completion-copy strong,.completion-section .stage-completion-copy span{overflow:visible;white-space:normal;text-overflow:clip}.completion-section>.stage-completion>.stage-action-icon{display:grid;width:52px;height:52px;grid-column:1;grid-row:1/3;align-self:center;justify-self:center;place-items:center;margin:0;border-radius:16px;color:rgb(var(--v-theme-primary));background:rgba(var(--v-theme-primary),.12)}.completion-section>.stage-completion>.stage-action-icon .v-icon{margin:0!important;font-size:1.7rem!important}.completion-section>.stage-completion>.stage-action-chevron{grid-column:3;grid-row:1/3;align-self:center;justify-self:center;margin:0!important;font-size:1.35rem!important}.completion-section>.completion-editor{width:100%}@media(max-width:520px){.completion-section{margin-top:24px}.completion-section>.stage-completion{min-height:88px;padding:15px 14px}}
-.resource-links{display:grid;gap:9px}.resource-links a{display:flex;min-width:0;align-items:center;justify-content:space-between;gap:14px;padding:14px 15px;border:1px solid rgba(var(--v-border-color),.08);border-radius:14px;color:inherit;text-decoration:none;background:rgba(var(--v-theme-on-surface),.045);transition:border-color .18s,background .18s,transform .18s}.resource-links a:hover{border-color:rgba(var(--v-theme-primary),.36);background:rgba(var(--v-theme-primary),.09);transform:translateY(-1px)}.resource-links a>span{display:grid;min-width:0;gap:3px}.resource-links small{color:rgb(var(--v-theme-primary));font-size:.68rem;font-weight:760;letter-spacing:.05em;text-transform:uppercase}.resource-links strong{overflow:hidden;font-size:.9rem;line-height:1.35;text-overflow:ellipsis;white-space:nowrap}.resource-links em{overflow:hidden;color:rgba(var(--v-theme-on-surface),.5);font-size:.68rem;font-style:normal;text-overflow:ellipsis;white-space:nowrap}.resource-links .v-icon{flex:0 0 auto;color:rgba(var(--v-theme-on-surface),.58);font-size:1.15rem}
-.van-summary{margin-top:24px;padding:18px;border:1px solid rgba(var(--v-theme-primary),.25);border-radius:var(--app-radius-md);background:linear-gradient(145deg,rgba(var(--v-theme-primary),.11),rgba(var(--v-theme-surface),.95) 56%);box-shadow:0 16px 44px rgba(0,0,0,.1)}.van-summary-heading{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:14px}.van-summary-heading span{color:rgb(var(--v-theme-primary));font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase}.van-summary-heading strong{overflow:hidden;font-size:1rem;text-overflow:ellipsis;white-space:nowrap}.van-summary-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}.van-summary-grid>div{display:grid;min-width:0;align-content:start;gap:6px;padding:13px;border:1px solid rgba(var(--v-border-color),.08);border-radius:15px;background:rgba(var(--v-theme-on-surface),.04)}.van-summary-grid .v-icon{color:rgb(var(--v-theme-primary));font-size:1.2rem}.van-summary-grid span{color:rgba(var(--v-theme-on-surface),.57);font-size:.7rem}.van-summary-grid strong{font-size:.84rem;line-height:1.35;overflow-wrap:anywhere}.van-summary-grid .v-chip{width:max-content;max-width:100%;font-weight:750}.verification-note{display:flex;align-items:flex-start;gap:8px;margin-top:13px;color:rgba(var(--v-theme-on-surface),.64);font-size:.78rem;line-height:1.5}.verification-note .v-icon{flex:0 0 auto;margin-top:1px;color:rgb(var(--v-theme-warning));font-size:1rem}.road-panel{border-color:rgba(var(--v-theme-primary),.24)!important}.ducato-decision{margin-bottom:14px;font-weight:800}.road-chips,.spot-tags{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px}.operational-callout{display:flex;align-items:flex-start;gap:10px;margin-top:14px;padding:14px;border-left:3px solid rgb(var(--v-theme-warning));border-radius:4px 14px 14px 4px;color:rgba(var(--v-theme-on-surface),.82);background:rgba(var(--v-theme-warning),.09);font-size:.9rem;line-height:1.55}.operational-callout.supply{margin:0 0 15px}.operational-callout .v-icon{flex:0 0 auto;margin-top:2px;color:rgb(var(--v-theme-warning));font-size:1.12rem}.spot-group-title{margin:0 0 12px;font-size:.95rem}.paid-title{margin-top:24px;padding-top:20px;border-top:1px solid rgba(var(--v-border-color),.1)}.spot-list{display:grid;gap:12px}.spot-card{padding:16px;border:1px solid rgba(var(--v-border-color),.1);border-radius:17px;background:rgba(var(--v-theme-on-surface),.04)}.spot-card .list-heading{margin-bottom:10px}.spot-card>p{color:rgba(var(--v-theme-on-surface),.78);font-size:.9rem;line-height:1.58}.spot-card>small{display:block;margin:8px 0 14px;color:rgba(var(--v-theme-on-surface),.58);font-size:.78rem;line-height:1.5}.spot-meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:13px 0}.spot-meta span{padding:8px;border-radius:10px;color:rgba(var(--v-theme-on-surface),.69);background:rgba(var(--v-theme-on-surface),.045);font-size:.68rem;line-height:1.35}.spot-verification{margin:0 0 12px!important;color:rgb(var(--v-theme-warning))!important;font-size:.72rem!important;font-weight:700}.warning-list .severity-info{color:rgba(var(--v-theme-on-surface),.76);background:rgba(var(--v-theme-primary),.08)}.warning-list .severity-caution{color:rgb(var(--v-theme-warning));background:rgba(var(--v-theme-warning),.1)}.warning-list .severity-danger{color:rgb(var(--v-theme-error));background:rgba(var(--v-theme-error),.1)}
-@media(max-width:760px){.van-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.van-summary-grid>div:first-child{grid-column:1/-1}.spot-meta{grid-template-columns:1fr}.van-summary-heading{align-items:flex-start;flex-direction:column;gap:5px}}
-@media(max-width:400px){.van-summary{padding:15px}.van-summary-grid>div{padding:11px}.van-summary-heading strong{max-width:100%}}
+.stop-detail {
+  padding-bottom: calc(104px + env(safe-area-inset-bottom));
+  background: transparent;
+}
+.cover {
+  height: 360px;
+}
+.cover-placeholder {
+  background:
+    radial-gradient(circle at 25% 10%, rgba(168, 182, 200, 0.22), transparent 38%),
+    linear-gradient(145deg, #14161a, #2b2f37);
+}
+.cover-shade {
+  background: linear-gradient(180deg, rgba(5, 6, 8, 0.42), transparent 36%, rgba(5, 6, 8, 0.9));
+}
+.back,
+.favorite {
+  top: max(16px, env(safe-area-inset-top));
+  min-width: 50px;
+  min-height: 50px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(14, 16, 19, 0.62) !important;
+  backdrop-filter: blur(20px);
+}
+.back {
+  left: clamp(16px, 2.6vw, 44px);
+}
+.favorite {
+  right: clamp(16px, 2.6vw, 44px);
+}
+.cover-copy {
+  left: clamp(20px, 3vw, 56px);
+  bottom: 30px;
+}
+.cover-copy p {
+  font-size: 0.84rem;
+  font-weight: 740;
+  opacity: 0.76;
+  letter-spacing: 0.1em;
+}
+.cover-copy h1 {
+  margin-top: 7px;
+  font-size: clamp(2.5rem, 5vw, 4.25rem);
+}
+.content {
+  padding-inline: clamp(16px, 3vw, 56px);
+}
+.photo-strip {
+  gap: 12px;
+  margin-top: 20px;
+}
+.photo-strip button {
+  height: 230px;
+  border-radius: 22px;
+  box-shadow: var(--app-shadow);
+}
+.intro {
+  padding: 30px 4px 26px;
+}
+.intro > p {
+  max-width: 1100px;
+  font-size: 1.08rem;
+  line-height: 1.7;
+  color: rgba(var(--v-theme-on-background), 0.82);
+}
+.summary-row {
+  gap: 12px;
+  margin-top: 24px;
+}
+.summary-row > div {
+  padding: 18px 16px;
+  border-radius: var(--app-radius-md);
+  background: linear-gradient(
+    145deg,
+    rgba(var(--v-theme-primary), 0.06),
+    rgb(var(--v-theme-surface))
+  );
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.08);
+}
+.summary-row .v-icon {
+  font-size: 1.35rem;
+}
+.summary-row strong {
+  font-size: 1.05rem;
+}
+.summary-row span {
+  margin-top: 5px;
+  font-size: 0.78rem;
+}
+.detail-panels {
+  border-radius: var(--app-radius-md);
+  box-shadow: 0 14px 42px rgba(0, 0, 0, 0.08);
+}
+.detail-panels :deep(.v-expansion-panel-title) {
+  min-height: 72px;
+  gap: 14px;
+  padding: 18px 20px;
+  font-size: 1.02rem;
+  font-weight: 740;
+}
+.detail-panels :deep(.v-expansion-panel-title .v-icon) {
+  font-size: 1.3rem;
+  color: rgb(var(--v-theme-primary));
+}
+.detail-panels :deep(.v-expansion-panel-text__wrapper) {
+  padding: 0 20px 24px;
+}
+.body-copy {
+  font-size: 0.98rem;
+  line-height: 1.72;
+}
+.empty-copy,
+.source-copy {
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+.stack-list {
+  gap: 12px;
+}
+.stack-list > div {
+  padding: 17px;
+  border: 1px solid rgba(var(--v-border-color), 0.07);
+  border-radius: 16px;
+}
+.stack-list strong {
+  font-size: 0.98rem;
+}
+.stack-list p,
+.stack-list small {
+  margin-top: 7px;
+  font-size: 0.9rem;
+  line-height: 1.58;
+  color: rgba(var(--v-theme-on-surface), 0.68);
+}
+.facility-grid {
+  gap: 10px;
+}
+.facility-grid > div {
+  padding: 16px;
+  border-radius: 16px;
+}
+.facility-grid .v-icon {
+  font-size: 1.3rem;
+}
+.facility-grid span {
+  font-size: 0.78rem;
+}
+.facility-grid strong {
+  margin-top: 4px;
+  font-size: 0.9rem;
+}
+.condition-list > div {
+  padding: 15px 0;
+  font-size: 0.92rem;
+}
+.warning-list p {
+  padding: 16px;
+  font-size: 0.9rem;
+  line-height: 1.58;
+}
+.sun-grid {
+  gap: 10px;
+}
+.sun-grid > div {
+  padding: 16px;
+  border-radius: 16px;
+}
+.sun-grid span {
+  font-size: 0.78rem;
+}
+.sun-grid p {
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+.detail-map-section {
+  margin-top: 30px;
+  padding-top: 32px;
+}
+.map-section-title {
+  gap: 12px;
+  margin-bottom: 16px;
+  font-size: 1.05rem;
+}
+.map-section-title p {
+  font-size: 0.82rem;
+}
+.detail-map {
+  height: 360px;
+  border-radius: var(--app-radius-md);
+  box-shadow: var(--app-shadow);
+}
+.navigation-bar {
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+  background: rgba(var(--v-theme-surface), 0.9);
+  box-shadow: 0 -16px 42px rgba(0, 0, 0, 0.13);
+  backdrop-filter: blur(24px) saturate(140%);
+}
+.navigation-bar .v-btn {
+  min-height: 58px;
+  font-size: 0.95rem;
+}
+@media (min-width: 700px) {
+  .cover {
+    height: 440px;
+  }
+  .photo-strip button {
+    height: 270px;
+  }
+  .detail-panels {
+    gap: 14px;
+    box-shadow: none;
+  }
+  .detail-panels :deep(.v-expansion-panel) {
+    border-radius: var(--app-radius-md) !important;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.07) !important;
+  }
+  .detail-map {
+    height: 440px;
+  }
+  .navigation-bar {
+    left: 50%;
+    bottom: 18px;
+    width: min(680px, calc(100% - 40px));
+    border: 1px solid rgba(var(--v-border-color), 0.13);
+    border-radius: 24px;
+    transform: translateX(-50%);
+    box-shadow: var(--app-shadow-float);
+  }
+}
+@media (max-width: 520px) {
+  .cover {
+    height: 330px;
+  }
+  .summary-row {
+    gap: 8px;
+  }
+  .summary-row > div {
+    padding: 15px 11px;
+  }
+  .intro > p {
+    font-size: 1rem;
+  }
+  .detail-panels :deep(.v-expansion-panel-title) {
+    min-height: 68px;
+    padding: 16px;
+  }
+}
+.summary-row span {
+  font-size: 0.82rem;
+}
+.summary-row {
+  max-width: 960px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+}
+.summary-row > div {
+  display: grid;
+  min-height: 86px;
+  grid-template-columns: 58px minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  align-content: center;
+  column-gap: 14px;
+  padding: 15px 17px;
+}
+.summary-row .v-icon {
+  grid-row: 1/3;
+  align-self: center;
+  justify-self: center;
+  margin: 0;
+}
+.summary-row strong,
+.summary-row span {
+  grid-column: 2;
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+}
+.summary-row strong {
+  align-self: end;
+  font-size: 1.05rem;
+  line-height: 1.3;
+}
+.summary-row span {
+  align-self: start;
+  margin-top: 2px;
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+.detail-panels:empty {
+  display: none;
+}
+@media (max-width: 520px) {
+  .summary-row {
+    grid-template-columns: 1fr;
+  }
+  .summary-row > div {
+    min-height: 78px;
+  }
+}
+.detail-panels {
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: start;
+  gap: 14px;
+  overflow: visible;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.detail-column {
+  align-self: start;
+  overflow: hidden;
+  border: 1px solid rgba(var(--v-border-color), 0.11);
+  border-radius: var(--app-radius-md);
+  box-shadow: 0 14px 42px rgba(0, 0, 0, 0.08);
+}
+.detail-panels :deep(.v-expansion-panel-text__wrapper) {
+  padding: 20px 20px 26px;
+}
+@media (min-width: 700px) {
+  .detail-panels {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+  .detail-column {
+    gap: 14px;
+    overflow: visible;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .detail-column :deep(.v-expansion-panel) {
+    align-self: start;
+    overflow: hidden;
+    border: 1px solid rgba(var(--v-border-color), 0.1) !important;
+    border-radius: var(--app-radius-md) !important;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.07) !important;
+  }
+}
+.summary-row > .stage-completion {
+  display: grid;
+  max-width: none;
+  min-height: 86px;
+  grid-template-columns: 58px minmax(0, 1fr) auto;
+  grid-template-rows: auto auto;
+  align-content: center;
+  align-items: center;
+  column-gap: 14px;
+  margin-top: 0;
+  padding: 15px 17px;
+}
+.stage-completion-copy {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  grid-column: 2;
+  grid-row: 1/3;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+}
+.stage-completion-copy strong,
+.stage-completion-copy span {
+  width: 100%;
+  align-self: flex-start;
+  margin-left: 0;
+  text-align: left;
+}
+.stage-checkbox {
+  display: grid;
+  width: 52px;
+  height: 52px;
+  grid-column: 1;
+  grid-row: 1/3;
+  align-self: center;
+  justify-self: center;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 16px;
+  color: rgba(var(--v-theme-on-surface), 0.68);
+  background: rgba(var(--v-theme-on-surface), 0.07);
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.stage-checkbox.editable {
+  cursor: pointer;
+}
+.stage-checkbox.editable:active {
+  transform: scale(0.96);
+}
+.stage-checkbox.checked {
+  color: rgb(var(--v-theme-primary));
+  background: rgba(var(--v-theme-primary), 0.14);
+}
+.stage-checkbox:disabled {
+  cursor: default;
+}
+.stage-checkbox .v-icon {
+  font-size: 2rem !important;
+}
+.completion-edit {
+  grid-column: 3;
+  grid-row: 1/3;
+  align-self: center;
+}
+.summary-row > .stage-completion.completed {
+  border-color: rgba(var(--v-theme-primary), 0.52);
+  background: linear-gradient(
+    145deg,
+    rgba(var(--v-theme-primary), 0.15),
+    rgb(var(--v-theme-surface))
+  );
+}
+@media (max-width: 520px) {
+  .summary-row > .stage-completion {
+    min-height: 82px;
+    padding: 14px;
+  }
+}
+.cover-photo-trigger {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: zoom-in;
+}
+.cover-photo-trigger img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.35s ease;
+}
+.cover-photo-trigger:hover img {
+  transform: scale(1.015);
+}
+.cover-shade {
+  z-index: 1;
+  pointer-events: none;
+}
+.cover-copy,
+.back,
+.favorite {
+  z-index: 2;
+}
+.navigation-bar {
+  display: grid;
+  grid-template-columns: 82px minmax(0, 1fr) 82px;
+  align-items: center;
+  gap: 8px;
+}
+.navigation-bar .v-btn {
+  width: 100%;
+  min-width: 0;
+  min-height: 58px;
+}
+.directions-action {
+  padding-inline: 10px !important;
+}
+.stop-jump {
+  padding-inline: 6px !important;
+}
+.stop-jump :deep(.v-btn__content) {
+  flex-direction: column;
+  gap: 1px;
+}
+.stop-jump .v-icon {
+  font-size: 1.25rem;
+}
+.stop-jump span {
+  font-size: 0.66rem;
+  line-height: 1.1;
+}
+@media (min-width: 700px) {
+  .navigation-bar {
+    grid-template-columns: 128px minmax(0, 1fr) 128px;
+    gap: 10px;
+  }
+  .stop-jump :deep(.v-btn__content) {
+    flex-direction: row;
+    gap: 6px;
+  }
+  .stop-jump span {
+    font-size: 0.8rem;
+  }
+}
+.section-title-copy {
+  display: grid;
+  min-width: 0;
+  justify-items: start;
+  gap: 6px;
+}
+.section-title-copy strong {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.detail-panels :deep(.section-title-copy .v-chip) {
+  margin: 0 !important;
+}
+.list-heading {
+  display: grid;
+  justify-items: start;
+  gap: 8px;
+}
+.list-heading strong {
+  display: block;
+  width: 100%;
+  line-height: 1.35;
+}
+.stop-detail {
+  background: rgb(var(--v-theme-background)) !important;
+}
+.completion-dialog-overlay {
+  position: fixed;
+  z-index: 10000;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: max(20px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right))
+    max(20px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+  background: rgba(0, 0, 0, 0.68);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.completion-dialog {
+  width: min(440px, 100%);
+  max-height: calc(100dvh - max(40px, env(safe-area-inset-top) + env(safe-area-inset-bottom)));
+  overflow-y: auto;
+  padding: 26px;
+  border: 1px solid rgba(var(--v-border-color), 0.12);
+  border-radius: 24px !important;
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.42) !important;
+}
+.completion-dialog-heading {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+.completion-dialog-heading > .v-icon {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  border-radius: 15px;
+  color: rgb(var(--v-theme-primary));
+  background: rgba(var(--v-theme-primary), 0.1);
+  font-size: 1.5rem;
+}
+.completion-dialog-copy {
+  min-width: 0;
+  text-align: left;
+}
+.completion-dialog-heading h2 {
+  margin: 0;
+  font-size: 1.35rem;
+  line-height: 1.2;
+  letter-spacing: -0.035em;
+  overflow-wrap: anywhere;
+}
+.completion-dialog-heading p {
+  margin: 4px 0 0;
+  color: rgba(var(--v-theme-on-surface), 0.6);
+  font-size: 0.86rem;
+  line-height: 1.4;
+}
+.completion-dialog :deep(.v-input) {
+  width: 100%;
+  min-width: 0;
+}
+.completion-dialog :deep(.v-field__field) {
+  min-width: 0;
+}
+.completion-distance {
+  margin-top: 18px;
+}
+.completion-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 24px;
+}
+@media (max-width: 430px) {
+  .completion-dialog-overlay {
+    place-items: end center;
+    padding: env(safe-area-inset-top) 0 0;
+  }
+  .completion-dialog {
+    width: 100%;
+    max-height: calc(100dvh - max(12px, env(safe-area-inset-top)));
+    padding: 22px 20px calc(20px + env(safe-area-inset-bottom));
+    border-radius: 24px 24px 0 0 !important;
+  }
+  .completion-dialog-heading {
+    grid-template-columns: 44px minmax(0, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .completion-dialog-heading > .v-icon {
+    width: 44px;
+    height: 44px;
+  }
+  .completion-dialog-heading h2 {
+    font-size: 1.2rem;
+  }
+  .completion-dialog-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    margin-top: 22px;
+  }
+  .completion-dialog-actions .v-btn {
+    width: 100%;
+    min-width: 0;
+    min-height: 48px;
+  }
+}
+.summary-row > .stage-completion {
+  width: 100%;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  appearance: none;
+}
+.summary-row > .stage-completion.editable {
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.summary-row > .stage-completion.editable:active {
+  transform: scale(0.99);
+}
+.summary-row > .stage-completion.expanded {
+  border-color: rgba(var(--v-theme-primary), 0.6);
+  box-shadow:
+    0 0 0 3px rgba(var(--v-theme-primary), 0.08),
+    0 14px 36px rgba(0, 0, 0, 0.1);
+}
+.summary-row > .stage-completion > .stage-action-icon {
+  display: grid;
+  width: 52px;
+  height: 52px;
+  grid-column: 1;
+  grid-row: 1/3;
+  align-self: center;
+  justify-self: center;
+  place-items: center;
+  margin: 0;
+  overflow: visible;
+  border-radius: 16px;
+  color: rgb(var(--v-theme-primary));
+  background: rgba(var(--v-theme-primary), 0.12);
+}
+.summary-row > .stage-completion > .stage-action-icon .v-icon {
+  display: block;
+  grid-column: auto;
+  grid-row: auto;
+  margin: 0 !important;
+  font-size: 1.7rem !important;
+}
+.summary-row > .stage-completion > .stage-action-chevron {
+  grid-column: 3 !important;
+  grid-row: 1/3 !important;
+  align-self: center;
+  justify-self: center;
+  margin: 0 !important;
+  font-size: 1.35rem !important;
+}
+.completion-editor {
+  width: min(100%, 960px);
+  margin-top: 12px;
+  padding: 24px;
+  border: 1px solid rgba(var(--v-theme-primary), 0.3);
+  border-radius: var(--app-radius-md) !important;
+  background: linear-gradient(
+    145deg,
+    rgba(var(--v-theme-primary), 0.08),
+    rgb(var(--v-theme-surface))
+  ) !important;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.12) !important;
+}
+.completion-editor :deep(.v-input) {
+  width: 100%;
+  min-width: 0;
+}
+.completion-editor :deep(.v-field__field) {
+  min-width: 0;
+}
+@media (max-width: 520px) {
+  .completion-editor {
+    padding: 20px 16px;
+  }
+  .completion-dialog-actions {
+    grid-template-columns: 1fr;
+  }
+  .completion-dialog-actions .v-btn {
+    min-height: 48px;
+  }
+}
+.completion-section {
+  width: min(100%, 960px);
+  margin-top: 30px;
+}
+.completion-section > .stage-completion {
+  display: grid;
+  width: 100%;
+  max-width: none;
+  min-height: 92px;
+  grid-template-columns: 58px minmax(0, 1fr) 34px;
+  grid-template-rows: auto auto;
+  align-content: center;
+  align-items: center;
+  column-gap: 14px;
+  margin: 0;
+  padding: 16px 18px;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  appearance: none;
+}
+.completion-section > .stage-completion.editable {
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.completion-section > .stage-completion.editable:active {
+  transform: scale(0.99);
+}
+.completion-section > .stage-completion.expanded {
+  border-color: rgba(var(--v-theme-primary), 0.6);
+  box-shadow:
+    0 0 0 3px rgba(var(--v-theme-primary), 0.08),
+    0 14px 36px rgba(0, 0, 0, 0.1);
+}
+.completion-section .stage-completion-copy {
+  grid-column: 2;
+  grid-row: 1/3;
+}
+.completion-section .stage-completion-copy strong,
+.completion-section .stage-completion-copy span {
+  overflow: visible;
+  white-space: normal;
+  text-overflow: clip;
+}
+.completion-section > .stage-completion > .stage-action-icon {
+  display: grid;
+  width: 52px;
+  height: 52px;
+  grid-column: 1;
+  grid-row: 1/3;
+  align-self: center;
+  justify-self: center;
+  place-items: center;
+  margin: 0;
+  border-radius: 16px;
+  color: rgb(var(--v-theme-primary));
+  background: rgba(var(--v-theme-primary), 0.12);
+}
+.completion-section > .stage-completion > .stage-action-icon .v-icon {
+  margin: 0 !important;
+  font-size: 1.7rem !important;
+}
+.completion-section > .stage-completion > .stage-action-chevron {
+  grid-column: 3;
+  grid-row: 1/3;
+  align-self: center;
+  justify-self: center;
+  margin: 0 !important;
+  font-size: 1.35rem !important;
+}
+.completion-section > .completion-editor {
+  width: 100%;
+}
+@media (max-width: 520px) {
+  .completion-section {
+    margin-top: 24px;
+  }
+  .completion-section > .stage-completion {
+    min-height: 88px;
+    padding: 15px 14px;
+  }
+}
+.resource-links {
+  display: grid;
+  gap: 9px;
+}
+.resource-links a {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 15px;
+  border: 1px solid rgba(var(--v-border-color), 0.08);
+  border-radius: 14px;
+  color: inherit;
+  text-decoration: none;
+  background: rgba(var(--v-theme-on-surface), 0.045);
+  transition:
+    border-color 0.18s,
+    background 0.18s,
+    transform 0.18s;
+}
+.resource-links a:hover {
+  border-color: rgba(var(--v-theme-primary), 0.36);
+  background: rgba(var(--v-theme-primary), 0.09);
+  transform: translateY(-1px);
+}
+.resource-links a > span {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+.resource-links small {
+  color: rgb(var(--v-theme-primary));
+  font-size: 0.68rem;
+  font-weight: 760;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.resource-links strong {
+  overflow: hidden;
+  font-size: 0.9rem;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.resource-links em {
+  overflow: hidden;
+  color: rgba(var(--v-theme-on-surface), 0.5);
+  font-size: 0.68rem;
+  font-style: normal;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.resource-links .v-icon {
+  flex: 0 0 auto;
+  color: rgba(var(--v-theme-on-surface), 0.58);
+  font-size: 1.15rem;
+}
+.van-summary {
+  margin-top: 24px;
+  padding: 18px;
+  border: 1px solid rgba(var(--v-theme-primary), 0.25);
+  border-radius: var(--app-radius-md);
+  background: linear-gradient(
+    145deg,
+    rgba(var(--v-theme-primary), 0.11),
+    rgba(var(--v-theme-surface), 0.95) 56%
+  );
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.1);
+}
+.van-summary-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+.van-summary-heading span {
+  color: rgb(var(--v-theme-primary));
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.van-summary-heading strong {
+  overflow: hidden;
+  font-size: 1rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.van-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+}
+.van-summary-grid > div {
+  display: grid;
+  min-width: 0;
+  align-content: start;
+  gap: 6px;
+  padding: 13px;
+  border: 1px solid rgba(var(--v-border-color), 0.08);
+  border-radius: 15px;
+  background: rgba(var(--v-theme-on-surface), 0.04);
+}
+.van-summary-grid .v-icon {
+  color: rgb(var(--v-theme-primary));
+  font-size: 1.2rem;
+}
+.van-summary-grid span {
+  color: rgba(var(--v-theme-on-surface), 0.57);
+  font-size: 0.7rem;
+}
+.van-summary-grid strong {
+  font-size: 0.84rem;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+.van-summary-grid .v-chip {
+  width: max-content;
+  max-width: 100%;
+  font-weight: 750;
+}
+.verification-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 13px;
+  color: rgba(var(--v-theme-on-surface), 0.64);
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+.verification-note .v-icon {
+  flex: 0 0 auto;
+  margin-top: 1px;
+  color: rgb(var(--v-theme-warning));
+  font-size: 1rem;
+}
+.road-panel {
+  border-color: rgba(var(--v-theme-primary), 0.24) !important;
+}
+.ducato-decision {
+  margin-bottom: 14px;
+  font-weight: 800;
+}
+.road-chips,
+.spot-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 14px;
+}
+.operational-callout {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 14px;
+  border-left: 3px solid rgb(var(--v-theme-warning));
+  border-radius: 4px 14px 14px 4px;
+  color: rgba(var(--v-theme-on-surface), 0.82);
+  background: rgba(var(--v-theme-warning), 0.09);
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+.operational-callout.supply {
+  margin: 0 0 15px;
+}
+.operational-callout .v-icon {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  color: rgb(var(--v-theme-warning));
+  font-size: 1.12rem;
+}
+.spot-group-title {
+  margin: 0 0 12px;
+  font-size: 0.95rem;
+}
+.paid-title {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(var(--v-border-color), 0.1);
+}
+.spot-list {
+  display: grid;
+  gap: 12px;
+}
+.spot-card {
+  padding: 16px;
+  border: 1px solid rgba(var(--v-border-color), 0.1);
+  border-radius: 17px;
+  background: rgba(var(--v-theme-on-surface), 0.04);
+}
+.spot-card .list-heading {
+  margin-bottom: 10px;
+}
+.spot-card > p {
+  color: rgba(var(--v-theme-on-surface), 0.78);
+  font-size: 0.9rem;
+  line-height: 1.58;
+}
+.spot-card > small {
+  display: block;
+  margin: 8px 0 14px;
+  color: rgba(var(--v-theme-on-surface), 0.58);
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+.spot-meta {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  margin: 13px 0;
+}
+.spot-meta span {
+  padding: 8px;
+  border-radius: 10px;
+  color: rgba(var(--v-theme-on-surface), 0.69);
+  background: rgba(var(--v-theme-on-surface), 0.045);
+  font-size: 0.68rem;
+  line-height: 1.35;
+}
+.spot-verification {
+  margin: 0 0 12px !important;
+  color: rgb(var(--v-theme-warning)) !important;
+  font-size: 0.72rem !important;
+  font-weight: 700;
+}
+.warning-list .severity-info {
+  color: rgba(var(--v-theme-on-surface), 0.76);
+  background: rgba(var(--v-theme-primary), 0.08);
+}
+.warning-list .severity-caution {
+  color: rgb(var(--v-theme-warning));
+  background: rgba(var(--v-theme-warning), 0.1);
+}
+.warning-list .severity-danger {
+  color: rgb(var(--v-theme-error));
+  background: rgba(var(--v-theme-error), 0.1);
+}
+@media (max-width: 760px) {
+  .van-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .van-summary-grid > div:first-child {
+    grid-column: 1/-1;
+  }
+  .spot-meta {
+    grid-template-columns: 1fr;
+  }
+  .van-summary-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+  }
+}
+@media (max-width: 400px) {
+  .van-summary {
+    padding: 15px;
+  }
+  .van-summary-grid > div {
+    padding: 11px;
+  }
+  .van-summary-heading strong {
+    max-width: 100%;
+  }
+}
+@media (min-width: 960px) {
+  .stop-detail {
+    width: min(100%, 1360px);
+    margin-inline: auto;
+  }
+}
 </style>

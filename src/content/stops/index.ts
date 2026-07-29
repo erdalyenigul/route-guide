@@ -6,6 +6,8 @@ import { dalyan } from './dalyan'
 import { faralya } from './faralya'
 import { gumusluk } from './gumusluk'
 import { guzelcamli } from './guzelcamli'
+import { cesmePalmiye } from './cesmePalmiye'
+import { torba } from './torba'
 import { izmir } from './izmir'
 import { karaotBeach } from './karaotBeach'
 import { kas } from './kas'
@@ -13,4 +15,20 @@ import { lara } from './lara'
 import { mazi } from './mazi'
 import type { StopContent } from '../types'
 
-export const stops: StopContent[] = [izmir, guzelcamli, bafaLake, gumusluk, akyarlar, mazi, akbuk, dalyan, karaotBeach, faralya, kas, cirali, lara]
+export const stops: StopContent[] = [
+  izmir,
+  guzelcamli,
+  bafaLake,
+  cesmePalmiye,
+  torba,
+  gumusluk,
+  akyarlar,
+  mazi,
+  akbuk,
+  dalyan,
+  karaotBeach,
+  faralya,
+  kas,
+  cirali,
+  lara
+]

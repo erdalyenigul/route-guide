@@ -7,6 +7,20 @@ export const initialCaravanRoute = {
   startDate: '2026-07-22',
   endDate: '2026-08-18',
   status: 'active',
-  stopIds: ['izmir', 'guzelcamli', 'bafa-lake', 'gumusluk', 'akyarlar', 'mazi', 'akbuk', 'dalyan', 'karaot-beach', 'faralya', 'kas', 'cirali', 'lara'],
-  totalDistanceKm: 1065
+  stopIds: [
+    'izmir',
+    'cesme-palmiye',
+    'torba',
+    'gumusluk',
+    'akyarlar',
+    'mazi',
+    'akbuk',
+    'dalyan',
+    'karaot-beach',
+    'faralya',
+    'kas',
+    'cirali',
+    'lara'
+  ],
+  totalDistanceKm: 1068
 } satisfies RouteContent

@@ -28,14 +28,24 @@ async function resolveRoute(routeSlug: string): Promise<ResolvedRoute> {
   const cached = routeCache.get(routeSlug)
   if (cached) return cached
 
-  const { data: route, error: routeError } = await client().from('routes').select('id').eq('slug', routeSlug).single()
+  const { data: route, error: routeError } = await client()
+    .from('routes')
+    .select('id')
+    .eq('slug', routeSlug)
+    .single()
   if (routeError) throw routeError
 
-  const { data: routeStops, error: routeStopsError } = await client().from('route_stops').select('stop_id').eq('route_id', route.id)
+  const { data: routeStops, error: routeStopsError } = await client()
+    .from('route_stops')
+    .select('stop_id')
+    .eq('route_id', route.id)
   if (routeStopsError) throw routeStopsError
   const stopIds = (routeStops ?? []).map((item) => item.stop_id)
 
-  const { data: stops, error: stopsError } = await client().from('stops').select('id,slug').in('id', stopIds)
+  const { data: stops, error: stopsError } = await client()
+    .from('stops')
+    .select('id,slug')
+    .in('id', stopIds)
   if (stopsError) throw stopsError
 
   const resolved = {
@@ -61,8 +71,14 @@ export const supabaseTripStateRepository: TripStateRepository = {
   async getState(routeSlug) {
     const resolved = await resolveRoute(routeSlug)
     const [stopResult, checklistResult] = await Promise.all([
-      client().from('trip_stop_states').select('stop_id,status,is_favorite,nights_stayed,actual_distance_km').eq('route_id', resolved.routeId),
-      client().from('trip_checklist_states').select('item_id,completed').eq('route_id', resolved.routeId)
+      client()
+        .from('trip_stop_states')
+        .select('stop_id,status,is_favorite,nights_stayed,actual_distance_km')
+        .eq('route_id', resolved.routeId),
+      client()
+        .from('trip_checklist_states')
+        .select('item_id,completed')
+        .eq('route_id', resolved.routeId)
     ])
     if (stopResult.error) throw stopResult.error
     if (checklistResult.error) throw checklistResult.error
@@ -76,56 +92,84 @@ export const supabaseTripStateRepository: TripStateRepository = {
       if (row.actual_distance_km !== null) state.actualDistanceByStop[slug] = row.actual_distance_km
       if (row.is_favorite) state.favoriteStopIds.push(slug)
     }
-    for (const row of checklistResult.data ?? []) state.checklistCompleted[row.item_id] = row.completed
+    for (const row of checklistResult.data ?? [])
+      state.checklistCompleted[row.item_id] = row.completed
     return state
   },
 
   async setFavorite(routeSlug, stopSlug, favorite) {
     const [resolved, user] = await Promise.all([resolveRoute(routeSlug), currentUser()])
-    await verifyWrite(await client().from('trip_stop_states').update({
-      is_favorite: favorite,
-      updated_by: user.id
-    }).eq('route_id', resolved.routeId).eq('stop_id', stopId(resolved, stopSlug)))
+    await verifyWrite(
+      await client()
+        .from('trip_stop_states')
+        .update({
+          is_favorite: favorite,
+          updated_by: user.id
+        })
+        .eq('route_id', resolved.routeId)
+        .eq('stop_id', stopId(resolved, stopSlug))
+    )
   },
 
   async setStopProgress(routeSlug, stopSlug, status, nightsStayed, actualDistanceKm) {
     const [resolved, user] = await Promise.all([resolveRoute(routeSlug), currentUser()])
-    await verifyWrite(await client().from('trip_stop_states').update({
-      status,
-      nights_stayed: nightsStayed,
-      actual_distance_km: actualDistanceKm,
-      updated_by: user.id
-    }).eq('route_id', resolved.routeId).eq('stop_id', stopId(resolved, stopSlug)))
+    await verifyWrite(
+      await client()
+        .from('trip_stop_states')
+        .update({
+          status,
+          nights_stayed: nightsStayed,
+          actual_distance_km: actualDistanceKm,
+          updated_by: user.id
+        })
+        .eq('route_id', resolved.routeId)
+        .eq('stop_id', stopId(resolved, stopSlug))
+    )
   },
 
   async setChecklistItem(routeSlug, itemId, completed) {
     const [resolved, user] = await Promise.all([resolveRoute(routeSlug), currentUser()])
-    await verifyWrite(await client().from('trip_checklist_states').upsert({
-      route_id: resolved.routeId,
-      item_id: itemId,
-      completed,
-      updated_by: user.id
-    }, { onConflict: 'route_id,item_id' }))
+    await verifyWrite(
+      await client().from('trip_checklist_states').upsert(
+        {
+          route_id: resolved.routeId,
+          item_id: itemId,
+          completed,
+          updated_by: user.id
+        },
+        { onConflict: 'route_id,item_id' }
+      )
+    )
   },
 
   async subscribe(routeSlug, onChange) {
     const resolved = await resolveRoute(routeSlug)
     const channel: RealtimeChannel = client()
       .channel(`trip-state:${resolved.routeId}`)
-      .on('postgres_changes', {
-        event: '*',
-        schema: 'public',
-        table: 'trip_stop_states',
-        filter: `route_id=eq.${resolved.routeId}`
-      }, onChange)
-      .on('postgres_changes', {
-        event: '*',
-        schema: 'public',
-        table: 'trip_checklist_states',
-        filter: `route_id=eq.${resolved.routeId}`
-      }, onChange)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'trip_stop_states',
+          filter: `route_id=eq.${resolved.routeId}`
+        },
+        onChange
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'trip_checklist_states',
+          filter: `route_id=eq.${resolved.routeId}`
+        },
+        onChange
+      )
       .subscribe()
 
-    return () => { void client().removeChannel(channel) }
+    return () => {
+      void client().removeChannel(channel)
+    }
   }
 }

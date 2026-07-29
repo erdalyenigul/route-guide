@@ -11,11 +11,23 @@ export interface TripState {
 export interface TripStateRepository {
   getState(routeSlug: string): Promise<TripState>
   setFavorite(routeSlug: string, stopSlug: string, favorite: boolean): Promise<void>
-  setStopProgress(routeSlug: string, stopSlug: string, status: StopStatus, nightsStayed: number | null, actualDistanceKm: number | null): Promise<void>
+  setStopProgress(
+    routeSlug: string,
+    stopSlug: string,
+    status: StopStatus,
+    nightsStayed: number | null,
+    actualDistanceKm: number | null
+  ): Promise<void>
   setChecklistItem(routeSlug: string, itemId: string, completed: boolean): Promise<void>
   subscribe(routeSlug: string, onChange: () => void): Promise<() => void>
 }
 
 export function emptyTripState(): TripState {
-  return { favoriteStopIds: [], stopStatuses: {}, nightsStayedByStop: {}, actualDistanceByStop: {}, checklistCompleted: {} }
+  return {
+    favoriteStopIds: [],
+    stopStatuses: {},
+    nightsStayedByStop: {},
+    actualDistanceByStop: {},
+    checklistCompleted: {}
+  }
 }

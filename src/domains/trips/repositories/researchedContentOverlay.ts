@@ -55,7 +55,11 @@ function key(path: string): ContentTranslationKey {
   return `content.${path}`
 }
 
-function service(contentName: ResearchedStop['contentName'], type: 'market' | 'fuel' | 'water' | 'dump', available = false): ServicePoint {
+function service(
+  contentName: ResearchedStop['contentName'],
+  type: 'market' | 'fuel' | 'water' | 'dump',
+  available = false
+): ServicePoint {
   return {
     available,
     name: key(`stops.${contentName}.${type}Name`),
@@ -89,13 +93,15 @@ function enrichStop(stop: StopContent, researched: ResearchedStop): StopContent 
     crowdLevel: null,
     ducatoAccessibility: 'caution',
     droneSuitability: null,
-    lunaUltraRecommendations: [{
-      subject: key(`${root}.luna.subject`),
-      lens: key(`${root}.luna.lens`),
-      timing: key(`${root}.luna.timing`),
-      settings: key(`${root}.luna.settings`),
-      fieldNote: key(`${root}.luna.note`)
-    }],
+    lunaUltraRecommendations: [
+      {
+        subject: key(`${root}.luna.subject`),
+        lens: key(`${root}.luna.lens`),
+        timing: key(`${root}.luna.timing`),
+        settings: key(`${root}.luna.settings`),
+        fieldNote: key(`${root}.luna.note`)
+      }
+    ],
     municipalityFacilities: {
       available: false,
       wc: false,
@@ -120,7 +126,8 @@ function enrichStop(stop: StopContent, researched: ResearchedStop): StopContent 
 }
 
 function freecamp(stop: StopContent, researched: ResearchedStop): SpotContent {
-  const spotName = researched.contentName === 'bafaLake' ? 'bafaFree' : `${researched.contentName}Free`
+  const spotName =
+    researched.contentName === 'bafaLake' ? 'bafaFree' : `${researched.contentName}Free`
   return {
     id: `${stop.id}-freecamp-unverified`,
     stopId: stop.id,
@@ -181,6 +188,9 @@ export function applyResearchedContentOverlay(dataset: RouteDataset): RouteDatas
     ...dataset,
     stops: enrichedStops,
     spots: [...dataset.spots.filter((spot) => !stopIds.has(spot.stopId)), ...additions],
-    activities: [...dataset.activities.filter((activity) => !stopIds.has(activity.stopId)), ...activityAdditions]
+    activities: [
+      ...dataset.activities.filter((activity) => !stopIds.has(activity.stopId)),
+      ...activityAdditions
+    ]
   }
 }

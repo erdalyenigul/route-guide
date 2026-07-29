@@ -8,6 +8,8 @@
     "build": "vue-tsc -b && vite build",
     "typecheck": "vue-tsc -b",
     "lint": "eslint . --max-warnings=0",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -29,6 +31,7 @@
     "eslint": "^9.32.0",
     "eslint-plugin-vue": "^10.3.0",
     "postcss": "^8.5.6",
+    "prettier": "^3.6.2",
     "sass": "^1.89.2",
     "tailwindcss": "^3.4.17",
     "typescript": "~5.8.3",

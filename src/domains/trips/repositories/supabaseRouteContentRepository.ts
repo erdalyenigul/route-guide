@@ -1,29 +1,54 @@
-import type { Accessibility, CampingType, ContentTranslationKey, DucatoAccess, Level, OvernightStatus, RouteDataset, RouteStatus, StopExperience, StopStatus, VerificationStatus, WarningSeverity } from '@/content/types'
+import type {
+  Accessibility,
+  CampingType,
+  ContentTranslationKey,
+  DucatoAccess,
+  Level,
+  OvernightStatus,
+  RouteDataset,
+  RouteStatus,
+  StopExperience,
+  StopStatus,
+  VerificationStatus,
+  WarningSeverity
+} from '@/content/types'
 import { departureChecklist } from '@/content/checklists/departure'
 import { supabase } from '@/infrastructure/supabase/client'
-import type { FacilityRow, GalleryRow, StopRow, TipRow } from '@/infrastructure/supabase/database.types'
+import type {
+  FacilityRow,
+  GalleryRow,
+  StopRow,
+  TipRow
+} from '@/infrastructure/supabase/database.types'
 
 import type { RouteContentRepository } from './routeContentRepository'
 
 function contentKey(value: string | null): ContentTranslationKey {
-  if (!value?.startsWith('content.')) throw new Error(`Invalid content translation key: ${value ?? 'null'}`)
+  if (!value?.startsWith('content.'))
+    throw new Error(`Invalid content translation key: ${value ?? 'null'}`)
   return value as ContentTranslationKey
 }
 
 function level(value: string | null): Level | null {
   if (value === null) return null
-  if (!['none', 'low', 'medium', 'high', 'excellent'].includes(value)) throw new Error(`Invalid level: ${value}`)
+  if (!['none', 'low', 'medium', 'high', 'excellent'].includes(value))
+    throw new Error(`Invalid level: ${value}`)
   return value as Level
 }
 
 function accessibility(value: string | null): Accessibility | null {
   if (value === null) return null
-  if (!['difficult', 'caution', 'good', 'excellent'].includes(value)) throw new Error(`Invalid accessibility: ${value}`)
+  if (!['difficult', 'caution', 'good', 'excellent'].includes(value))
+    throw new Error(`Invalid accessibility: ${value}`)
   return value as Accessibility
 }
 
-function ducatoAccess(value: string | null | undefined, fallback: Accessibility | null): DucatoAccess | null {
-  if (value && ['comfortable', 'caution', 'leave_above', 'do_not_enter'].includes(value)) return value as DucatoAccess
+function ducatoAccess(
+  value: string | null | undefined,
+  fallback: Accessibility | null
+): DucatoAccess | null {
+  if (value && ['comfortable', 'caution', 'leave_above', 'do_not_enter'].includes(value))
+    return value as DucatoAccess
   if (fallback === 'excellent' || fallback === 'good') return 'comfortable'
   if (fallback === 'caution') return 'caution'
   if (fallback === 'difficult') return 'leave_above'
@@ -31,7 +56,7 @@ function ducatoAccess(value: string | null | undefined, fallback: Accessibility 
 }
 
 function optionalContentKey(value: string | null | undefined): ContentTranslationKey | null {
-  return value?.startsWith('content.') ? value as ContentTranslationKey : null
+  return value?.startsWith('content.') ? (value as ContentTranslationKey) : null
 }
 
 function publicMediaUrl(gallery: GalleryRow): string {
@@ -42,7 +67,12 @@ function publicMediaUrl(gallery: GalleryRow): string {
 
 function metadataFlag(facility: FacilityRow | undefined, property: string): boolean {
   const metadata = facility?.metadata
-  return Boolean(metadata && typeof metadata === 'object' && !Array.isArray(metadata) && metadata[property] === true)
+  return Boolean(
+    metadata &&
+    typeof metadata === 'object' &&
+    !Array.isArray(metadata) &&
+    metadata[property] === true
+  )
 }
 
 function service(facilities: FacilityRow[], type: string) {
@@ -70,23 +100,48 @@ export const supabaseRouteContentRepository: RouteContentRepository = {
   async getDataset(): Promise<RouteDataset> {
     if (!supabase) throw new Error('Supabase environment variables are not configured')
 
-    const [routeResult, routeStopResult, stopResult, spotResult, galleryResult, facilityResult, activityResult, tipResult, warningResult, experienceResult] = await Promise.all([
+    const [
+      routeResult,
+      routeStopResult,
+      stopResult,
+      spotResult,
+      galleryResult,
+      facilityResult,
+      activityResult,
+      tipResult,
+      warningResult,
+      experienceResult
+    ] = await Promise.all([
       supabase.from('routes').select('*').order('created_at'),
       supabase.from('route_stops').select('*').order('position'),
       supabase.from('stops').select('*').order('slug'),
       supabase.from('camping_spots').select('*').order('position'),
-      supabase.from('galleries').select('*').order('is_cover', { ascending: false }).order('position'),
+      supabase
+        .from('galleries')
+        .select('*')
+        .order('is_cover', { ascending: false })
+        .order('position'),
       supabase.from('facilities').select('*').order('created_at'),
       supabase.from('activities').select('*').order('position'),
       supabase.from('tips').select('*').order('position'),
       supabase.from('warnings').select('*').order('position'),
       supabase.from('stop_experiences').select('*').order('updated_at', { ascending: false })
     ])
-    const results = [routeResult, routeStopResult, stopResult, spotResult, galleryResult, facilityResult, activityResult, tipResult, warningResult]
+    const results = [
+      routeResult,
+      routeStopResult,
+      stopResult,
+      spotResult,
+      galleryResult,
+      facilityResult,
+      activityResult,
+      tipResult,
+      warningResult
+    ]
     const failed = results.find((result) => result.error)
     if (failed?.error) throw failed.error
-    const missingExperienceTable = experienceResult.error
-      && ['42P01', 'PGRST205'].includes(experienceResult.error.code ?? '')
+    const missingExperienceTable =
+      experienceResult.error && ['42P01', 'PGRST205'].includes(experienceResult.error.code ?? '')
     if (experienceResult.error && !missingExperienceTable) throw experienceResult.error
 
     const routeRows = routeResult.data ?? []
@@ -111,7 +166,10 @@ export const supabaseRouteContentRepository: RouteContentRepository = {
       startDate: route.start_date,
       endDate: route.end_date,
       status: route.status as RouteStatus,
-      stopIds: routeStopRows.filter((item) => item.route_id === route.id).sort((a, b) => a.position - b.position).map((item) => stopSlugById.get(item.stop_id) ?? item.stop_id),
+      stopIds: routeStopRows
+        .filter((item) => item.route_id === route.id)
+        .sort((a, b) => a.position - b.position)
+        .map((item) => stopSlugById.get(item.stop_id) ?? item.stop_id),
       totalDistanceKm: route.total_distance_km
     }))
 
@@ -119,17 +177,22 @@ export const supabaseRouteContentRepository: RouteContentRepository = {
       const routeStop = routeStopRows.find((item) => item.stop_id === row.id)
       if (!routeStop) throw new Error(`Stop ${row.slug} is not assigned to a route`)
       const stopFacilities = facilityRows.filter((facility) => facility.stop_id === row.id)
-      const municipality = stopFacilities.find((facility) => facility.facility_type === 'municipality' && !facility.camping_spot_id)
+      const municipality = stopFacilities.find(
+        (facility) => facility.facility_type === 'municipality' && !facility.camping_spot_id
+      )
       const stopGalleries = galleryRows.filter((gallery) => gallery.stop_id === row.id)
       const stopSpotRows = spotRows.filter((spot) => spot.stop_id === row.id)
-      const stopExperienceRows = experienceRows.filter(item => item.stop_id === row.id)
-      const experienceRow = stopExperienceRows.find(item => item.locale === 'tr') ?? stopExperienceRows[0]
-      const experience: StopExperience | undefined = experienceRow ? {
-        body: experienceRow.body,
-        isPublished: experienceRow.is_published,
-        authorName: experienceRow.author_name,
-        updatedAt: experienceRow.updated_at
-      } : undefined
+      const stopExperienceRows = experienceRows.filter((item) => item.stop_id === row.id)
+      const experienceRow =
+        stopExperienceRows.find((item) => item.locale === 'tr') ?? stopExperienceRows[0]
+      const experience: StopExperience | undefined = experienceRow
+        ? {
+            body: experienceRow.body,
+            isPublished: experienceRow.is_published,
+            authorName: experienceRow.author_name,
+            updatedAt: experienceRow.updated_at
+          }
+        : undefined
       const legacyDucatoAccess = accessibility(row.ducato_accessibility)
       return {
         id: row.slug,
@@ -179,17 +242,25 @@ export const supabaseRouteContentRepository: RouteContentRepository = {
         fuelStation: service(stopFacilities, 'fuel'),
         waterRefill: service(stopFacilities, 'water'),
         dumpStation: service(stopFacilities, 'dump'),
-        freecampSpotIds: stopSpotRows.filter((spot) => spot.spot_type === 'freecamp').map((spot) => spot.slug),
-        paidAlternativeIds: stopSpotRows.filter((spot) => spot.spot_type !== 'freecamp').map((spot) => spot.slug),
-        roadWarnings: warningRows.filter((warning) => warning.stop_id === row.id).map((warning) => contentKey(warning.body_key)),
-        warnings: warningRows.filter((warning) => warning.stop_id === row.id).map((warning) => ({
-          id: warning.id,
-          type: warning.warning_type,
-          severity: warning.severity as WarningSeverity,
-          body: contentKey(warning.body_key),
-          verificationStatus: warning.verification_status as VerificationStatus,
-          lastVerifiedAt: warning.last_verified_at
-        })),
+        freecampSpotIds: stopSpotRows
+          .filter((spot) => spot.spot_type === 'freecamp')
+          .map((spot) => spot.slug),
+        paidAlternativeIds: stopSpotRows
+          .filter((spot) => spot.spot_type !== 'freecamp')
+          .map((spot) => spot.slug),
+        roadWarnings: warningRows
+          .filter((warning) => warning.stop_id === row.id)
+          .map((warning) => contentKey(warning.body_key)),
+        warnings: warningRows
+          .filter((warning) => warning.stop_id === row.id)
+          .map((warning) => ({
+            id: warning.id,
+            type: warning.warning_type,
+            severity: warning.severity as WarningSeverity,
+            body: contentKey(warning.body_key),
+            verificationStatus: warning.verification_status as VerificationStatus,
+            lastVerifiedAt: warning.last_verified_at
+          })),
         bestSunrise: contentKey(row.best_sunrise_key),
         bestSunset: contentKey(row.best_sunset_key),
         photos: stopGalleries.map((gallery) => ({
@@ -220,7 +291,9 @@ export const supabaseRouteContentRepository: RouteContentRepository = {
       priceNote: contentKey(row.price_note_key),
       rating: row.rating,
       recommended: row.recommended,
-      facilities: facilityRows.filter((facility) => facility.camping_spot_id === row.id && facility.name_key).map((facility) => contentKey(facility.name_key)),
+      facilities: facilityRows
+        .filter((facility) => facility.camping_spot_id === row.id && facility.name_key)
+        .map((facility) => contentKey(facility.name_key)),
       accessNote: contentKey(row.access_note_key),
       ducatoAccess: ducatoAccess(row.ducato_access, null),
       overnightStatus: row.overnight_status as OvernightStatus | null,

@@ -13,7 +13,9 @@ function defaultTheme(): ThemePreference {
 
 export const usePreferencesStore = defineStore('preferences', () => {
   const language = ref<AppLocale>((localStorage.getItem(LANGUAGE_KEY) as AppLocale | null) ?? 'en')
-  const theme = ref<ThemePreference>((localStorage.getItem(THEME_KEY) as ThemePreference | null) ?? defaultTheme())
+  const theme = ref<ThemePreference>(
+    (localStorage.getItem(THEME_KEY) as ThemePreference | null) ?? defaultTheme()
+  )
 
   watch(language, (value) => localStorage.setItem(LANGUAGE_KEY, value))
   watch(theme, (value) => localStorage.setItem(THEME_KEY, value))

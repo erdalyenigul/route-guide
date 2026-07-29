@@ -16,10 +16,7 @@ function normalizeUsername(value: string): string {
 }
 
 function normalizePassword(value: string): string {
-  return value
-    .normalize('NFKC')
-    .replace(INVISIBLE_INPUT_CHARACTERS, '')
-    .trim()
+  return value.normalize('NFKC').replace(INVISIBLE_INPUT_CHARACTERS, '').trim()
 }
 
 async function imageBlob(file: File): Promise<Blob> {
@@ -39,7 +36,9 @@ async function imageBlob(file: File): Promise<Blob> {
   context.drawImage(bitmap, 0, 0, canvas.width, canvas.height)
   bitmap.close()
 
-  const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/webp', 0.86))
+  const blob = await new Promise<Blob | null>((resolve) =>
+    canvas.toBlob(resolve, 'image/webp', 0.86)
+  )
   if (!blob) throw new Error('IMAGE_PROCESSING_FAILED')
   return blob
 }
@@ -47,12 +46,18 @@ async function imageBlob(file: File): Promise<Blob> {
 export class AdminContentService {
   constructor(private readonly repository: AdminContentRepository) {}
 
-  currentUser() { return this.repository.currentUser() }
+  currentUser() {
+    return this.repository.currentUser()
+  }
   signIn(username: string, password: string) {
     return this.repository.signIn(normalizeUsername(username), normalizePassword(password))
   }
-  signOut() { return this.repository.signOut() }
-  getStopEditor(stopSlug: string) { return this.repository.getStopEditor(stopSlug) }
+  signOut() {
+    return this.repository.signOut()
+  }
+  getStopEditor(stopSlug: string) {
+    return this.repository.getStopEditor(stopSlug)
+  }
 
   async saveExperience(stopSlug: string, input: SaveExperienceInput): Promise<void> {
     const body = input.body.trim()
@@ -60,7 +65,12 @@ export class AdminContentService {
     await this.repository.saveExperience(stopSlug, { ...input, body })
   }
 
-  async uploadPhotos(stopSlug: string, files: File[], caption: string, currentCount: number): Promise<void> {
+  async uploadPhotos(
+    stopSlug: string,
+    files: File[],
+    caption: string,
+    currentCount: number
+  ): Promise<void> {
     if (!files.length) return
     if (currentCount + files.length > MAX_PHOTOS_PER_STOP) throw new Error('PHOTO_LIMIT_REACHED')
     for (const file of files) {
@@ -69,8 +79,12 @@ export class AdminContentService {
     }
   }
 
-  deletePhoto(photoId: string) { return this.repository.deletePhoto(photoId) }
-  setCover(stopSlug: string, photoId: string) { return this.repository.setCover(stopSlug, photoId) }
+  deletePhoto(photoId: string) {
+    return this.repository.deletePhoto(photoId)
+  }
+  setCover(stopSlug: string, photoId: string) {
+    return this.repository.setCover(stopSlug, photoId)
+  }
 }
 
 export const adminContentService = new AdminContentService(supabaseAdminContentRepository)

@@ -17,8 +17,12 @@ const isOnline = ref(navigator.onLine)
 const adminUser = ref<AdminUser | null>(null)
 const safeAreaTop = ref(0)
 
-const logoUrl = computed(() => preferences.theme === 'dark' ? '/logo-dark.png' : '/logo-light.png')
-const adminInitial = computed(() => adminUser.value?.displayName.trim().charAt(0).toLocaleUpperCase(preferences.language) ?? '')
+const logoUrl = computed(() =>
+  preferences.theme === 'dark' ? '/logo-dark.png' : '/logo-light.png'
+)
+const adminInitial = computed(
+  () => adminUser.value?.displayName.trim().charAt(0).toLocaleUpperCase(preferences.language) ?? ''
+)
 const headerHeight = computed(() => 64 + safeAreaTop.value)
 
 watch(
@@ -39,7 +43,8 @@ function updateOnlineStatus(): void {
 
 function updateSafeAreaTop(): void {
   const probe = document.createElement('div')
-  probe.style.cssText = 'position:fixed;inset:0 auto auto 0;width:0;height:env(safe-area-inset-top);visibility:hidden;pointer-events:none'
+  probe.style.cssText =
+    'position:fixed;inset:0 auto auto 0;width:0;height:env(safe-area-inset-top);visibility:hidden;pointer-events:none'
   document.body.appendChild(probe)
   safeAreaTop.value = Math.max(0, Math.round(probe.getBoundingClientRect().height))
   probe.remove()
@@ -70,36 +75,90 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <v-app-bar class="app-header" :class="`theme-${preferences.theme}`" flat :height="headerHeight">
+  <v-app-bar
+    class="app-header"
+    :class="`theme-${preferences.theme}`"
+    flat
+    :height="headerHeight"
+  >
     <div class="brand-navigation">
-      <v-btn class="home-entry" icon="mdi-home-outline" variant="text" to="/" :aria-label="t('nav.home')" />
-      <router-link class="app-brand" to="/" :aria-label="t('app.name')">
-        <img :src="logoUrl" :alt="t('app.name')" />
+      <v-btn
+        class="home-entry"
+        icon="mdi-home-outline"
+        variant="text"
+        to="/"
+        :aria-label="t('nav.home')"
+      />
+      <router-link
+        class="app-brand"
+        to="/"
+        :aria-label="t('app.name')"
+      >
+        <img
+          :src="logoUrl"
+          :alt="t('app.name')"
+        />
       </router-link>
     </div>
 
     <template #append>
-      <span v-if="!isOnline" class="sync-state"><i />{{ t('offline.status') }}</span>
+      <span
+        v-if="!isOnline"
+        class="sync-state"
+        ><i />{{ t('offline.status') }}</span
+      >
 
-      <v-menu v-if="!adminUser" location="bottom end">
+      <v-menu
+        v-if="!adminUser"
+        location="bottom end"
+      >
         <template #activator="{ props }">
-          <v-btn v-bind="props" class="admin-entry" icon="mdi-account-lock-outline" :aria-label="t('admin.accountMenu')" />
+          <v-btn
+            v-bind="props"
+            class="admin-entry"
+            icon="mdi-account-lock-outline"
+            :aria-label="t('admin.accountMenu')"
+          />
         </template>
-        <v-card class="admin-menu" min-width="220">
+        <v-card
+          class="admin-menu"
+          min-width="220"
+        >
           <v-list>
-            <v-list-item prepend-icon="mdi-login" append-icon="mdi-chevron-right" :title="t('admin.loginTitle')" to="/manage/login" />
-            <v-list-item prepend-icon="mdi-cog-outline" append-icon="mdi-chevron-right" :title="t('nav.settings')" to="/settings" />
+            <v-list-item
+              prepend-icon="mdi-login"
+              append-icon="mdi-chevron-right"
+              :title="t('admin.loginTitle')"
+              to="/manage/login"
+            />
+            <v-list-item
+              prepend-icon="mdi-cog-outline"
+              append-icon="mdi-chevron-right"
+              :title="t('nav.settings')"
+              to="/settings"
+            />
           </v-list>
         </v-card>
       </v-menu>
 
-      <v-menu v-else location="bottom end">
+      <v-menu
+        v-else
+        location="bottom end"
+      >
         <template #activator="{ props }">
-          <v-btn v-bind="props" class="admin-avatar" icon :aria-label="t('admin.accountMenu')">
+          <v-btn
+            v-bind="props"
+            class="admin-avatar"
+            icon
+            :aria-label="t('admin.accountMenu')"
+          >
             <span>{{ adminInitial }}</span>
           </v-btn>
         </template>
-        <v-card class="admin-menu" min-width="220">
+        <v-card
+          class="admin-menu"
+          min-width="220"
+        >
           <v-list>
             <v-list-item
               prepend-icon="mdi-account-circle-outline"
@@ -110,11 +169,22 @@ onUnmounted(() => {
               link
               @click="openAdminPanel"
             />
-            <v-list-item prepend-icon="mdi-cog-outline" append-icon="mdi-chevron-right" :title="t('nav.settings')" to="/settings" />
+            <v-list-item
+              prepend-icon="mdi-cog-outline"
+              append-icon="mdi-chevron-right"
+              :title="t('nav.settings')"
+              to="/settings"
+            />
           </v-list>
           <v-divider />
           <v-card-actions>
-            <v-btn block color="error" variant="text" prepend-icon="mdi-logout" @click="signOutAdmin">
+            <v-btn
+              block
+              color="error"
+              variant="text"
+              prepend-icon="mdi-logout"
+              @click="signOutAdmin"
+            >
               {{ t('admin.signOut') }}
             </v-btn>
           </v-card-actions>
@@ -125,11 +195,134 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-.app-header{border-bottom:1px solid rgba(var(--v-border-color),.1)!important;box-shadow:0 8px 30px rgba(0,0,0,.08)!important}.app-header.theme-dark{background:#1f1f1f!important}.app-header.theme-light{background:#f9f8f4!important}
-.app-header :deep(.v-toolbar__content){box-sizing:border-box;width:100%;height:calc(64px + env(safe-area-inset-top))!important;padding:env(safe-area-inset-top) 0 0!important}
-.brand-navigation{display:flex;height:100%;align-items:center;margin-left:max(14px,env(safe-area-inset-left))}.home-entry{width:48px!important;min-width:48px!important;height:48px!important;margin-right:12px;border:1px solid rgba(var(--v-border-color),.16);border-radius:14px!important;background:rgba(var(--v-theme-on-surface),.045)!important}.home-entry :deep(.v-icon){font-size:1.35rem}.app-brand{display:flex;align-items:center;width:158px;height:52px;padding-left:12px;border-left:1px solid rgba(var(--v-border-color),.13);overflow:hidden;text-decoration:none}.app-brand img{display:block;width:146px;height:100%;object-fit:contain}
-.sync-state{display:flex;align-items:center;gap:8px;max-width:240px;margin-right:22px;color:rgba(var(--v-theme-on-surface),.64);font-size:.8rem;font-weight:620;text-transform:capitalize;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sync-state i{width:8px;height:8px;border-radius:50%;background:rgb(var(--v-theme-warning));box-shadow:0 0 0 4px rgba(var(--v-theme-warning),.12)}
-.admin-entry,.admin-avatar{margin-right:max(14px,env(safe-area-inset-right));border:1px solid rgba(var(--v-border-color),.12);background:rgba(var(--v-theme-on-surface),.055)!important}.admin-avatar span{display:grid;width:34px;height:34px;place-items:center;border-radius:50%;color:rgb(var(--v-theme-on-primary));background:rgb(var(--v-theme-primary));font-size:.88rem;font-weight:800}.admin-menu{margin-top:8px;border:1px solid rgba(var(--v-border-color),.12);border-radius:18px!important;box-shadow:var(--app-shadow-float)}.admin-profile-link{cursor:pointer}
-@media(max-width:959px){.brand-navigation{margin-left:max(10px,env(safe-area-inset-left))}.home-entry{width:44px!important;min-width:44px!important;height:44px!important;margin-right:9px;border-radius:13px!important}.app-brand{width:126px;height:46px;padding-left:9px}.app-brand img{width:116px}.sync-state{max-width:112px;margin-right:10px}.admin-entry,.admin-avatar{margin-right:max(10px,env(safe-area-inset-right))}}
-@media(max-width:600px){.sync-state{display:none}}
+.app-header {
+  border-bottom: 1px solid rgba(var(--v-border-color), 0.1) !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08) !important;
+}
+.app-header.theme-dark {
+  background: #1f1f1f !important;
+}
+.app-header.theme-light {
+  background: #f9f8f4 !important;
+}
+.app-header :deep(.v-toolbar__content) {
+  box-sizing: border-box;
+  width: 100%;
+  height: calc(64px + env(safe-area-inset-top)) !important;
+  padding: env(safe-area-inset-top) 0 0 !important;
+}
+.brand-navigation {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  margin-left: max(14px, env(safe-area-inset-left));
+}
+.home-entry {
+  width: 48px !important;
+  min-width: 48px !important;
+  height: 48px !important;
+  margin-right: 12px;
+  border: 1px solid rgba(var(--v-border-color), 0.16);
+  border-radius: 14px !important;
+  background: rgba(var(--v-theme-on-surface), 0.045) !important;
+}
+.home-entry :deep(.v-icon) {
+  font-size: 1.35rem;
+}
+.app-brand {
+  display: flex;
+  align-items: center;
+  width: 158px;
+  height: 52px;
+  padding-left: 12px;
+  border-left: 1px solid rgba(var(--v-border-color), 0.13);
+  overflow: hidden;
+  text-decoration: none;
+}
+.app-brand img {
+  display: block;
+  width: 146px;
+  height: 100%;
+  object-fit: contain;
+}
+.sync-state {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 240px;
+  margin-right: 22px;
+  color: rgba(var(--v-theme-on-surface), 0.64);
+  font-size: 0.8rem;
+  font-weight: 620;
+  text-transform: capitalize;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sync-state i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgb(var(--v-theme-warning));
+  box-shadow: 0 0 0 4px rgba(var(--v-theme-warning), 0.12);
+}
+.admin-entry,
+.admin-avatar {
+  margin-right: max(14px, env(safe-area-inset-right));
+  border: 1px solid rgba(var(--v-border-color), 0.12);
+  background: rgba(var(--v-theme-on-surface), 0.055) !important;
+}
+.admin-avatar span {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border-radius: 50%;
+  color: rgb(var(--v-theme-on-primary));
+  background: rgb(var(--v-theme-primary));
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+.admin-menu {
+  margin-top: 8px;
+  border: 1px solid rgba(var(--v-border-color), 0.12);
+  border-radius: 18px !important;
+  box-shadow: var(--app-shadow-float);
+}
+.admin-profile-link {
+  cursor: pointer;
+}
+@media (max-width: 959px) {
+  .brand-navigation {
+    margin-left: max(10px, env(safe-area-inset-left));
+  }
+  .home-entry {
+    width: 44px !important;
+    min-width: 44px !important;
+    height: 44px !important;
+    margin-right: 9px;
+    border-radius: 13px !important;
+  }
+  .app-brand {
+    width: 126px;
+    height: 46px;
+    padding-left: 9px;
+  }
+  .app-brand img {
+    width: 116px;
+  }
+  .sync-state {
+    max-width: 112px;
+    margin-right: 10px;
+  }
+  .admin-entry,
+  .admin-avatar {
+    margin-right: max(10px, env(safe-area-inset-right));
+  }
+}
+@media (max-width: 600px) {
+  .sync-state {
+    display: none;
+  }
+}
 </style>

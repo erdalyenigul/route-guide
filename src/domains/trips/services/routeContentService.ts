@@ -6,7 +6,9 @@ import { supabaseRouteContentRepository } from '@/domains/trips/repositories/sup
 function withTimeout<T>(promise: Promise<T>, milliseconds: number): Promise<T> {
   return Promise.race([
     promise,
-    new Promise<T>((_resolve, reject) => window.setTimeout(() => reject(new Error('Supabase request timed out')), milliseconds))
+    new Promise<T>((_resolve, reject) =>
+      window.setTimeout(() => reject(new Error('Supabase request timed out')), milliseconds)
+    )
   ])
 }
 

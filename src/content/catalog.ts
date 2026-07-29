@@ -1,6 +1,9 @@
 import { departureChecklist, routes, spots, stops } from './index'
 
-function uniqueMap<T extends { id: string }>(entries: readonly T[], label: string): ReadonlyMap<string, T> {
+function uniqueMap<T extends { id: string }>(
+  entries: readonly T[],
+  label: string
+): ReadonlyMap<string, T> {
   const result = new Map<string, T>()
   for (const entry of entries) {
     if (result.has(entry.id)) throw new Error(`Duplicate ${label} content id: ${entry.id}`)
@@ -22,7 +25,8 @@ for (const route of routes) {
 }
 
 for (const stop of stops) {
-  if (!routeById.has(stop.routeId)) throw new Error(`Stop ${stop.id} references missing route: ${stop.routeId}`)
+  if (!routeById.has(stop.routeId))
+    throw new Error(`Stop ${stop.id} references missing route: ${stop.routeId}`)
   for (const spotId of [...stop.freecampSpotIds, ...stop.paidAlternativeIds]) {
     const spot = spotById.get(spotId)
     if (!spot) throw new Error(`Stop ${stop.id} references missing spot: ${spotId}`)

@@ -14,8 +14,20 @@ export class TripStateService {
     return this.repository.setFavorite(routeSlug, stopSlug, favorite)
   }
 
-  setStopProgress(routeSlug: string, stopSlug: string, status: StopStatus, nightsStayed: number | null, actualDistanceKm: number | null) {
-    return this.repository.setStopProgress(routeSlug, stopSlug, status, nightsStayed, actualDistanceKm)
+  setStopProgress(
+    routeSlug: string,
+    stopSlug: string,
+    status: StopStatus,
+    nightsStayed: number | null,
+    actualDistanceKm: number | null
+  ) {
+    return this.repository.setStopProgress(
+      routeSlug,
+      stopSlug,
+      status,
+      nightsStayed,
+      actualDistanceKm
+    )
   }
 
   setChecklistItem(routeSlug: string, itemId: string, completed: boolean) {
