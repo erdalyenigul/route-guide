@@ -32,7 +32,18 @@ const navigationDestination = computed(() => {
 })
 const activities = computed(() => (stop.value ? store.activitiesForStop(stop.value.id) : []))
 const notes = computed(() => activities.value.filter((item) => item.type === 'note'))
-const exploreActivities = computed(() => activities.value.filter((item) => item.type !== 'note'))
+const logisticsActivities = computed(() =>
+  activities.value.filter((item) => item.type.startsWith('logistics_'))
+)
+const exploreActivities = computed(() =>
+  activities.value.filter((item) => item.type !== 'note' && !item.type.startsWith('logistics_'))
+)
+const logisticsLinks = computed(() =>
+  resourceLinks.value.filter((link) => link.label === 'navigation')
+)
+const guideLinks = computed(() =>
+  resourceLinks.value.filter((link) => link.label !== 'navigation')
+)
 const selectedPhotoIndex = ref<number | null>(null)
 const viewerPhotos = computed(
   () =>
@@ -183,7 +194,14 @@ const hasEssentials = computed(() =>
       stop.value.internetScore !== null)
   )
 )
-type DetailSectionKey = 'road' | 'camping' | 'risks' | 'essentials' | 'explore' | 'summary'
+type DetailSectionKey =
+  | 'road'
+  | 'logistics'
+  | 'camping'
+  | 'risks'
+  | 'essentials'
+  | 'explore'
+  | 'summary'
 interface DetailSection {
   key: DetailSectionKey
   icon: string
@@ -195,6 +213,15 @@ const detailSections = computed<DetailSection[]>(() => {
   if (!stop.value) return []
   return [
     { key: 'road', icon: 'mdi-van-utility', title: 'van.roadAndDucato' },
+    ...(logisticsActivities.value.length
+      ? [
+          {
+            key: 'logistics' as const,
+            icon: 'mdi-package-variant-closed-check',
+            title: 'van.logisticsPlan'
+          }
+        ]
+      : []),
     ...(visibleCampingSpots.value.length
       ? [
           {
@@ -648,6 +675,33 @@ onUnmounted(() => {
                   </div></template
                 >
               </template>
+              <template v-else-if="section.key === 'logistics'">
+                <div class="stack-list logistics-list">
+                  <div
+                    v-for="item in logisticsActivities"
+                    :key="item.id"
+                  >
+                    <strong>{{ t(item.title) }}</strong>
+                    <p>{{ t(item.description) }}</p>
+                  </div>
+                </div>
+                <div class="resource-links logistics-links">
+                  <a
+                    v-for="link in logisticsLinks"
+                    :key="link.url"
+                    :href="link.url"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <span>
+                      <small>{{ t(`stopLinks.${link.label}`) }}</small>
+                      <strong>{{ t(link.titleKey) }}</strong>
+                      <em>{{ resourceHost(link.url) }}</em>
+                    </span>
+                    <v-icon icon="mdi-navigation-variant" />
+                  </a>
+                </div>
+              </template>
               <div
                 v-else-if="section.key === 'risks'"
                 class="warning-list"
@@ -735,11 +789,11 @@ onUnmounted(() => {
                   </div>
                 </div>
                 <div
-                  v-if="resourceLinks.length"
+                  v-if="guideLinks.length"
                   class="resource-links"
                 >
                   <a
-                    v-for="link in resourceLinks"
+                    v-for="link in guideLinks"
                     :key="link.url"
                     :href="link.url"
                     target="_blank"

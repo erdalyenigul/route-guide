@@ -212,6 +212,7 @@ export default {
     paidAlternatives: 'Paid alternatives',
     noVerifiedFreecamp: 'No verified freecamp spot is available.',
     openNavigation: 'Open in navigation',
+    logisticsPlan: 'Delivery and parking plan',
     ducato: {
       comfortable: 'Easy access',
       caution: 'Use caution',
@@ -255,6 +256,7 @@ export default {
     travelGuide: 'Travel guide',
     thingsToDo: 'Things to do',
     beachesAndCoves: 'Beaches and coves',
+    navigation: 'Open in Google Maps',
     titles: {
       izmirGuide: 'İzmir travel guide',
       izmirTwoDayRoute: 'Two-day İzmir itinerary',
@@ -266,6 +268,8 @@ export default {
       cesmeBeaches: 'Çeşme beaches and travel guide',
       torbaBeach: 'Torba Public Beach information',
       torbaGuide: 'Torba travel guide',
+      yalikavakEasyPoint: 'Easy Point parcel collection',
+      yalikavakParking: 'Kadıoğlu Otopark — parking for the waterfront walk',
       gumuslukGuide: 'Gümüşlük travel guide',
       gumuslukThingsToDo: 'Things to do in Gümüşlük',
       akyarlarThingsToDo: 'Things to do in Akyarlar',

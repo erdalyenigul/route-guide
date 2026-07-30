@@ -213,6 +213,7 @@ export default {
     paidAlternatives: 'Ücretli kamp seçenekleri',
     noVerifiedFreecamp: 'Güvenle önerebildiğimiz ücretsiz bir geceleme yeri yok.',
     openNavigation: 'Yol tarifini aç',
+    logisticsPlan: 'Teslimat ve park planı',
     ducato: {
       comfortable: 'Rahat gir',
       caution: 'Dikkatli',
@@ -256,6 +257,7 @@ export default {
     travelGuide: 'Gezi rehberi',
     thingsToDo: 'Yapılacaklar',
     beachesAndCoves: 'Plajlar ve koylar',
+    navigation: 'Google Maps’te aç',
     titles: {
       izmirGuide: 'İzmir Gezi Rehberi',
       izmirTwoDayRoute: 'İzmir’de 2 Günlük Gezi Rotası',
@@ -267,6 +269,8 @@ export default {
       cesmeBeaches: 'Çeşme Plajları ve Gezi Rehberi',
       torbaBeach: 'Torba Halk Plajı Bilgileri',
       torbaGuide: 'Torba Gezi Rehberi',
+      yalikavakEasyPoint: 'Easy Point paket teslim noktası',
+      yalikavakParking: 'Kadıoğlu Otopark — sahil yürüyüşü için park',
       gumuslukGuide: 'Gümüşlük Gezi Rehberi',
       gumuslukThingsToDo: 'Gümüşlük’te Gezilecek Yerler',
       akyarlarThingsToDo: 'Akyarlar’da Yapılacaklar',

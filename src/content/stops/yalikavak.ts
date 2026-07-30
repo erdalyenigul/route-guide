@@ -7,7 +7,7 @@ export const yalikavak = {
   order: 6,
   slug: 'yalikavak',
   ...stopCopy('yalikavak'),
-  coordinates: { latitude: 37.1057, longitude: 27.2849 },
+  coordinates: { latitude: 37.103811441060074, longitude: 27.292568122759068 },
   recommendedNights: 0,
   minNights: 0,
   maxNights: 1,
@@ -51,6 +51,6 @@ export const yalikavak = {
   initialStatus: 'planned',
   verificationStatus: 'partially_verified',
   sourceNote:
-    'Yalıkavak is used as a flexible daytime logistics and dinner waypoint between Torba and Gümüşlük. No specific Hepsiburada pickup point is hardcoded because pickup locations must be selected and checked in the delivery app at the time of ordering.',
+    'Easy Point Faturamatik Yalıkavak delivery coordinates were supplied by the travellers. Kadıoğlu Otopark publishes 24-hour service, a spacious parking area and a location about 100 m from the marina; acceptance and clearance for a 15 m³ Ducato must be confirmed by phone before entry.',
   lastVerifiedAt: '2026-07-30T00:00:00+03:00'
 } satisfies StopContent

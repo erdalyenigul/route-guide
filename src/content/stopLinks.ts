@@ -1,4 +1,4 @@
-export type StopLinkLabel = 'travelGuide' | 'thingsToDo' | 'beachesAndCoves'
+export type StopLinkLabel = 'travelGuide' | 'thingsToDo' | 'beachesAndCoves' | 'navigation'
 
 export interface StopResourceLink {
   label: StopLinkLabel
@@ -65,6 +65,18 @@ export const stopResourceLinks: Readonly<Record<string, readonly StopResourceLin
       label: 'travelGuide',
       titleKey: 'stopLinks.titles.torbaGuide',
       url: 'https://www.flypgs.com/blog/torba-gezi-rehberi/'
+    }
+  ],
+  yalikavak: [
+    {
+      label: 'navigation',
+      titleKey: 'stopLinks.titles.yalikavakEasyPoint',
+      url: 'https://www.google.com/maps/search/?api=1&query=37.103811441060074%2C27.292568122759068'
+    },
+    {
+      label: 'navigation',
+      titleKey: 'stopLinks.titles.yalikavakParking',
+      url: 'https://www.google.com/maps/search/?api=1&query=Kad%C4%B1o%C4%9Flu%20Otopark%20Yal%C4%B1kavak%20Bodrum'
     }
   ],
   gumusluk: [

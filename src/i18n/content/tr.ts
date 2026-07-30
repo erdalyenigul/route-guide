@@ -365,9 +365,21 @@ const content = {
       title: 'Yalıkavak Ara Durağı',
       region: 'Yalıkavak, Bodrum, Muğla',
       overview:
-        'Torba Halk Plajı’ndan Gümüşlük’e geçerken kullanılabilecek kısa lojistik ve akşam yemeği durağı. Geceleme hedefi değil; kargo teslimatı, yemek ve kısa sahil yürüyüşü için rota arası mola.',
+        'Torba Halk Plajı ile Gümüşlük arasındaki 0 gecelik lojistik ve akşam durağı: Easy Point’ten paketi al, Ducato’yu uygun otoparka bırak, merkez ve marina sahilini yürüyüp yemeğini ye, sonra yola devam et.',
       whyVisit:
-        'Hepsiburada teslimat noktasını Yalıkavak tarafında seçmek istersek paketi almak, merkezde yemek yemek ve sonra Gümüşlük sahiline devam etmek için.',
+        'Teslimat hedefi Easy Point – Faturamatik Yalıkavak olarak netleşti. Paketi aldıktan sonra Ducato ile dar marina ve restoran sokaklarına girmek yerine ayrı park hedefini kullanacağız.',
+      activities: {
+        pickup: {
+          title: '1. Paketi Easy Point’ten al',
+          description:
+            'Şeyhül İslam Ömer Lütfi Cd. No:23/D adresindeki 37.1038114, 27.2925681 noktasına git. Teslimat günü çalışma saatini kontrol et; Ducato’yu yalnızca paketi alacak kadar burada tut.'
+        },
+        parking: {
+          title: '2. Park et, sahili yürü ve devam et',
+          description:
+            'Birinci park adayı Kadıoğlu Otopark, Özkan Sk. No:7/1. İşletme 24 saat hizmet, geniş park alanı ve marinaya yaklaşık 100 metre yürüme mesafesi belirtiyor. Gitmeden 0533 161 51 04 numarasını arayıp 15 m³ Ducato’nun sığıp sığmadığını ve güncel ücreti sor. Aracı bıraktıktan sonra marina ile eski sahil merkezini yürüyerek gezip yemek ye; dönüşte Gümüşlük’e devam et. Burası geceleme önerisi değildir.'
+        }
+      },
       luna: {
         subject: 'Yalıkavak marina ışıkları, akşam sokakları ve kısa sahil yürüyüşü',
         lens: '24 mm ana kamera',
@@ -390,18 +402,18 @@ const content = {
       warning1:
         'Yalıkavak merkezi ve marina çevresi akşam saatlerinde kalabalık olabilir. Ducato ile dar restoran/marina sokaklarına girmeyin.',
       warning2:
-        'Hepsiburada teslimat noktası sipariş sırasında değişebilir. Noktayı uygulamada seçip açık adresi ve çalışma saatini aynı gün kontrol edin.',
+        'Easy Point adresi bu plan için sabit; ancak çalışma saati değişebilir. Kadıoğlu Otopark Ducato’ya özel yükseklik veya uzunluk sınırı yayınlamıyor; içeri girmeden önce telefonla teyit et.',
       sunrise: 'Bu durak gün doğumu için planlanmıyor.',
       sunset:
         'Akşam yemeği öncesi kısa sahil yürüyüşünde marina ve batı ışığı değerlendirilebilir.',
       photoAlt: 'Yalıkavak sahili ve akşam ışıkları',
       ops: {
         lastMile:
-          'Torba’dan Yalıkavak merkeze yaklaşık 20 km / 30 dk. Ana yolu kullanın; teslimat veya restoran noktasına son 300–500 metreyi gerekirse yürüyün.',
+          'Torba’dan Easy Point’e yaklaşık 20 km / 30 dk. Önce verilen teslimat koordinatını kullan. Paketi aldıktan sonra ayrı Kadıoğlu Otopark hedefini aç; marina sokaklarında doğaçlama rota arama.',
         supply:
           'Kargo teslimatı, market ve yemek için iyi ara durak; fakat su, duş veya atık boşaltma durağı olarak kullanmayın.',
         decision:
-          'Yalıkavak’ı 0 gece ara durak olarak kullanın. Kargo teslim noktası uygunsa paketi alın, yemek yiyin ve aynı akşam Gümüşlük sahiline yaklaşık 12 km / 20 dk devam edin.'
+          'Paketi al, Ducato girişini telefonla teyit et, marina yakınında park edip akşam yürüyüşünü ve yemeği yaya tamamla; sonra araca dönüp Gümüşlük’e devam et. Planlanan konaklama 0 gece olarak kalır.'
       }
     },
     gumusluk: {

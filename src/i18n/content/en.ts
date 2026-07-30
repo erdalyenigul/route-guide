@@ -359,9 +359,21 @@ export default {
       title: 'Yalıkavak Waypoint',
       region: 'Yalıkavak, Bodrum, Muğla',
       overview:
-        'A short logistics and dinner waypoint between Torba Public Beach and Gümüşlük. It is not an overnight target; use it for parcel pickup, dinner and a brief waterfront walk.',
+        'A zero-night logistics and evening waypoint between Torba Public Beach and Gümüşlük: collect the parcel at Easy Point, leave the Ducato at a suitable car park, walk the centre and marina waterfront, then continue.',
       whyVisit:
-        'If a Hepsiburada pickup point around Yalıkavak is practical, stop here to collect the parcel, eat in town and then continue to the Gümüşlük waterfront.',
+        'The delivery point is fixed at Easy Point – Faturamatik Yalıkavak. After pickup, use a separate parking target rather than driving the Ducato through the compact marina and restaurant streets.',
+      activities: {
+        pickup: {
+          title: '1. Collect the parcel at Easy Point',
+          description:
+            'Navigate to Şeyhül İslam Ömer Lütfi Cd. No:23/D (37.1038114, 27.2925681). Check opening hours on the collection day and keep the Ducato only as long as the handover requires.'
+        },
+        parking: {
+          title: '2. Park, walk the waterfront, then leave',
+          description:
+            'Primary parking candidate: Kadıoğlu Otopark, Özkan Sk. No:7/1. The operator advertises 24-hour service, a spacious area and roughly 100 m walking distance to the marina. Call 0533 161 51 04 first to confirm a 15 m³ Ducato fits and ask the current price. From there, walk the marina and old waterfront centre for dinner; return to the van and continue to Gümüşlük. Do not treat this as an overnight recommendation.'
+        }
+      },
       luna: {
         subject: 'Yalıkavak marina lights, evening streets and a short waterfront walk',
         lens: '24 mm main camera',
@@ -384,17 +396,17 @@ export default {
       warning1:
         'Yalıkavak centre and marina streets can be busy in the evening. Do not drive the Ducato into tight restaurant or marina lanes.',
       warning2:
-        'Hepsiburada pickup locations can change during ordering. Select the point in the app and check address and opening hours on the same day.',
+        'The Easy Point address is fixed for this plan, but opening hours can change. Kadıoğlu Otopark does not publish a Ducato-specific height or length limit; call before entering.',
       sunrise: 'This waypoint is not planned for sunrise.',
       sunset: 'Use the waterfront and marina light during a short pre-dinner or post-dinner walk.',
       photoAlt: 'Yalıkavak waterfront and evening lights',
       ops: {
         lastMile:
-          'Torba to Yalıkavak centre is about 20 km / 30 min. Use the main road; walk the final 300–500 m to the pickup or restaurant if the street gets tight.',
+          'Torba to Easy Point is about 20 km / 30 min. First use the supplied delivery coordinate. After collection, open the separate Kadıoğlu Otopark target; do not improvise a route through marina lanes.',
         supply:
           'Good for parcel pickup, a small shop and dinner; not a water, shower or waste stop.',
         decision:
-          'Use Yalıkavak as a zero-night waypoint. If the pickup point is convenient, collect the parcel, eat dinner and continue the same evening about 12 km / 20 min to Gümüşlük.'
+          'Collect the parcel, confirm Ducato access by phone, park near the marina, take the evening walk and dinner on foot, then return to the van and continue to Gümüşlük. Planned stay remains 0 nights.'
       }
     },
     gumusluk: {
