@@ -9,6 +9,7 @@ import { adminContentService } from '@/domains/admin/services/adminContentServic
 import { mapService } from '@/services/mapService'
 import { useTripStore } from '@/stores/trip'
 import { formatDateTime } from '@/utils/dateTime'
+import { roadConditionKey } from '@/utils/roadCondition'
 import { terrainProfile } from '@/utils/terrainProfile'
 
 const { t } = useI18n()
@@ -522,7 +523,7 @@ onUnmounted(() => {
                     :key="chip"
                     size="small"
                     variant="tonal"
-                    >{{ t(`van.road.${chip}`) }}</v-chip
+                    >{{ t(`van.road.${roadConditionKey(chip)}`) }}</v-chip
                   >
                 </div>
                 <div
@@ -540,11 +541,11 @@ onUnmounted(() => {
                   </div>
                   <div v-if="stop.roadSurface">
                     <span>{{ t('van.roadSurface') }}</span
-                    ><strong>{{ t(`van.road.${stop.roadSurface}`) }}</strong>
+                    ><strong>{{ t(`van.road.${roadConditionKey(stop.roadSurface)}`) }}</strong>
                   </div>
                   <div v-if="stop.roadWidth">
                     <span>{{ t('van.roadWidth') }}</span
-                    ><strong>{{ t(`van.road.${stop.roadWidth}`) }}</strong>
+                    ><strong>{{ t(`van.road.${roadConditionKey(stop.roadWidth)}`) }}</strong>
                   </div>
                   <div v-if="stop.turnaroundPossible !== null">
                     <span>{{ t('van.turnaround') }}</span
