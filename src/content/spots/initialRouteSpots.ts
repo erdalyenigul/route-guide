@@ -119,9 +119,35 @@ export const initialRouteSpots: SpotContent[] = [
     27.249,
     'reserve',
     4.3,
-    false,
-    ['electricity', 'freshWater', 'wc', 'shower']
+    true,
+    ['electricity', 'freshWater', 'wc', 'shower', 'wasteDisposal']
   ),
+  {
+    ...createSpot(
+      'geris-piknik-freecamp',
+      'geris-piknik',
+      'gerisPiknikFree',
+      'freecamp',
+      37.0796,
+      27.2771,
+      'arrivalCheckFree',
+      3.8,
+      true,
+      []
+    ),
+    ducatoAccess: 'caution',
+    overnightStatus: 'tolerated',
+    seaView: true,
+    capacityVehicles: 20,
+    waterAvailable: false,
+    toiletAvailable: false,
+    showerAvailable: false,
+    wasteAvailable: false,
+    nightQuiet: true,
+    verificationStatus: 'partially_verified',
+    lastVerifiedAt: '2026-07-30T00:00:00+03:00',
+    safetyNote: sharedKey('spots.gerisPiknikFree.safety')
+  },
   createSpot(
     'akyarlar-inland-layby',
     'akyarlar',

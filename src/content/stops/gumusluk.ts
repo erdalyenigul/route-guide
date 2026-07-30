@@ -21,7 +21,18 @@ export const gumusluk = {
   shade: 'medium',
   crowdLevel: 'high',
   ducatoAccessibility: 'caution',
+  ducatoAccess: 'caution',
   droneSuitability: 'difficult',
+  roadSurface: 'asphalt',
+  roadWidth: 'narrow coastal streets',
+  steepGrade: false,
+  hairpins: false,
+  cliffExposure: false,
+  guardrails: true,
+  turnaroundPossible: false,
+  lastMileNote: 'content.stops.gumusluk.ops.lastMile',
+  supplyNote: 'content.stops.gumusluk.ops.supply',
+  decisionSummary: 'content.stops.gumusluk.ops.decision',
   municipalityFacilities: {
     available: true,
     wc: true,
@@ -43,5 +54,9 @@ export const gumusluk = {
       'gumusluk'
     )
   ],
-  initialStatus: 'planned'
+  initialStatus: 'planned',
+  verificationStatus: 'partially_verified',
+  sourceNote:
+    'Gümüşlük is an evening visit; central overnight parking is not recommended. Mandi Camping is the planned serviced overnight base for this stage.',
+  lastVerifiedAt: '2026-07-30T00:00:00+03:00'
 } satisfies StopContent

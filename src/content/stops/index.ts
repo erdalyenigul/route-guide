@@ -1,10 +1,10 @@
 import { akbuk } from './akbuk'
-import { akyarlar } from './akyarlar'
 import { bafaLake } from './bafaLake'
 import { bodrumCenter } from './bodrumCenter'
 import { cirali } from './cirali'
 import { dalyan } from './dalyan'
 import { faralya } from './faralya'
+import { gerisPiknik } from './gerisPiknik'
 import { gumusluk } from './gumusluk'
 import { guzelcamli } from './guzelcamli'
 import { cesmePalmiye } from './cesmePalmiye'
@@ -29,7 +29,7 @@ export const stops: StopContent[] = [
   torba,
   yalikavak,
   gumusluk,
-  akyarlar,
+  gerisPiknik,
   bodrumCenter,
   mazi,
   ilginKoyu,

@@ -412,17 +412,17 @@ export default {
       title: 'Gümüşlük Waterfront',
       region: 'Gümüşlük, Bodrum, Muğla',
       overview:
-        'A west-tip Bodrum Peninsula waterfront stop around Rabbit Island and ancient Myndos. After Torba, the target is the seaside and sunset line, not the tight inner streets.',
+        'A bohemian waterfront stop for sunset, a seaside walk and a few hours in the evening. Free overnight parking is not planned in the centre.',
       whyVisit:
-        'Drive across the peninsula from Torba Public Beach, walk the waterfront, see Rabbit Island and use the stop for an unhurried Gümüşlük evening by the sea.',
+        'Watch sunset around Rabbit Island, walk the shore and explore Gümüşlük on foot before or after dinner.',
       spots: {
         mandi: {
           title: 'Mandi Camping',
           overview:
-            'A paid fallback only if a serviced overnight base is needed in the area. It lists fresh water, grey-water drainage, electricity and cassette-disposal terminals.',
+            'The planned paid service and overnight base for this stage. Settle in after Yalıkavak, handle fresh water, showers, WC, grey water and cassette disposal here, then return after the Gümüşlük evening visit.',
           price: 'Reservation and the current seasonal price should be confirmed directly.',
           access:
-            'Mandi is not the waterfront target. Use the operator’s main-road approach if needed and confirm space for the 15 m³ Ducato before arrival.'
+            'Reserve space for the 15 m³ Ducato and use the operator’s main approach. Treat the campsite separately from parking in central Gümüşlük.'
         }
       },
       luna: {
@@ -447,7 +447,7 @@ export default {
       warning1:
         'From Torba, you cross from the eastern peninsula entrance to the western end. Waterfront streets are narrow and summer parking is difficult; do not push the Ducato into the centre.',
       warning2:
-        'This is a waterfront and sunset stop. No clearly suitable free overnight point is endorsed in central Gümüşlük; do not treat ordinary shore parking as permission.',
+        'Gümüşlük is a visit stop. Do not treat ordinary central shore parking as overnight permission; return to Mandi Camping for the night.',
       sunrise:
         'No exact sunrise position has been verified; scout a legal public viewpoint in daylight.',
       sunset:
@@ -455,11 +455,50 @@ export default {
       photoAlt: 'Gümüşlük waterfront in evening light',
       ops: {
         lastMile:
-          'Yalıkavak waypoint to Gümüşlük waterfront is about 12 km / 20 min. Use the main road, leave the Ducato outside the compact waterfront lanes and walk down to the sea.',
+          'From Yalıkavak, first settle at Mandi Camping. For Gümüşlük, use the main road, leave the Ducato at a permitted position outside the narrow waterfront lanes and walk to the shore.',
         supply:
-          'Shop and refuel on the main road before the waterfront. Do not rely on Gümüşlük shore facilities for water or waste; use Mandi only as a serviced fallback if needed.',
+          'Handle fresh water, shower, WC, grey water and cassette disposal at Mandi Camping. Do not use the Gümüşlük waterfront as a motorhome service stop.',
         decision:
-          'Navigate to the Gümüşlük waterfront/Rabbit Island area. Spend time by the sea, but avoid the tight centre with the Ducato. If overnight parking does not feel clearly appropriate, move on instead of forcing a shore stay.'
+          'Evening flow: settle at Mandi Camping, visit Gümüşlük for sunset and a waterfront walk, then return to camp. Continue to Geriş Picnic Area the next day.'
+      }
+    },
+    gerisPiknik: {
+      title: 'Geriş Picnic Area',
+      region: 'Geriş, Yalıkavak, Bodrum, Muğla',
+      overview:
+        'A freecamp candidate between Mandi Camping and central Bodrum, better for a quiet sea-view night than for swimming.',
+      whyVisit:
+        'Pause for one quiet night before entering busy central Bodrum and starting the controlled Ducato parking and pedestrian ferry plan.',
+      luna: {
+        subject: 'Sea view and peninsula layers',
+        lens: '70 mm telephoto',
+        timing: 'Just before sunset',
+        settings: 'RAW, -0.7 EV',
+        note: 'Compress the coast and distant ridges without placing the vehicle in frame.'
+      },
+      municipality: 'Do not plan on municipal motorhome services here.',
+      marketName: 'Stock up beforehand',
+      marketNotes: 'Complete water and basic supplies at Mandi Camping or on the main road.',
+      fuelName: 'Fuel on the main road',
+      fuelNotes: 'Do not look for fuel or service inside the area.',
+      waterName: 'Water is not guaranteed',
+      waterNotes: 'Arrive with enough fresh water.',
+      dumpName: 'No waste disposal',
+      dumpNotes: 'Keep grey water and the cassette closed.',
+      warning1:
+        'Community listings describe capacity around 20 vehicles; inspect the current surface and Ducato turning room in daylight.',
+      warning2:
+        'Overnight rules may change. Check signs, local restrictions and fire warnings on arrival; leave if the stop is not clearly suitable.',
+      sunrise: 'Use only a safe pedestrian position for the open-sea morning light.',
+      sunset: 'The open sea-view sections are the useful sunset subject.',
+      photoAlt: 'Sea view around Geriş',
+      ops: {
+        lastMile:
+          'About 10 km / 17 min from the Gümüşlük stage. Arrive before dark and inspect the surface and turning room before committing the van.',
+        supply:
+          'Water, WC, shower, electricity and waste service are not guaranteed. Complete all service tasks before leaving Mandi Camping.',
+        decision:
+          'Stay one simple night only if signs and ground conditions allow it. Next day use paid or controlled Ducato parking in central Bodrum, take the Datça ferry as pedestrians and return to the same parking area in the evening.'
       }
     },
     akyarlar: {
@@ -1217,10 +1256,17 @@ export default {
       access: 'Confirm pitch dimensions before entering the village.'
     },
     gumuslukPaid: {
-      title: 'Gümüşlük Caravan Camp',
+      title: 'Mandi Camping',
       overview:
-        'A serviced fallback if the Gümüşlük waterfront does not provide a suitable overnight decision.',
-      access: 'Use the main approach, not waterfront shortcuts.'
+        'The planned paid overnight and service base for the Gümüşlük stage, with water, showers, WC and motorhome waste services.',
+      access: 'Reserve for the Ducato and use the main approach, not waterfront shortcuts.'
+    },
+    gerisPiknikFree: {
+      title: 'Geriş sea-view freecamp candidate',
+      overview:
+        'A community-listed overnight candidate for a quiet sea view, not a guaranteed campsite or swimming beach.',
+      access: 'Check signs, surface and turning room in daylight before entering.',
+      safety: 'No facility is guaranteed. Keep the setup inside the van and leave if local restrictions do not clearly allow the stop.'
     },
     akyarlarFree: {
       title: 'Akyarlar Inland Stopover',
