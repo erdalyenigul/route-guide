@@ -473,42 +473,86 @@ const content = {
       }
     },
     mazi: {
-      title: 'Mazı — İnceyalı Sahili',
-      region: 'Bodrum, Muğla',
+      title: 'Çakıllı Plajı',
+      region: 'Mazıköy, Bodrum, Muğla',
       overview:
-        'Gökova Körfezi’ndeki sakin Mazı kıyısı; hedef artık iç bölgedeki köy yolu değil, doğrudan İnceyalı Sahili.',
+        'Mazı bölgesine girerken ilk merak ettiğimiz koy. Küçük, taşlık ve doğal yapısıyla önce burada durup denizi, zemini ve geceleme hissini yerinde anlayacağız.',
       whyVisit:
-        'İnceyalı’da denize girmek; yakındaki Çakıllıyalı ve Hurma sahillerini görmek için. Park ve geceleme iznini vardığınızda kontrol edin.',
+        'Ilgın Koyu’na geçmeden önce Çakıllı’yı gündüz görmek, denize girmek ve 15 m³ Ducato ile kalmaya değer mi karar vermek için.',
       luna: {
-        subject: 'Çam sırtları, koylar ve Samanyolu',
+        subject: 'Taşlık kıyı, berrak su ve Mazı koylarının sakin ışığı',
         lens: '24 mm ana kamera',
-        timing: 'Mavi saat veya aysız gece',
+        timing: 'Sabah erken saatler veya gün batımına yakın yumuşak ışık',
         settings: 'Tripodda Gece modu; gündüz RAW',
-        note: 'Sağlam zeminde durun, uzun pozlamada farları kapatın.'
+        note: 'Aracı indirmeden önce zemini yürüyerek kontrol edin; fotoğraf için geçişi kapatmayın.'
       },
       municipality:
-        'İnceyalı hedefinde karavan hizmeti bulunmuyor; su, WC, duş ve atık boşaltma imkânı beklemeyin.',
+        'Çakıllı’da karavan altyapısı beklemeyin; su, WC, duş ve atık boşaltma işini koya gelmeden çözün.',
       marketName: 'Alışverişi Mazı’ya gelmeden yapın',
-      marketNotes: 'Koy yollarına sapmadan önce büyük alışverişi tamamlayın.',
+      marketNotes: 'Koya inmeden önce temel yiyecek, içecek ve buz ihtiyacını tamamlayın.',
       fuelName: 'Depoyu önceden doldurun',
       fuelNotes: 'Mazı’ya yeterli yakıtla gelin.',
       waterName: 'Suyunuzu yanınızda getirin',
-      waterNotes: 'Güvenilir bir su dolum noktası bulunmuyor.',
+      waterNotes: 'Bu koy için güvenilir bir su dolum noktası planlanmıyor.',
       dumpName: 'Atık boşaltma noktası yok',
       dumpNotes: 'Tankları uygun bir karavan tesisine ulaşana kadar kapalı tutun.',
       warning1:
-        'Koylara inen yolların genişliği ve dönüş alanları 15 m³ Ducato için her yerde uygun değil. İnmeden önce yolu gündüz kontrol edin.',
-      warning2: 'Yangın yasaklarına uyun; orman ve acil durum yollarını hiçbir zaman kapatmayın.',
+        'Son inişte yol genişliği, zemin ve dönüş alanı Ducato için gündüz kontrol edilmeli. Emin değilseniz aracı aşağı indirmeyin.',
+      warning2:
+        'Burası resmî kamp alanı gibi gösterilmemeli. Güncel yasak levhası, yerel uyarı veya geçişi kapatma riski varsa kalmayın.',
       sunrise:
-        'Gün doğumu için yalnızca gündüz görüp güvenli olduğundan emin olduğunuz, aracı yol dışına çıkarabildiğiniz bir nokta kullanın.',
-      sunset: 'Gün batımı için sağlam zemini ve güvenli park alanı olan bir seyir noktası seçin.',
-      photoAlt: 'Ormanlı yamaçların altındaki Mazı kıyısı',
+        'Gün doğumu için koya inmeye gerek yok; önce güvenli park ve dönüş alanını gündüz netleştirin.',
+      sunset:
+        'Koyda kalırsanız gün batımını taşlık kıyıdan çekin; aracı kum, gevşek çakıl veya geçiş alanına sokmayın.',
+      photoAlt: 'Çakıllı Plajı ve Mazı kıyısındaki taşlık doğal koy',
       ops: {
         lastMile:
-          'Her koy inişini ayrı değerlendirin; genişlik, zemin ve dönüşü gündüz kontrol edin.',
-        supply: 'Yiyecek, yakıt ve suyla hazırlıklı gelin.',
+          'Çakıllı’ya gündüz gidin. Son yolun genişliğini, zemini ve dönüş alanını yürüyerek kontrol edin; uygun değilse aracı zorlamayın.',
+        supply: 'Mazı koylarına girmeden önce yiyecek, su ve yakıt hazırlığını tamamlayın.',
         decision:
-          'Doğrudan seçtiğimiz İnceyalı noktasına gidin. Hava kararmadan varın; son yolun genişliğini, zemini, 15 m³ Ducato için dönüş alanını ve güncel yasak levhalarını kontrol edin. Uygunsa geçişi kapatmadan ve dışarıya kamp düzeni kurmadan araç içinde kalın; uygun değilse bir sonraki ücretsiz adaya devam edin.'
+          'Önce Çakıllı’yı görün. Gecelemek mantıklıysa 1 gece kalın; uygun değilse bu durağı günübirlik ziyaret olarak bırakıp aynı gün yaklaşık 5 km ilerideki Ilgın Koyu’na devam edin.'
+      }
+    },
+    ilginKoyu: {
+      title: 'Aşağı Mazı Ilgın Koyu',
+      region: 'Mazıköy, Bodrum, Muğla',
+      overview:
+        'Çakıllı’dan sonra ikinci Mazı durağı. Daha sakin, doğal ve freecamp adayı olarak değerlendirilecek kıyı noktası.',
+      whyVisit:
+        'Denize yakın, daha sessiz bir gece arıyorsak Çakıllı’dan sonra burayı kontrol edeceğiz. Resmî kamp alanı gibi değil, varışta karar verilecek doğal durak gibi düşünülmeli.',
+      luna: {
+        subject: 'Sakin Mazı koyu, taşlık kıyı ve gece gökyüzü',
+        lens: '24 mm ana kamera',
+        timing: 'Gün batımı sonrası mavi saat veya sabah erken ışık',
+        settings: 'RAW, gece için tripod, farları kapatarak uzun pozlama',
+        note: 'Kıyı erişimini ve aracı bırakacağınız zemini gündüz kontrol etmeden gece çekimi planlamayın.'
+      },
+      municipality:
+        'Ilgın Koyu’nda karavan servisi beklemeyin. Su, WC, duş, elektrik ve atık boşaltma için önceden hazırlıklı gelin.',
+      marketName: 'Mazı çevresindeki küçük alışveriş noktaları',
+      marketNotes: 'Koya inmeden önce temel alışverişi tamamlayın; gece burada markete güvenmeyin.',
+      fuelName: 'Yakıtı Mazı’ya gelmeden alın',
+      fuelNotes: 'Koy yollarına girmeden önce depoda yeterli menzil bırakın.',
+      waterName: 'Su yanınızda olmalı',
+      waterNotes: 'Temiz suyu bu durağa gelmeden doldurun.',
+      dumpName: 'Atık boşaltma yok',
+      dumpNotes: 'Gri su ve tuvalet kasetini burada boşaltmayın; uygun tesise kadar araçta tutun.',
+      warning1:
+        'Büyük Fiat Ducato ile giriş, dönüş alanı ve zemin durumu gündüz kontrol edilmeli. Yol daralırsa devam etmeyin.',
+      warning2:
+        'Geceleme izni kesin kabul edilmemeli. Levha, yerel uyarı, yangın riski veya kalabalık varsa aynı gün başka noktaya geçin.',
+      sunrise:
+        'Güvenli park yerini gündüz belirlediyseniz sabah kıyıdan sade ve sakin kareler alın.',
+      sunset:
+        'Gün batımında taşlık sahil ve koy çizgisi iyi çalışır; aracı kıyıya fazla yaklaştırmayın.',
+      photoAlt: 'Aşağı Mazı Ilgın Koyu’nda doğal taşlık kıyı',
+      ops: {
+        lastMile:
+          'Adres: Unnamed Road, Mazıköy, 48440 Bodrum/Muğla. Hedefi koordinatla açın: 37.0010509, 27.7560274. Son yaklaşımı gündüz değerlendirin.',
+        supply:
+          'Koya servissiz girin: su dolu, atık tankları kapalı, yakıt yeterli ve gece için dışarıya kamp düzeni kurmadan kalabilecek şekilde.',
+        decision:
+          'Çakıllı’da kalmazsak Ilgın’a aynı gün geçin. Uygun zemin, dönüş alanı ve güncel yasak durumu temizse 1 gece araç içinde kalın; uygun değilse Mazı içinde zorlamadan bir sonraki mantıklı durağa devam edin.'
       }
     },
     akbuk: {
@@ -1091,14 +1135,23 @@ const content = {
       overview: 'Yüzme koyuna yakın, karavan kabul eden kamp alanı.',
       access: 'Yükseklik ve uzunluk sınırlarını sorun.'
     },
-    maziInceyali: {
-      title: 'İnceyalı ücretsiz geceleme adayı',
+    cakilliBeach: {
+      title: 'Çakıllı Plajı freecamp adayı',
       overview:
-        'Mazı etabında doğrudan seçtiğimiz, özel işletmeye bağlı olmayan ücretsiz/wild geceleme adayı. Karavan altyapısı bulunmuyor; geceleme uygunluğu varışta kontrol edilmeli.',
+        'Mazı bölgesinde ilk kontrol edilecek doğal kıyı noktası. Geceleme kararı yalnızca varıştaki levha, zemin, kalabalık ve dönüş alanı kontrolünden sonra verilmeli.',
       access:
-        'Google Maps’te paylaşılan İnceyalı pinine hava kararmadan gidin. Son yolun genişliğini, zemini ve 15 m³ Ducato için dönüş alanını ilerlemeden önce kontrol edin.',
+        'Çakıllı’ya hava kararmadan gidin. Son inişte aracı zorlamadan önce yolu yürüyerek kontrol edin ve Ducato için geri dönüş planını netleştirin.',
       safety:
-        'Burası resmî kamp alanı değildir. Güncel yasak levhası veya yerel uyarı varsa kalmayın; yolu ve kıyı erişimini kapatmayın, ateş yakmayın ve tüm atığı araçta tutun.'
+        'Resmî kamp alanı gibi davranmayın. Dışarı kamp düzeni kurmayın, ateş yakmayın, geçişi kapatmayın ve uygun değilse aynı gün Ilgın Koyu’na devam edin.'
+    },
+    ilginKoyuWild: {
+      title: 'Aşağı Mazı Ilgın Koyu freecamp adayı',
+      overview:
+        'Çakıllı’dan sonra bakılacak daha sakin doğal koy. Deniz kenarında sade geceleme için adaydır; izin ve uygunluk kesinmiş gibi kabul edilmemeli.',
+      access:
+        'Koordinatla gidin: 37.0010509, 27.7560274. Son yaklaşım, zemin ve dönüş alanı gündüz kontrol edilmeden Ducato ile inmeyin.',
+      safety:
+        'Su, WC, duş ve atık boşaltma yok. Güncel yasak, yangın riski veya yerel uyarı varsa kalmayın; tüm atığı araçta tutun.'
     },
     akbukFree: {
       title: 'Akbük üst yolunda olası geceleme alanı',

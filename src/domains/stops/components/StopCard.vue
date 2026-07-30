@@ -63,8 +63,10 @@ function level(value: string | null): string {
       </div>
       <div class="compact-facts">
         <span v-if="isAccommodationStop"
-          ><v-icon icon="mdi-weather-night" />{{ stop.recommendedNights }}
-          {{ t('common.nights') }}</span
+          ><v-icon icon="mdi-weather-night" /><template
+            v-if="stop.status === 'visited' && (stop.nightsStayed ?? 0) === 0"
+            >{{ t('common.dayVisit') }}</template
+          ><template v-else>{{ stop.recommendedNights }} {{ t('common.nights') }}</template></span
         ><span
           ><v-icon icon="mdi-wifi" />{{
             stop.internetScore === null ? '—' : `${stop.internetScore}/5`

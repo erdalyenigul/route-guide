@@ -160,9 +160,9 @@ export const initialRouteSpots: SpotContent[] = [
   ),
   {
     ...createSpot(
-      'inceyali-wildcamp',
+      'cakilli-beach-wildcamp',
       'mazi',
-      'maziInceyali',
+      'cakilliBeach',
       'freecamp',
       37.001543,
       27.728339,
@@ -172,7 +172,7 @@ export const initialRouteSpots: SpotContent[] = [
       []
     ),
     ducatoAccess: 'caution',
-    overnightStatus: 'tolerated',
+    overnightStatus: 'restricted',
     beachfront: null,
     seaView: null,
     distanceToSeaM: null,
@@ -183,7 +183,34 @@ export const initialRouteSpots: SpotContent[] = [
     nightQuiet: null,
     verificationStatus: 'partially_verified',
     lastVerifiedAt: '2026-07-30T00:00:00+03:00',
-    safetyNote: sharedKey('spots.maziInceyali.safety')
+    safetyNote: sharedKey('spots.cakilliBeach.safety')
+  },
+  {
+    ...createSpot(
+      'ilgin-koyu-wildcamp',
+      'ilgin-koyu',
+      'ilginKoyuWild',
+      'freecamp',
+      37.0010509,
+      27.7560274,
+      'arrivalCheckFree',
+      4.4,
+      true,
+      []
+    ),
+    ducatoAccess: 'caution',
+    overnightStatus: 'restricted',
+    beachfront: true,
+    seaView: true,
+    distanceToSeaM: 20,
+    waterAvailable: false,
+    toiletAvailable: false,
+    showerAvailable: false,
+    wasteAvailable: false,
+    nightQuiet: true,
+    verificationStatus: 'partially_verified',
+    lastVerifiedAt: '2026-07-30T00:00:00+03:00',
+    safetyNote: sharedKey('spots.ilginKoyuWild.safety')
   },
   createSpot(
     'akbuk-gokova-upper-bay',

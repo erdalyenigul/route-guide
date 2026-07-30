@@ -103,6 +103,18 @@ export const stopResourceLinks: Readonly<Record<string, readonly StopResourceLin
       url: 'https://gezimanya.com/GeziNotlari/mazi-koyu'
     }
   ],
+  'ilgin-koyu': [
+    {
+      label: 'thingsToDo',
+      titleKey: 'stopLinks.titles.ilginKoyuGuide',
+      url: 'https://dogadakiler.com/Kamp-Alanlari/Mugla-Kamp-Alanlari/Asagi-Mazi-Ilgin-Koyu/'
+    },
+    {
+      label: 'beachesAndCoves',
+      titleKey: 'stopLinks.titles.ilginKoyuCamping',
+      url: 'https://www.campalow.com/kamp-alani/ilgin-koyu-kamp-alani'
+    }
+  ],
   'akbuk-bay-gokova': [
     {
       label: 'travelGuide',

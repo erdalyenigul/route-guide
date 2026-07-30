@@ -48,7 +48,8 @@ export default {
     unknown: 'Bilinmiyor',
     completed: 'Tamamlandı',
     next: 'Sıradaki',
-    upcoming: 'Yaklaşan'
+    upcoming: 'Yaklaşan',
+    dayVisit: 'Günübirlik ziyaret'
   },
   home: {
     greeting: 'İyi akşamlar',
@@ -120,6 +121,7 @@ export default {
     stageCompleteReadOnlyHint: 'Bu ortak rota durumu yönetici tarafından güncellenir.',
     nightsStayedValue: '{count} gece kalındı',
     completionSummary: '{nights} gece · {distance} km sürüldü',
+    dayVisitCompletionSummary: 'Günübirlik ziyaret · {distance} km sürüldü',
     completeStopTitle: 'Rota durumunu güncelle',
     plannedNightsValue: '{count} gece planlandı',
     actualNightsStayed: 'Gerçek kalınan gece',
@@ -254,8 +256,10 @@ export default {
       gumuslukThingsToDo: 'Gümüşlük’te Gezilecek Yerler',
       akyarlarThingsToDo: 'Akyarlar’da Yapılacaklar',
       akyarlarBeaches: 'Akyarlar Plajları ve Gezi Rehberi',
-      maziCoves: 'Mazı Köyü ve Sekiz Koy Rehberi',
-      maziNotes: 'Mazı Köyü Gezi Notları',
+      maziCoves: 'Mazı Koyları Rehberi',
+      maziNotes: 'Çakıllı ve Mazı Gezi Notları',
+      ilginKoyuGuide: 'Ilgın Koyu Kamp Notları',
+      ilginKoyuCamping: 'Ilgın Koyu Kamp Alanı',
       akbukGuide: 'Akbük Koyu Gezi Rehberi',
       muglaCoastGuide: 'Muğla Tatil Bölgeleri Rehberi',
       dalyanGuide: 'Dalyan Gezi Rehberi',

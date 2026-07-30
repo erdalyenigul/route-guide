@@ -118,8 +118,10 @@ function finishDrag(): void {
       </div>
       <div class="sheet-facts">
         <span v-if="isAccommodationStop"
-          ><v-icon icon="mdi-weather-night" />{{ stop.recommendedNights }}
-          {{ t('common.nights') }}</span
+          ><v-icon icon="mdi-weather-night" /><template
+            v-if="stop.status === 'visited' && (stop.nightsStayed ?? 0) === 0"
+            >{{ t('common.dayVisit') }}</template
+          ><template v-else>{{ stop.recommendedNights }} {{ t('common.nights') }}</template></span
         >
         <span v-if="stop.ducatoAccessibility"
           ><v-icon icon="mdi-van-utility" />{{ t(`common.${stop.ducatoAccessibility}`) }}</span

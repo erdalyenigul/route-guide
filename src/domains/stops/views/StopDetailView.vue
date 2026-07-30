@@ -53,6 +53,20 @@ const stopIndex = computed(() => routeStops.value.findIndex((item) => item.id ==
 const isRouteOrigin = computed(() => stopIndex.value === 0)
 const isRouteDestination = computed(() => stopIndex.value === routeStops.value.length - 1)
 const isAccommodationStop = computed(() => !isRouteOrigin.value && !isRouteDestination.value)
+const completionSummary = computed(() => {
+  if (!stop.value || stop.value.status !== 'visited') return ''
+  if (isRouteOrigin.value) return t('stop.routeOriginCompleted')
+  if (isRouteDestination.value)
+    return t('stop.routeDestinationCompleted', { distance: stop.value.actualDistanceKm ?? 0 })
+  if ((stop.value.nightsStayed ?? 0) === 0)
+    return t('stop.dayVisitCompletionSummary', {
+      distance: stop.value.actualDistanceKm ?? 0
+    })
+  return t('stop.completionSummary', {
+    nights: stop.value.nightsStayed ?? 0,
+    distance: stop.value.actualDistanceKm ?? 0
+  })
+})
 const previousDetailStop = computed(() =>
   stopIndex.value > 0 ? routeStops.value[stopIndex.value - 1] : undefined
 )
@@ -806,18 +820,7 @@ onUnmounted(() => {
                     : 'stop.stageIncomplete'
               )
             }}</strong>
-            <span v-if="stop.status === 'visited'">
-              <template v-if="isRouteOrigin">{{ t('stop.routeOriginCompleted') }}</template>
-              <template v-else-if="isRouteDestination">{{
-                t('stop.routeDestinationCompleted', { distance: stop.actualDistanceKm ?? 0 })
-              }}</template>
-              <template v-else>{{
-                t('stop.completionSummary', {
-                  nights: stop.nightsStayed ?? 0,
-                  distance: stop.actualDistanceKm ?? 0
-                })
-              }}</template>
-            </span>
+            <span v-if="stop.status === 'visited'">{{ completionSummary }}</span>
             <span v-else-if="stop.status === 'skipped'">{{ t('stop.routeSkippedHint') }}</span>
             <span v-else>{{ t('common.upcoming') }}</span>
           </div>

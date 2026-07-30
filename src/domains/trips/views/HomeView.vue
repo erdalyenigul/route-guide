@@ -276,11 +276,18 @@ onUnmounted(() => {
                       ><strong>{{ stop.recommendedNights }} {{ t('common.nights') }}</strong>
                     </div>
                     <div v-if="index > 0 && index < store.activeStops.length - 1">
-                      <span>{{ t('home.stayed') }}</span
-                      ><strong
-                        >{{ stop.status === 'visited' ? (stop.nightsStayed ?? 0) : 0 }}
-                        {{ t('common.nights') }}</strong
-                      >
+                      <span>{{ t('home.stayed') }}</span>
+                      <strong>
+                        <template
+                          v-if="stop.status === 'visited' && (stop.nightsStayed ?? 0) === 0"
+                        >
+                          {{ t('common.dayVisit') }}
+                        </template>
+                        <template v-else>
+                          {{ stop.status === 'visited' ? (stop.nightsStayed ?? 0) : 0 }}
+                          {{ t('common.nights') }}
+                        </template>
+                      </strong>
                     </div>
                     <div v-if="index > 0">
                       <span>{{ t('trip.distance') }}</span

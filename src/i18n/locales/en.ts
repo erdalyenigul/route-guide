@@ -48,7 +48,8 @@ export default {
     unknown: 'Unknown',
     completed: 'Completed',
     next: 'Next',
-    upcoming: 'Upcoming'
+    upcoming: 'Upcoming',
+    dayVisit: 'Day visit'
   },
   home: {
     greeting: 'Good evening',
@@ -119,6 +120,7 @@ export default {
     stageCompleteReadOnlyHint: 'This shared route status is managed by an administrator.',
     nightsStayedValue: '{count} nights stayed',
     completionSummary: '{nights} nights · {distance} km driven',
+    dayVisitCompletionSummary: 'Day visit · {distance} km driven',
     completeStopTitle: 'Update route status',
     plannedNightsValue: '{count} nights planned',
     actualNightsStayed: 'Actual nights stayed',
@@ -253,8 +255,10 @@ export default {
       gumuslukThingsToDo: 'Things to do in Gümüşlük',
       akyarlarThingsToDo: 'Things to do in Akyarlar',
       akyarlarBeaches: 'Akyarlar beaches and travel guide',
-      maziCoves: 'Mazı village and its eight coves',
-      maziNotes: 'Mazı village travel notes',
+      maziCoves: 'Mazı coves guide',
+      maziNotes: 'Çakıllı and Mazı travel notes',
+      ilginKoyuGuide: 'Ilgın Koyu camping notes',
+      ilginKoyuCamping: 'Ilgın Koyu camping area',
       akbukGuide: 'Akbük Bay travel guide',
       muglaCoastGuide: 'Muğla coastal destinations guide',
       dalyanGuide: 'Dalyan travel guide',

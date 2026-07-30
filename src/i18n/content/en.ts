@@ -466,45 +466,88 @@ export default {
       }
     },
     mazi: {
-      title: 'Mazı — İnceyalı Beach',
-      region: 'Bodrum, Muğla',
+      title: 'Çakıllı Beach',
+      region: 'Mazıköy, Bodrum, Muğla',
       overview:
-        'A quiet beach destination on the Gulf of Gökova, now pinned to the İnceyalı shoreline rather than the inland Mazı road.',
+        'The first cove we want to check as we enter the Mazı coast: small, stony and natural, useful for a daylight swim and an on-site overnight decision.',
       whyVisit:
-        'Swim at İnceyalı and explore the neighbouring Çakıllıyalı and Hurma shores. Parking and overnight permission still need to be checked on arrival.',
+        'Stop here before Ilgın Koyu to see the beach, swim if conditions are good and decide whether the 15 m³ Ducato can stay comfortably.',
       luna: {
-        subject: 'Pine ridges, coves and the Milky Way',
+        subject: 'Stony shoreline, clear water and soft Mazı cove light',
         lens: '24 mm main camera',
-        timing: 'Blue hour or a moonless night',
+        timing: 'Early morning or late soft light',
         settings: 'Night mode on tripod; RAW by day',
-        note: 'Use stable ground and switch headlights off during exposures.'
+        note: 'Walk the ground before bringing the van down; do not block access for a photo.'
       },
       municipality:
-        'The İnceyalı target has no motorhome services; expect no water, WC, shower or waste disposal.',
-      marketName: 'Mazı settlement supplies',
-      marketNotes: 'Complete the main shop before the cove roads.',
+        'Do not expect motorhome infrastructure at Çakıllı; handle water, toilets, showers and waste before the cove.',
+      marketName: 'Shopping before Mazı coves',
+      marketNotes: 'Complete food, drinks and ice before descending to the coast.',
       fuelName: 'Fuel before Mazı',
       fuelNotes: 'Arrive with sufficient fuel.',
       waterName: 'Carry water',
-      waterNotes: 'No dependable motorhome refill is documented.',
+      waterNotes: 'Do not plan a dependable refill at this cove.',
       dumpName: 'No documented dump',
       dumpNotes: 'Retain waste for a licensed facility.',
       warning1:
-        'Final cove-road width and turnaround remain unresolved for a large Ducato; inspect before descending.',
+        'The final approach, surface and turnaround must be checked in daylight for the Ducato. If it feels tight, do not force the descent.',
       warning2:
-        'Forest-fire restrictions can close access; keep forestry and emergency routes clear.',
+        'This must not be treated as a licensed campsite. Do not stay if signs, local instructions or access-blocking risk make it unsuitable.',
       sunrise:
-        'No exact dawn viewpoint is endorsed; use established public access after a daylight scout.',
+        'No need to descend for sunrise unless parking and turning have already been checked in daylight.',
       sunset:
-        'Select an established public viewpoint with firm parking, well away from road and emergency access.',
-      photoAlt: 'Mazı coastal landscape below wooded slopes',
+        'If staying, shoot sunset from the stony shore; keep the van away from loose gravel, sand and access lines.',
+      photoAlt: 'Çakıllı Beach on the natural Mazı coast',
       ops: {
         lastMile:
-          'Treat each cove descent separately and stay on the main access until width, surface and turnaround are checked in daylight.',
+          'Reach Çakıllı in daylight. Walk the last approach, surface and turning room before committing the van.',
         supply:
-          'Arrive with food, fuel and water; no dependable motorhome service or dump is documented.',
+          'Enter the Mazı coves with food, water and fuel already sorted; there is no planned motorhome service here.',
         decision:
-          'Drive directly to our selected İnceyalı point. Arrive before dark and check the final-road width, ground, turning room for the 15 m³ Ducato and current restriction signs. If suitable, remain inside the vehicle without blocking access or setting up camp outside; otherwise continue to the next free candidate.'
+          'Check Çakıllı first. If it feels suitable, stay one night; if not, mark it as a daytime visit and continue the same day about 5 km to Ilgın Koyu.'
+      }
+    },
+    ilginKoyu: {
+      title: 'Aşağı Mazı Ilgın Koyu',
+      region: 'Mazıköy, Bodrum, Muğla',
+      overview:
+        'The second Mazı stop after Çakıllı: a quieter natural coastal candidate for a freecamp-style overnight decision.',
+      whyVisit:
+        'Use it if we want a quieter night close to the sea after checking Çakıllı. Treat it as an arrival-check natural stop, not as guaranteed camping permission.',
+      luna: {
+        subject: 'Quiet Mazı cove, stony shoreline and night sky',
+        lens: '24 mm main camera',
+        timing: 'Blue hour after sunset or early morning',
+        settings: 'RAW, tripod at night, headlights off for long exposures',
+        note: 'Do not plan night photography until the parking surface and access are checked in daylight.'
+      },
+      municipality:
+        'Expect no motorhome service at Ilgın Koyu. Arrive self-contained for water, WC, shower, electricity and waste.',
+      marketName: 'Small supplies around Mazı',
+      marketNotes:
+        'Complete basic shopping before descending; do not rely on late access to shops.',
+      fuelName: 'Fuel before Mazı',
+      fuelNotes: 'Keep enough range before entering the cove roads.',
+      waterName: 'Bring your own water',
+      waterNotes: 'Fill the potable-water tank before this stop.',
+      dumpName: 'No dump point',
+      dumpNotes: 'Do not empty grey water or cassette waste here; retain it for a proper facility.',
+      warning1:
+        'Large-Ducato access, turning space and ground must be checked in daylight. Stop if the road narrows or the surface becomes doubtful.',
+      warning2:
+        'Overnight permission is not guaranteed. Leave the same day if signs, local instructions, fire risk or crowding make it unsuitable.',
+      sunrise:
+        'If safe parking has been confirmed, the shoreline can work for calm early-morning frames.',
+      sunset:
+        'Use the cove line and stony beach at sunset; keep the van away from the immediate shore edge.',
+      photoAlt: 'Natural stony shoreline at Aşağı Mazı Ilgın Koyu',
+      ops: {
+        lastMile:
+          'Address: Unnamed Road, Mazıköy, 48440 Bodrum/Muğla. Open the target by coordinates: 37.0010509, 27.7560274. Inspect the final approach in daylight.',
+        supply:
+          'Enter self-contained: full water, waste retained, enough fuel and no need to set up outside the van.',
+        decision:
+          'If Çakıllı does not work for overnight, continue to Ilgın the same day. Stay one night only if surface, turning room and current restrictions are acceptable; otherwise move on without forcing a marginal spot.'
       }
     },
     akbuk: {
@@ -1093,14 +1136,23 @@ export default {
       overview: 'A practical camp near the swimming bay.',
       access: 'Confirm height and length limits.'
     },
-    maziInceyali: {
-      title: 'İnceyalı free overnight candidate',
+    cakilliBeach: {
+      title: 'Çakıllı Beach freecamp candidate',
       overview:
-        'Our directly selected free/wild overnight candidate for the Mazı stage, independent of a private operator. There are no motorhome services and overnight suitability must be checked on arrival.',
+        'The first natural shore candidate to check in the Mazı area. Overnight suitability depends on current signs, surface, crowding and turning room on arrival.',
       access:
-        'Follow the shared Google Maps pin to İnceyalı before dark. Check the final-road width, ground and turning room for the 15 m³ Ducato before proceeding.',
+        'Reach Çakıllı before dark. Walk the final descent before committing the van and keep a clear exit plan for the Ducato.',
       safety:
-        'This is not a licensed campsite. Do not stay if current signs or local instructions prohibit it; keep road and shore access clear, light no fire and retain all waste in the vehicle.'
+        'Do not treat it as a licensed campsite. Keep all setup inside the van, light no fire, block no access and continue to Ilgın Koyu the same day if it is not suitable.'
+    },
+    ilginKoyuWild: {
+      title: 'Aşağı Mazı Ilgın Koyu freecamp candidate',
+      overview:
+        'A quieter natural cove to check after Çakıllı. It is a simple sea-edge overnight candidate, not guaranteed legal camping permission.',
+      access:
+        'Navigate by coordinates: 37.0010509, 27.7560274. Do not descend with the Ducato until the final approach, surface and turning room have been checked in daylight.',
+      safety:
+        'No water, WC, shower or dump service. Leave if signs, fire risk or local instructions make staying inappropriate; retain all waste in the vehicle.'
     },
     akbukFree: {
       title: 'Akbük Upper-Bay Stopover',
