@@ -9,6 +9,7 @@ import {
   type GeoJSONSource
 } from 'maplibre-gl'
 import { useI18n } from 'vue-i18n'
+import { useTheme } from 'vuetify'
 import StopMarker from '@/components/map/StopMarker.vue'
 import { mapService } from '@/services/mapService'
 import type { MapStop } from '@/types/map'
@@ -16,11 +17,21 @@ import type { MapStop } from '@/types/map'
 const props = defineProps<{ stops: MapStop[]; selectedId: string | undefined; compact?: boolean }>()
 const emit = defineEmits<{ select: [id: string]; ready: []; error: [message: string] }>()
 const { t } = useI18n()
+const theme = useTheme()
 const container = ref<HTMLElement>()
 const loading = ref(true)
 const error = ref<string>()
 let map: MapLibreMap | undefined
 let markerEntries: { marker: Marker; app: App<Element> }[] = []
+
+function updateRouteColors(): void {
+  if (!map?.loaded()) return
+  const colors = theme.current.value.colors
+  if (map.getLayer('active-route-line'))
+    map.setPaintProperty('active-route-line', 'line-color', colors.primary)
+  if (map.getLayer('completed-route-line'))
+    map.setPaintProperty('completed-route-line', 'line-color', colors.secondary)
+}
 
 function clearMarkers(): void {
   markerEntries.forEach(({ marker, app }) => {
@@ -117,6 +128,7 @@ onMounted(async () => {
     map.once('load', () => {
       loading.value = false
       renderRoute()
+      updateRouteColors()
       renderMarkers()
       fitRoute()
       emit('ready')
@@ -146,6 +158,10 @@ watch(
     }
   },
   { deep: true }
+)
+watch(
+  () => theme.global.name.value,
+  () => updateRouteColors()
 )
 onBeforeUnmount(() => {
   clearMarkers()

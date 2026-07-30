@@ -4,23 +4,52 @@ import { useI18n } from 'vue-i18n'
 import type { StopViewModel } from '@/content/types'
 import { mapService } from '@/services/mapService'
 import { useTripStore } from '@/stores/trip'
+import { usePreferencesStore } from '@/stores/preferences'
 import { terrainProfile } from '@/utils/terrainProfile'
 
 const { t } = useI18n()
 const store = useTripStore()
+const preferences = usePreferencesStore()
 const trip = computed(() => store.activeTrip)
 const routeId = computed(() => trip.value?.id ?? 'active')
 const openChapters = ref<string[]>([])
 const chapterColumnCount = ref(1)
 const fullRouteSheetOpen = ref(false)
-const chapterAccents = [
-  '93, 125, 169',
-  '191, 139, 79',
-  '126, 103, 174',
-  '171, 85, 113',
-  '72, 134, 160',
-  '154, 112, 88'
-]
+const chapterAccentPalettes = {
+  default: [
+    '93, 125, 169',
+    '191, 139, 79',
+    '126, 103, 174',
+    '171, 85, 113',
+    '72, 134, 160',
+    '154, 112, 88'
+  ],
+  obsidian: [
+    '184, 199, 218',
+    '145, 164, 188',
+    '190, 172, 145',
+    '123, 145, 172',
+    '167, 184, 202',
+    '120, 135, 154'
+  ],
+  woodstock: [
+    '225, 151, 78',
+    '190, 74, 54',
+    '214, 179, 84',
+    '145, 82, 112',
+    '73, 137, 132',
+    '181, 104, 54'
+  ],
+  nomad: [
+    '132, 160, 126',
+    '181, 127, 83',
+    '105, 139, 132',
+    '151, 119, 86',
+    '116, 145, 102',
+    '183, 150, 94'
+  ]
+} as const
+const chapterAccents = computed(() => chapterAccentPalettes[preferences.themeStyle])
 const chapterColumns = computed(() => {
   const columns = Array.from(
     { length: chapterColumnCount.value },
@@ -60,7 +89,7 @@ function text(key?: string): string {
   return key ? t(key) : t('common.unknown')
 }
 function chapterAccent(index: number): string {
-  return chapterAccents[index % chapterAccents.length] ?? '93, 125, 169'
+  return chapterAccents.value[index % chapterAccents.value.length] ?? '93, 125, 169'
 }
 function updateChapterColumnCount(): void {
   const width = window.innerWidth

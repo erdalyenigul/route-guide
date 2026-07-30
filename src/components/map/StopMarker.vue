@@ -58,8 +58,8 @@ defineEmits<{ select: [] }>()
   place-items: center;
   border: 2px solid rgba(255, 255, 255, 0.88);
   border-radius: 50%;
-  color: #fff;
-  background: #59655f;
+  color: rgb(var(--v-theme-background));
+  background: rgb(var(--v-theme-primary));
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
   transition:
     transform 0.16s ease,
@@ -75,7 +75,8 @@ defineEmits<{ select: [] }>()
   stroke-linejoin: round;
 }
 .stop-marker.visited span {
-  background: #527b66;
+  color: #fff;
+  background: rgb(var(--v-theme-success));
 }
 .stop-marker.current {
   width: 58px;
@@ -86,7 +87,7 @@ defineEmits<{ select: [] }>()
   position: absolute;
   z-index: 0;
   inset: 5px;
-  border: 2px solid rgba(255, 205, 76, 0.88);
+  border: 2px solid rgba(var(--v-theme-secondary), 0.9);
   border-radius: 50%;
   content: '';
   pointer-events: none;
@@ -103,9 +104,9 @@ defineEmits<{ select: [] }>()
 .stop-marker.current span {
   width: 40px;
   height: 40px;
-  border: 3px solid #11151a;
-  color: #11151a;
-  background: #ffcd4c;
+  border: 3px solid rgb(var(--v-theme-background));
+  color: rgb(var(--v-theme-background));
+  background: rgb(var(--v-theme-secondary));
   box-shadow:
     0 0 0 3px rgba(255, 255, 255, 0.96),
     0 8px 24px rgba(0, 0, 0, 0.68);
@@ -124,7 +125,7 @@ defineEmits<{ select: [] }>()
 .stop-marker.current.selected span {
   transform: scale(1.12);
   box-shadow:
-    0 0 0 4px #ffcd4c,
+    0 0 0 4px rgb(var(--v-theme-secondary)),
     0 0 0 7px rgba(255, 255, 255, 0.95),
     0 10px 30px rgba(0, 0, 0, 0.72);
 }

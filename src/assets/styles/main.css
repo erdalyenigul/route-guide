@@ -36,6 +36,8 @@
   --app-header-bg-light: #f8f8f9;
   --app-body-overlay-top: rgba(3, 4, 6, 0.94);
   --app-body-overlay-bottom: rgba(3, 4, 6, 0.96);
+  --app-theme-glow: 174, 190, 211;
+  --app-theme-edge: 194, 205, 218;
 }
 
 :root[data-theme-style='woodstock'] {
@@ -50,6 +52,8 @@
   --app-header-bg-light: #fff2dd;
   --app-body-overlay-top: rgba(23, 12, 8, 0.83);
   --app-body-overlay-bottom: rgba(23, 12, 8, 0.9);
+  --app-theme-glow: 227, 142, 70;
+  --app-theme-edge: 200, 95, 66;
 }
 
 :root[data-theme-style='nomad'] {
@@ -63,6 +67,8 @@
   --app-header-bg-light: #f4efe4;
   --app-body-overlay-top: rgba(10, 16, 10, 0.86);
   --app-body-overlay-bottom: rgba(10, 16, 10, 0.92);
+  --app-theme-glow: 139, 164, 128;
+  --app-theme-edge: 190, 137, 91;
 }
 
 html,
@@ -144,6 +150,112 @@ select {
   background-image:
     radial-gradient(circle at 5% 0, rgba(var(--v-theme-primary), 0.035), transparent 32%),
     linear-gradient(145deg, rgba(255, 255, 255, 0.022), rgba(var(--v-theme-secondary), 0.018) 100%);
+}
+
+/* Theme characters deliberately reach beyond Vuetify tokens so route cards,
+   stop drawers, detail panels and map chrome visibly belong to the preset. */
+:root[data-theme-style='obsidian'] body .v-card,
+:root[data-theme-style='obsidian'] body .trip-summary,
+:root[data-theme-style='obsidian'] body .chapter,
+:root[data-theme-style='obsidian'] body .stop-row,
+:root[data-theme-style='obsidian'] body .route-leg,
+:root[data-theme-style='obsidian'] body .stop-sheet,
+:root[data-theme-style='obsidian'] body .v-expansion-panel {
+  border-color: rgba(var(--app-theme-edge), 0.2) !important;
+  background-image:
+    linear-gradient(125deg, rgba(var(--app-theme-glow), 0.075), transparent 34%),
+    linear-gradient(155deg, rgba(255, 255, 255, 0.025), transparent 60%) !important;
+  box-shadow:
+    inset 0 1px rgba(255, 255, 255, 0.035),
+    0 18px 55px rgba(0, 0, 0, 0.24) !important;
+}
+
+:root[data-theme-style='woodstock'] body .v-card,
+:root[data-theme-style='woodstock'] body .trip-summary,
+:root[data-theme-style='woodstock'] body .chapter,
+:root[data-theme-style='woodstock'] body .stop-row,
+:root[data-theme-style='woodstock'] body .route-leg,
+:root[data-theme-style='woodstock'] body .stop-sheet,
+:root[data-theme-style='woodstock'] body .v-expansion-panel {
+  border-color: rgba(var(--app-theme-edge), 0.28) !important;
+  background-image:
+    radial-gradient(circle at 8% 0, rgba(var(--app-theme-glow), 0.2), transparent 35%),
+    linear-gradient(145deg, rgba(126, 42, 29, 0.12), transparent 62%) !important;
+  box-shadow:
+    inset 0 1px rgba(255, 220, 168, 0.055),
+    0 18px 50px rgba(42, 15, 7, 0.25) !important;
+}
+
+:root[data-theme-style='nomad'] body .v-card,
+:root[data-theme-style='nomad'] body .trip-summary,
+:root[data-theme-style='nomad'] body .chapter,
+:root[data-theme-style='nomad'] body .stop-row,
+:root[data-theme-style='nomad'] body .route-leg,
+:root[data-theme-style='nomad'] body .stop-sheet,
+:root[data-theme-style='nomad'] body .v-expansion-panel {
+  border-color: rgba(var(--app-theme-edge), 0.24) !important;
+  background-image:
+    radial-gradient(circle at 8% 0, rgba(var(--app-theme-glow), 0.16), transparent 38%),
+    linear-gradient(135deg, rgba(82, 104, 69, 0.1), transparent 58%) !important;
+  box-shadow:
+    inset 0 1px rgba(231, 226, 190, 0.035),
+    0 16px 46px rgba(5, 14, 7, 0.23) !important;
+}
+
+:root:not([data-theme-style='default']) body .chapter::before {
+  height: 6px;
+  background: linear-gradient(
+    90deg,
+    rgb(var(--chapter-accent)),
+    rgba(var(--app-theme-edge), 0.72),
+    rgba(var(--chapter-accent), 0.2)
+  ) !important;
+}
+
+:root:not([data-theme-style='default']) body .v-btn--variant-tonal,
+:root:not([data-theme-style='default']) body .chapter-quick-detail,
+:root:not([data-theme-style='default']) body .full-route-action {
+  border: 1px solid rgba(var(--app-theme-edge), 0.22) !important;
+  background: rgba(var(--app-theme-glow), 0.13) !important;
+}
+
+:root[data-theme-style='woodstock'] body .eyebrow,
+:root[data-theme-style='woodstock'] body .section-heading p,
+:root[data-theme-style='woodstock'] body .chapter-id,
+:root[data-theme-style='woodstock'] body .page-subtitle {
+  color: rgb(var(--v-theme-secondary)) !important;
+}
+
+:root[data-theme-style='nomad'] body .eyebrow,
+:root[data-theme-style='nomad'] body .section-heading p,
+:root[data-theme-style='nomad'] body .chapter-id {
+  color: rgb(var(--v-theme-primary)) !important;
+}
+
+:root[data-theme-style='woodstock'] body .mobile-nav,
+:root[data-theme-style='woodstock'] body .app-header {
+  border-color: rgba(var(--app-theme-edge), 0.28) !important;
+  box-shadow: 0 12px 45px rgba(43, 15, 8, 0.34) !important;
+}
+
+:root[data-theme-style='nomad'] body .mobile-nav,
+:root[data-theme-style='nomad'] body .app-header {
+  border-color: rgba(var(--app-theme-edge), 0.24) !important;
+  box-shadow: 0 12px 42px rgba(6, 16, 7, 0.3) !important;
+}
+
+:root[data-theme-style='obsidian'] body .map-container {
+  filter: contrast(1.18) saturate(0.58) brightness(0.82);
+}
+:root[data-theme-style='woodstock'] body .map-container {
+  filter: sepia(0.34) saturate(1.18) hue-rotate(338deg) brightness(0.82) contrast(1.08);
+}
+:root[data-theme-style='nomad'] body .map-container {
+  filter: sepia(0.22) saturate(0.9) hue-rotate(55deg) brightness(0.8) contrast(1.08);
+}
+
+:root:not([data-theme-style='default']) body .map-container {
+  transition: filter 0.28s ease;
 }
 a,
 button {
