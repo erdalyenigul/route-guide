@@ -69,6 +69,7 @@ function renderMarkers(): void {
         order: stop.order,
         status: stop.status,
         selected: stop.id === props.selectedId,
+        overlapping: orderedGroup.length > 1,
         onSelect: () => emit('select', stop.id)
       })
       app.mount(element)

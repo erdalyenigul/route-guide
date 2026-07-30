@@ -1,7 +1,13 @@
 <script setup lang="ts">
 import type { StopStatus } from '@/content/types'
 
-defineProps<{ label: string; order: number; status: StopStatus; selected: boolean }>()
+defineProps<{
+  label: string
+  order: number
+  status: StopStatus
+  selected: boolean
+  overlapping?: boolean
+}>()
 defineEmits<{ select: [] }>()
 </script>
 
@@ -9,7 +15,7 @@ defineEmits<{ select: [] }>()
   <button
     type="button"
     class="stop-marker"
-    :class="[status, { selected }]"
+    :class="[status, { selected, overlapping }]"
     :aria-label="`${String(order).padStart(2, '0')} · ${label}`"
     :title="`${String(order).padStart(2, '0')} · ${label}`"
     @click.stop="$emit('select')"
@@ -48,6 +54,12 @@ defineEmits<{ select: [] }>()
   transition:
     transform 0.16s ease,
     box-shadow 0.16s ease;
+}
+.stop-marker.overlapping {
+  pointer-events: none;
+}
+.stop-marker.overlapping span {
+  pointer-events: auto;
 }
 .stop-marker b {
   font-size: 0.66rem;
