@@ -250,22 +250,6 @@ onUnmounted(() => {
             >
           </div>
         </div>
-        <button
-          class="summary-handle"
-          :class="{ dragging: summaryDragging }"
-          type="button"
-          :aria-expanded="summaryExpanded"
-          :aria-label="t(summaryExpanded ? 'home.collapseRouteSummary' : 'home.expandRouteSummary')"
-          :style="{ '--summary-drag': `${summaryDragOffset}px` }"
-          @click="toggleSummary"
-          @pointerdown="startSummaryDrag"
-          @pointermove="moveSummaryDrag"
-          @pointerup="finishSummaryDrag"
-          @pointercancel="finishSummaryDrag"
-        >
-          <span />
-          <v-icon :icon="summaryExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down'" />
-        </button>
         <v-expand-transition>
           <div
             v-show="summaryExpanded"
@@ -337,6 +321,22 @@ onUnmounted(() => {
             </button>
           </div>
         </v-expand-transition>
+        <button
+          class="summary-handle"
+          :class="{ dragging: summaryDragging }"
+          type="button"
+          :aria-expanded="summaryExpanded"
+          :aria-label="t(summaryExpanded ? 'home.collapseRouteSummary' : 'home.expandRouteSummary')"
+          :style="{ '--summary-drag': `${summaryDragOffset}px` }"
+          @click="toggleSummary"
+          @pointerdown="startSummaryDrag"
+          @pointermove="moveSummaryDrag"
+          @pointerup="finishSummaryDrag"
+          @pointercancel="finishSummaryDrag"
+        >
+          <span />
+          <v-icon :icon="summaryExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down'" />
+        </button>
       </section>
 
       <section class="chapters">
