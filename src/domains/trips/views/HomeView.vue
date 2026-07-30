@@ -1002,8 +1002,9 @@ onUnmounted(() => {
   width: calc(100% - 40px);
   min-height: 42px;
   margin: 0 20px 18px;
-  background: rgba(var(--chapter-accent), 0.12) !important;
-  color: rgb(var(--chapter-accent)) !important;
+  border: 1px solid rgba(var(--v-theme-primary), 0.2) !important;
+  background: rgba(var(--v-theme-primary), 0.12) !important;
+  color: rgb(var(--v-theme-primary)) !important;
 }
 .drawer-content {
   padding: 0 20px 20px;

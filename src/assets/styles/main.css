@@ -126,8 +126,8 @@
   --app-border-alpha: 0.22;
   --app-card-inset: inset 0 1px rgba(255, 253, 244, 0.94), inset 0 -2px rgba(138, 63, 45, 0.045);
   --app-card-texture:
-    radial-gradient(circle at 8% 4%, rgba(196, 125, 38, 0.1), transparent 36%),
-    linear-gradient(145deg, rgba(138, 63, 45, 0.045), transparent 64%);
+    radial-gradient(circle at 8% 4%, rgba(165, 104, 50, 0.055), transparent 38%),
+    linear-gradient(145deg, rgba(132, 67, 50, 0.025), transparent 66%);
   --app-shadow: 0 9px 25px rgba(108, 60, 34, 0.11), 0 2px 5px rgba(108, 60, 34, 0.05);
   --app-shadow-hover: 0 15px 36px rgba(108, 60, 34, 0.15), 0 3px 7px rgba(108, 60, 34, 0.06);
   --app-shadow-float: 0 20px 48px rgba(108, 60, 34, 0.18), 0 4px 9px rgba(108, 60, 34, 0.07);
@@ -139,12 +139,12 @@
   --app-card-texture:
     repeating-linear-gradient(
       135deg,
-      rgba(79, 102, 86, 0.018) 0,
-      rgba(79, 102, 86, 0.018) 1px,
+      rgba(71, 96, 82, 0.012) 0,
+      rgba(71, 96, 82, 0.012) 1px,
       transparent 1px,
       transparent 11px
     ),
-    linear-gradient(135deg, rgba(79, 102, 86, 0.045), transparent 62%);
+    linear-gradient(135deg, rgba(71, 96, 82, 0.026), transparent 64%);
   --app-shadow: 0 8px 23px rgba(48, 65, 49, 0.1), 2px 3px 0 rgba(79, 102, 86, 0.045);
   --app-shadow-hover: 0 14px 34px rgba(48, 65, 49, 0.14), 3px 4px 0 rgba(79, 102, 86, 0.055);
   --app-shadow-float: 0 19px 46px rgba(48, 65, 49, 0.17), 4px 5px 0 rgba(79, 102, 86, 0.06);
@@ -446,10 +446,44 @@ select {
 }
 
 :root:not([data-theme-style='default']) body .v-btn--variant-tonal,
-:root:not([data-theme-style='default']) body .chapter-quick-detail,
 :root:not([data-theme-style='default']) body .full-route-action {
   border: 1px solid rgba(var(--app-theme-edge), 0.22) !important;
   background: rgba(var(--app-theme-glow), 0.13) !important;
+}
+
+:root[data-color-mode='light'][data-theme-style='woodstock']
+  body
+  :is(
+    .v-card,
+    .trip-summary,
+    .chapter,
+    .stop-row,
+    .route-leg,
+    .stop-sheet,
+    .v-expansion-panel,
+    .summary-grid > div
+  ) {
+  border-color: rgba(132, 67, 50, 0.14) !important;
+}
+
+:root[data-color-mode='light'][data-theme-style='nomad']
+  body
+  :is(
+    .v-card,
+    .trip-summary,
+    .chapter,
+    .stop-row,
+    .route-leg,
+    .stop-sheet,
+    .v-expansion-panel,
+    .summary-grid > div
+  ) {
+  border-color: rgba(71, 96, 82, 0.14) !important;
+}
+
+:root[data-color-mode='light']:not([data-theme-style='default']) body .full-route-action {
+  border-color: rgba(var(--v-theme-primary), 0.14) !important;
+  background: rgba(var(--v-theme-primary), 0.052) !important;
 }
 
 :root[data-theme-style='woodstock'] body .eyebrow,
