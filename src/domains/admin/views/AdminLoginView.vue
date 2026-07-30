@@ -1,18 +1,13 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 
-import { usePreferencesStore } from '@/stores/preferences'
 import { adminContentService } from '../services/adminContentService'
 
 const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
-const preferences = usePreferencesStore()
-const logoUrl = computed(() =>
-  preferences.theme === 'dark' ? '/logo-dark.png' : '/logo-light.png'
-)
 const username = ref('')
 const password = ref('')
 const showPassword = ref(false)
@@ -56,11 +51,6 @@ async function submit(): Promise<void> {
 <template>
   <main class="admin-login">
     <v-card class="login-card">
-      <img
-        class="login-logo"
-        :src="logoUrl"
-        :alt="t('app.name')"
-      />
       <p class="eyebrow">{{ t('admin.privateWorkspace') }}</p>
       <h1>{{ t('admin.loginTitle') }}</h1>
       <v-alert
@@ -134,14 +124,6 @@ async function submit(): Promise<void> {
   border: 1px solid rgba(var(--v-border-color), 0.13);
   border-radius: 28px !important;
   box-shadow: var(--app-shadow-float);
-}
-.login-logo {
-  display: block;
-  width: min(250px, 72%);
-  height: auto;
-  margin: 0 0 28px;
-  border-radius: 14px;
-  object-fit: contain;
 }
 h1 {
   margin-bottom: 26px;
