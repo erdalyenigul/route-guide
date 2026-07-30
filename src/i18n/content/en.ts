@@ -9,9 +9,8 @@ export default {
     sunset: 'Sunset location not added.'
   },
   route: {
-    title: 'Aegean to Mediterranean Caravan Route',
-    description:
-      'A slow coastal journey from İzmir to Antalya through quiet bays, ancient landscapes and pine-backed beaches.',
+    title: 'Caravan Route Guide',
+    description: 'Aegean–Mediterranean coastal route',
     firstLegTitle: 'First İzmir–Bafa leg',
     firstLegDescription:
       'Completed first departure through Güzelçamlı and Bafa Lake before returning to İzmir.'

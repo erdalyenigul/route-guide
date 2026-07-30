@@ -14,9 +14,8 @@ const content = {
     sunset: 'Gün batımı konumu eklenmedi.'
   },
   route: {
-    title: 'Ege’den Akdeniz’e Karavan Rotası',
-    description:
-      'İzmir’den Antalya’ya sakin koylar, antik coğrafyalar ve çamlarla çevrili sahiller boyunca yavaş bir kıyı yolculuğu.',
+    title: 'Caravan Route Guide',
+    description: 'Ege–Akdeniz sahil yolu',
     firstLegTitle: 'İlk İzmir–Bafa etabı',
     firstLegDescription:
       'İzmir’e dönmeden önce Güzelçamlı ve Bafa Gölü üzerinden tamamlanan ilk yolculuk.'

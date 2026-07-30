@@ -146,6 +146,7 @@ onUnmounted(() => {
           <div>
             <p>{{ t('home.title') }}</p>
             <h1>{{ text(trip.title) }}</h1>
+            <div class="route-summary">({{ text(trip.description) }})</div>
           </div>
           <v-btn
             class="open-map-action"
@@ -481,6 +482,13 @@ onUnmounted(() => {
   font-size: clamp(1.2rem, 3.4vw, 3rem);
   line-height: 1.04;
   letter-spacing: -0.05em;
+}
+.route-summary {
+  margin-top: 9px;
+  color: rgba(var(--v-theme-on-surface), 0.62);
+  font-size: clamp(0.86rem, 1.25vw, 1rem);
+  font-weight: 560;
+  letter-spacing: 0;
 }
 .open-map-action {
   min-width: 148px;
