@@ -55,7 +55,7 @@ function renderMarkers(): void {
 
   for (const group of groupedStops.values()) {
     const orderedGroup = [...group].sort((left, right) => left.order - right.order)
-    const radius = orderedGroup.length > 1 ? 34 : 0
+    const radius = orderedGroup.length === 2 ? 27 : orderedGroup.length > 2 ? 32 : 0
     orderedGroup.forEach((stop, index) => {
       const angle =
         orderedGroup.length === 2 ? index * Math.PI : (index / orderedGroup.length) * 2 * Math.PI
