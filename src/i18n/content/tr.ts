@@ -78,6 +78,7 @@ const content = {
   prices: {
     permitted: 'Park izni olan yerlerde ücretsiz',
     permission: 'Yerel izinle ücretsiz',
+    arrivalCheckFree: 'Ücretsiz olarak listeleniyor; güncel durumu varışta kontrol edin',
     seasonal: 'Sezonluk ücret; güncel tutarı işletmeden öğrenin',
     reserve: 'Sezonluk ücret; rezervasyon önerilir',
     premium: 'Yüksek sezon ücreti; önceden ayırtın',
@@ -486,7 +487,7 @@ const content = {
         note: 'Sağlam zeminde durun, uzun pozlamada farları kapatın.'
       },
       municipality:
-        'Mazı’da karavan hizmet noktası veya güvenle önerebildiğimiz ücretsiz geceleme alanı yok.',
+        'İnceyalı hedefinde karavan hizmeti bulunmuyor; su, WC, duş ve atık boşaltma imkânı beklemeyin.',
       marketName: 'Alışverişi Mazı’ya gelmeden yapın',
       marketNotes: 'Koy yollarına sapmadan önce büyük alışverişi tamamlayın.',
       fuelName: 'Depoyu önceden doldurun',
@@ -507,7 +508,7 @@ const content = {
           'Her koy inişini ayrı değerlendirin; genişlik, zemin ve dönüşü gündüz kontrol edin.',
         supply: 'Yiyecek, yakıt ve suyla hazırlıklı gelin.',
         decision:
-          'Mazı koylarını yalnızca gündüz keşfedin. Gecelemek için rastgele sahil veya orman boşluğu aramak yerine, Ducato kabul ettiğini önceden doğruladığınız bir işletmeye gidin.'
+          'Doğrudan seçtiğimiz İnceyalı noktasına gidin. Hava kararmadan varın; son yolun genişliğini, zemini, 15 m³ Ducato için dönüş alanını ve güncel yasak levhalarını kontrol edin. Uygunsa geçişi kapatmadan ve dışarıya kamp düzeni kurmadan araç içinde kalın; uygun değilse bir sonraki ücretsiz adaya devam edin.'
       }
     },
     akbuk: {
@@ -1047,16 +1048,14 @@ const content = {
       overview: 'Yüzme koyuna yakın, karavan kabul eden kamp alanı.',
       access: 'Yükseklik ve uzunluk sınırlarını sorun.'
     },
-    maziFree: {
-      title: 'Mazı üst yolunda olası park alanı',
+    maziInceyali: {
+      title: 'İnceyalı ücretsiz geceleme adayı',
       overview:
-        'Dik koy yollarına inmeden önce değerlendirilebilecek üst yol alanı; izin, sağlam zemin ve güvenli dönüş imkânı yerinde kontrol edilmeli.',
-      access: 'Orman ve acil geçiş yollarını tamamen açık bırakın.'
-    },
-    maziPaid: {
-      title: 'Mazı Aile Kampı',
-      overview: 'Koylara yakın, gölgeli sade kamp.',
-      access: 'Yol ve alan için önceden arayın.'
+        'Mazı etabında doğrudan seçtiğimiz, özel işletmeye bağlı olmayan ücretsiz/wild geceleme adayı. Karavan altyapısı bulunmuyor; geceleme uygunluğu varışta kontrol edilmeli.',
+      access:
+        'Google Maps’te paylaşılan İnceyalı pinine hava kararmadan gidin. Son yolun genişliğini, zemini ve 15 m³ Ducato için dönüş alanını ilerlemeden önce kontrol edin.',
+      safety:
+        'Burası resmî kamp alanı değildir. Güncel yasak levhası veya yerel uyarı varsa kalmayın; yolu ve kıyı erişimini kapatmayın, ateş yakmayın ve tüm atığı araçta tutun.'
     },
     akbukFree: {
       title: 'Akbük üst yolunda olası geceleme alanı',

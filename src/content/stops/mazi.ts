@@ -7,7 +7,7 @@ export const mazi = {
   order: 8,
   slug: 'mazi',
   ...stopCopy('mazi'),
-  coordinates: { latitude: 37.0020527, longitude: 27.7333534 },
+  coordinates: { latitude: 37.001543, longitude: 27.728339 },
   recommendedNights: 2,
   minNights: 1,
   maxNights: 3,
@@ -34,8 +34,8 @@ export const mazi = {
   fuelStation: servicePoint('mazi', 'fuel', true, 27),
   waterRefill: servicePoint('mazi', 'water', false, 0),
   dumpStation: servicePoint('mazi', 'dump', false, 0),
-  freecampSpotIds: ['mazi-upper-terrace'],
-  paidAlternativeIds: ['mazi-family-camp'],
+  freecampSpotIds: ['inceyali-wildcamp'],
+  paidAlternativeIds: [],
   photos: [
     stopPhoto(
       'mazi-cove',

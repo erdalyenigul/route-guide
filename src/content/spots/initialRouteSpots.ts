@@ -158,24 +158,33 @@ export const initialRouteSpots: SpotContent[] = [
     true,
     ['electricity', 'freshWater', 'wc', 'shower']
   ),
-  createSpot(
-    'mazi-upper-terrace',
-    'mazi',
-    'maziFree',
-    'freecamp',
-    37.105,
-    27.676,
-    'permission',
-    4,
-    false,
-    []
-  ),
-  createSpot('mazi-family-camp', 'mazi', 'maziPaid', 'paid', 37.092, 27.683, 'local', 4.5, true, [
-    'freshWater',
-    'wc',
-    'shower',
-    'restaurant'
-  ]),
+  {
+    ...createSpot(
+      'inceyali-wildcamp',
+      'mazi',
+      'maziInceyali',
+      'freecamp',
+      37.001543,
+      27.728339,
+      'arrivalCheckFree',
+      4.3,
+      true,
+      []
+    ),
+    ducatoAccess: 'caution',
+    overnightStatus: 'tolerated',
+    beachfront: null,
+    seaView: null,
+    distanceToSeaM: null,
+    waterAvailable: false,
+    toiletAvailable: false,
+    showerAvailable: false,
+    wasteAvailable: false,
+    nightQuiet: null,
+    verificationStatus: 'partially_verified',
+    lastVerifiedAt: '2026-07-30T00:00:00+03:00',
+    safetyNote: sharedKey('spots.maziInceyali.safety')
+  },
   createSpot(
     'akbuk-gokova-upper-bay',
     'akbuk',

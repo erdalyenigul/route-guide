@@ -73,6 +73,7 @@ export default {
   prices: {
     permitted: 'Free where parking is permitted',
     permission: 'Free with local permission',
+    arrivalCheckFree: 'Listed as free; verify the current situation on arrival',
     seasonal: 'Seasonal rate; confirm directly',
     reserve: 'Seasonal rate; reservation recommended',
     premium: 'Premium seasonal rate; book ahead',
@@ -478,7 +479,8 @@ export default {
         settings: 'Night mode on tripod; RAW by day',
         note: 'Use stable ground and switch headlights off during exposures.'
       },
-      municipality: 'No municipal motorhome service or verified freecamp is documented.',
+      municipality:
+        'The İnceyalı target has no motorhome services; expect no water, WC, shower or waste disposal.',
       marketName: 'Mazı settlement supplies',
       marketNotes: 'Complete the main shop before the cove roads.',
       fuelName: 'Fuel before Mazı',
@@ -502,7 +504,7 @@ export default {
         supply:
           'Arrive with food, fuel and water; no dependable motorhome service or dump is documented.',
         decision:
-          'Use Mazı as a daytime exploration stop. Do not chase an unverified beach or forest freecamp with the Ducato.'
+          'Drive directly to our selected İnceyalı point. Arrive before dark and check the final-road width, ground, turning room for the 15 m³ Ducato and current restriction signs. If suitable, remain inside the vehicle without blocking access or setting up camp outside; otherwise continue to the next free candidate.'
       }
     },
     akbuk: {
@@ -1047,15 +1049,14 @@ export default {
       overview: 'A practical camp near the swimming bay.',
       access: 'Confirm height and length limits.'
     },
-    maziFree: {
-      title: 'Mazı Upper-Road Terrace',
-      overview: 'A remote candidate above the steep beach roads.',
-      access: 'Keep forestry and emergency routes completely clear.'
-    },
-    maziPaid: {
-      title: 'Mazı Family Campground',
-      overview: 'A simple shaded camp close to the coves.',
-      access: 'Call ahead for road and pitch advice.'
+    maziInceyali: {
+      title: 'İnceyalı free overnight candidate',
+      overview:
+        'Our directly selected free/wild overnight candidate for the Mazı stage, independent of a private operator. There are no motorhome services and overnight suitability must be checked on arrival.',
+      access:
+        'Follow the shared Google Maps pin to İnceyalı before dark. Check the final-road width, ground and turning room for the 15 m³ Ducato before proceeding.',
+      safety:
+        'This is not a licensed campsite. Do not stay if current signs or local instructions prohibit it; keep road and shore access clear, light no fire and retain all waste in the vehicle.'
     },
     akbukFree: {
       title: 'Akbük Upper-Bay Stopover',
