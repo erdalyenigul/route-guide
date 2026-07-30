@@ -68,6 +68,11 @@ const languageOptions = computed(() => [
 .settings-page {
   max-width: none;
 }
+.settings-page :deep(.page-header) {
+  width: 100%;
+  max-width: 1100px;
+  margin-inline: auto;
+}
 .settings-card {
   width: 100%;
   max-width: 1100px;
