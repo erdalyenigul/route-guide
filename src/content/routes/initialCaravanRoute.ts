@@ -21,9 +21,10 @@ export const initialCaravanRoute = {
     'dalyan',
     'karaot-beach',
     'faralya',
+    'patara',
     'kas',
     'cirali',
     'lara'
   ],
-  totalDistanceKm: 1453
+  totalDistanceKm: 1463
 } satisfies RouteContent

@@ -732,6 +732,49 @@ const content = {
           'Uçurum yolunda rahat değilseniz Ducato’yu Ovacık’taki Aydede’de bırakıp Faralya–Kabak minibüsünü kullanın. Çıkacaksanız gündüz sürün ve yalnızca Bağ Camp gibi önceden ayarlanmış üst alana gidin. Kelebekler Vadisi tabanına araç yolu yoktur; Kabak sahili inişi Ducato’ya uygun değildir. Açık seyir veya geçiş ceplerinde gecelemeyin.'
       }
     },
+    patara: {
+      title: 'Patara',
+      region: 'Kaş, Antalya',
+      overview:
+        'Patara’nın kum tepelerine ve uzun kumsalına yukarıdan bakan, işletmesiz ve tesissiz ücretsiz geceleme adayı.',
+      whyVisit:
+        'Kum denizi hissi veren manzarayı görmek, gün batımını izlemek, Patara Plajı’nda yüzmek ve Faralya–Kaş arasındaki uzun sürüşü bölmek için.',
+      luna: {
+        subject: 'Patara kum tepeleri, kıyı çizgisi ve gün batımı katmanları',
+        lens: '24 mm ana kamera ve 70 mm telefoto',
+        timing: 'Gün batımından 45 dakika önce',
+        settings: 'RAW, -0,7 EV; kum tepelerinde parlak alanları koruyun',
+        note: 'Koruma alanına girmeden ve kumullara basmadan yalnızca mevcut park açıklığından çekim yapın.'
+      },
+      municipality:
+        'Kum tepeleri park adayında su, WC, duş veya karavan atık hizmeti yok; yalnızca çöp kutusu bildiriliyor.',
+      marketName: 'Gelemiş’te alışveriş',
+      marketNotes:
+        'Kum tepeleri yoluna girmeden yiyecek ve içecek alın; park noktasında hizmet bulunmuyor.',
+      fuelName: 'Kalkan–Kaş ana yolunda yakıt',
+      fuelNotes: 'Patara sapağına girmeden manevra alanı geniş bir istasyonda depoyu tamamlayın.',
+      waterName: 'Suyu önceden doldurun',
+      waterNotes: 'Kum tepeleri park noktasında güvenilir su dolum imkânı bulunmuyor.',
+      dumpName: 'Atık boşaltma noktası yok',
+      dumpNotes: 'Gri suyu ve tuvalet kasetini uygun bir karavan hizmetine kadar araçta tutun.',
+      warning1:
+        'Patara koruma altındaki deniz kaplumbağası yuvalama kıyısıdır. Gece plaja girmeyin, kumullara araçla veya yürüyerek çıkmayın ve yapay ışık kullanmayın.',
+      warning2:
+        'Son 2–3 km bozuk ve kıvrımlı; bazı yaklaşımlar dik mahalle yollarına sapıyor. 15 m³ Ducato ile kuru havada, gündüz ve dönüş alanını kontrol ederek ilerleyin.',
+      sunrise:
+        'Gece sahil kısıtlamaları nedeniyle gün doğumu için plaja inmeyin; mevcut park açıklığından koruma alanına girmeden çekim yapın.',
+      sunset:
+        'Kum tepeleri üstündeki mevcut park açıklığı güçlü bir gün batımı manzarası sunuyor; kalabalık saatlerde yolu ve manzarayı kapatmayın.',
+      photoAlt: 'Patara kum tepeleri ve Akdeniz kıyısı',
+      ops: {
+        lastMile:
+          'Gelemiş merkezinden kum tepeleri yönüne gündüz ilerleyin. Navigasyonun dik mahalle kestirmelerine sokmasına izin vermeyin; son 2–3 km bozuk, dar ve virajlıdır. Yağmurda zemini zorlamayın.',
+        supply:
+          'Gelemiş’e ulaşmadan yakıtı, içme suyunu ve yiyeceği tamamlayın. Hedefte su, WC, duş, elektrik veya atık boşaltma hizmeti yoktur.',
+        decision:
+          'Hava kararmadan gidip levhaları, yolu, sert zemini ve Ducato dönüş alanını kontrol edin. Gecelemeye açıkça izin verilmiyorsa kalmayın. Uygunsa yalnızca aracın içinde, dışarıya kamp düzeni kurmadan ve tüm geçişleri açık bırakarak bir gece kalın.'
+      }
+    },
     kas: {
       title: 'Kaş',
       region: 'Antalya',
@@ -1101,6 +1144,15 @@ const content = {
       title: 'Faralya Manzara Terası Kampı',
       overview: 'Güvenli manzara alanı bulunan, işletmeye ait uçurum üstü kamp.',
       access: 'Ducato ölçülerini önceden bildirin.'
+    },
+    pataraDunes: {
+      title: 'Patara kum tepeleri ücretsiz geceleme adayı',
+      overview:
+        'Kum tepeleri ve deniz manzaralı, çamların çevrelediği tesissiz park açıklığı. Ücretsiz olarak kullanıldığına dair güncel karavan kayıtları var; resmî geceleme izni olarak değerlendirilmemeli.',
+      access:
+        'Gelemiş merkezinden gündüz yaklaşın. Son 2–3 km bozuk ve virajlıdır; dik kuzey kestirmeleri yerine daha yönetilebilir güney yaklaşımını kullanın.',
+      safety:
+        'Güncel levhalar veya kolluk uyarısı gecelemeyi yasaklıyorsa devam edin. Gece sahile ve kumullara girmeyin, ateş yakmayın, dışarıya masa veya tente açmayın.'
     },
     kasFree: {
       title: 'Kaş yaylasında olası geceleme alanı',

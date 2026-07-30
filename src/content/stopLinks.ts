@@ -156,6 +156,18 @@ export const stopResourceLinks: Readonly<Record<string, readonly StopResourceLin
       url: 'https://www.enuygun.com/bilgi/faralya-koyu/'
     }
   ],
+  patara: [
+    {
+      label: 'travelGuide',
+      titleKey: 'stopLinks.titles.pataraGuide',
+      url: 'https://www.enuygun.com/bilgi/2020-yili-ilan-edilen-patara-antik-kenti-ne-dair-her-sey/'
+    },
+    {
+      label: 'beachesAndCoves',
+      titleKey: 'stopLinks.titles.pataraDunes',
+      url: 'https://www.park4night.com/en/place/75720'
+    }
+  ],
   kas: [
     {
       label: 'travelGuide',

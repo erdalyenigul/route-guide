@@ -264,6 +264,8 @@ export default {
       karaotBeaches: 'Karaot and Fethiye beaches guide',
       faralyaGuide: 'Faralya travel guide',
       faralyaHighlights: 'Faralya, Kabak and Butterfly Valley',
+      pataraGuide: 'Patara ancient city and beach guide',
+      pataraDunes: 'Patara dunes motorhome reports',
       kasGuide: 'Kaş travel guide',
       kasBeaches: 'Kaş beaches, coves and sights',
       ciraliGuide: 'Çıralı travel guide',

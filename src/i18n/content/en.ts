@@ -737,6 +737,50 @@ export default {
           'If cliff-road driving is uncomfortable, leave the Ducato at Aydede in Ovacık and use the Faralya–Kabak minibus. If driving up, travel in daylight and go only to a pre-booked upper pitch such as Bağ Camp. Butterfly Valley floor has no road and Kabak beach descent is not suitable for the Ducato. Never sleep in an exposed viewpoint or passing bay.'
       }
     },
+    patara: {
+      title: 'Patara',
+      region: 'Kaş, Antalya',
+      overview:
+        'An unserviced free-overnight candidate overlooking Patara’s dunes and long Mediterranean beach.',
+      whyVisit:
+        'See the immense dune landscape, swim at Patara Beach, photograph sunset and divide the long Faralya–Kaş drive into manageable stages.',
+      luna: {
+        subject: 'Patara dunes, coastline and sunset layers',
+        lens: '24 mm main camera and 70 mm telephoto',
+        timing: 'Forty-five minutes before sunset',
+        settings: 'RAW, -0.7 EV; protect highlights across the sand',
+        note: 'Photograph only from the established parking clearing without entering protected dunes.'
+      },
+      municipality:
+        'The dune-overlook candidate has no water, WC, shower or motorhome waste service; only bins are reported.',
+      marketName: 'Gelemiş supplies',
+      marketNotes:
+        'Buy food and drinks before taking the dune road; there are no services at the target.',
+      fuelName: 'Fuel on the Kalkan–Kaş approach',
+      fuelNotes:
+        'Use a main-road forecourt with enough turning room before entering the Patara road.',
+      waterName: 'Carry all water',
+      waterNotes: 'No dependable refill is documented at the dune-overlook parking.',
+      dumpName: 'No motorhome dump',
+      dumpNotes: 'Retain grey water and the toilet cassette until a suitable motorhome service.',
+      warning1:
+        'Patara is protected turtle-nesting coast. Do not enter the beach at night, drive or walk onto the dunes, or use artificial light toward the nesting beach.',
+      warning2:
+        'The final 2–3 km are rough and winding, and navigation can choose steep residential shortcuts. Approach the 15 m³ Ducato in daylight and dry conditions after checking turning space.',
+      sunrise:
+        'Do not descend to the beach during night restrictions; photograph from the established clearing without entering protected habitat.',
+      sunset:
+        'The established clearing above the dunes is a strong sunset viewpoint; never block access or the view during busy hours.',
+      photoAlt: 'Patara dunes and the Mediterranean coast',
+      ops: {
+        lastMile:
+          'Approach the dunes from Gelemiş centre in daylight. Reject steep residential shortcuts; the final 2–3 km are rough, narrow and winding. Do not commit after rain.',
+        supply:
+          'Complete fuel, drinking water and food before Gelemiş. The target has no water, WC, shower, electricity or waste disposal.',
+        decision:
+          'Arrive before dark and check current signs, road condition, firm ground and Ducato turning room. Leave if overnight parking is prohibited. If suitable, stay inside the vehicle for one night without external camp setup and keep every access route clear.'
+      }
+    },
     kas: {
       title: 'Kaş',
       region: 'Antalya Province',
@@ -1097,6 +1141,15 @@ export default {
       title: 'Faralya View Terrace Camp',
       overview: 'A managed cliff-top base with safe viewpoints.',
       access: 'Confirm Ducato dimensions in advance.'
+    },
+    pataraDunes: {
+      title: 'Patara dunes free overnight candidate',
+      overview:
+        'An unserviced pine-edge clearing with views over the dunes and sea. Recent motorhome reports describe free use, but they do not constitute official overnight permission.',
+      access:
+        'Approach from Gelemiş centre in daylight. The final 2–3 km are rough and winding; use the more manageable southern approach instead of steep northern shortcuts.',
+      safety:
+        'Leave if current signs or authorities prohibit overnight parking. Never enter the beach or dunes at night, light a fire, or deploy tables and an awning outside.'
     },
     kasFree: {
       title: 'Kaş Inland Plateau Stopover',

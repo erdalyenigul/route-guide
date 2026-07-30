@@ -14,6 +14,7 @@ import { karaotBeach } from './karaotBeach'
 import { kas } from './kas'
 import { lara } from './lara'
 import { mazi } from './mazi'
+import { patara } from './patara'
 import type { StopContent } from '../types'
 
 export const stops: StopContent[] = [
@@ -30,6 +31,7 @@ export const stops: StopContent[] = [
   dalyan,
   karaotBeach,
   faralya,
+  patara,
   kas,
   cirali,
   lara

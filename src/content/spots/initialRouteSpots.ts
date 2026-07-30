@@ -281,6 +281,38 @@ export const initialRouteSpots: SpotContent[] = [
     true,
     ['freshWater', 'wc', 'shower', 'restaurant']
   ),
+  {
+    ...createSpot(
+      'patara-dunes-wildcamp',
+      'patara',
+      'pataraDunes',
+      'freecamp',
+      36.2704,
+      29.3034,
+      'arrivalCheckFree',
+      4.1,
+      true,
+      ['wasteBins', 'shade']
+    ),
+    ducatoAccess: 'caution',
+    overnightStatus: 'restricted',
+    beachfront: false,
+    seaView: true,
+    distanceToSeaM: null,
+    groundSurface: 'rough track and firm clearings',
+    levelGround: null,
+    shadeAvailable: true,
+    waterAvailable: false,
+    toiletAvailable: false,
+    showerAvailable: false,
+    wasteAvailable: false,
+    mobileSignal: 'good',
+    crowdLevel: 'medium',
+    nightQuiet: true,
+    verificationStatus: 'partially_verified',
+    lastVerifiedAt: '2026-07-30T00:00:00+03:00',
+    safetyNote: sharedKey('spots.pataraDunes.safety')
+  },
   createSpot(
     'kas-inland-plateau',
     'kas',

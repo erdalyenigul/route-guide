@@ -265,6 +265,8 @@ export default {
       karaotBeaches: 'Karaot ve Fethiye Plajları Rehberi',
       faralyaGuide: 'Faralya Gezi Rehberi',
       faralyaHighlights: 'Faralya, Kabak ve Kelebekler Vadisi',
+      pataraGuide: 'Patara Antik Kenti ve Plaj Rehberi',
+      pataraDunes: 'Patara Kum Tepeleri Karavan Kayıtları',
       kasGuide: 'Kaş Gezi Rehberi',
       kasBeaches: 'Kaş Plajları, Koyları ve Gezilecek Yerler',
       ciraliGuide: 'Çıralı Gezi Rehberi',
