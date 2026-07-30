@@ -68,8 +68,9 @@ const chapterColumns = computed(() => {
   return columns
 })
 const fullRouteMapStops = computed(() =>
-  store.activeStops.map((stop) => ({
+  store.activeStops.map((stop, index) => ({
     id: stop.id,
+    order: index + 1,
     label: t(stop.title),
     status: stop.status,
     coordinate: mapService.coordinate(stop.coordinates)

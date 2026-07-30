@@ -48,6 +48,7 @@ function renderMarkers(): void {
     const element = document.createElement('div')
     const app = createApp(StopMarker, {
       label: stop.label,
+      order: stop.order,
       status: stop.status,
       selected: stop.id === props.selectedId,
       onSelect: () => emit('select', stop.id)

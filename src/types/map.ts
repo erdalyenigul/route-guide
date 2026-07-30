@@ -7,6 +7,7 @@ export interface MapCoordinate {
 
 export interface MapStop {
   id: string
+  order: number
   label: string
   status: StopStatus
   coordinate: MapCoordinate | null

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { StopStatus } from '@/content/types'
 
-defineProps<{ label: string; status: StopStatus; selected: boolean }>()
+defineProps<{ label: string; order: number; status: StopStatus; selected: boolean }>()
 defineEmits<{ select: [] }>()
 </script>
 
@@ -10,29 +10,13 @@ defineEmits<{ select: [] }>()
     type="button"
     class="stop-marker"
     :class="[status, { selected }]"
-    :aria-label="label"
-    :title="label"
+    :aria-label="`${String(order).padStart(2, '0')} · ${label}`"
+    :title="`${String(order).padStart(2, '0')} · ${label}`"
     @click.stop="$emit('select')"
   >
     <span
-      ><svg
-        v-if="status === 'visited'"
-        viewBox="0 0 24 24"
-        aria-hidden="true"
-      >
-        <path d="m5 12 4 4L19 6" /></svg
-      ><svg
-        v-else
-        viewBox="0 0 24 24"
-        aria-hidden="true"
-      >
-        <path d="M12 21s7-6.1 7-12a7 7 0 1 0-14 0c0 5.9 7 12 7 12Z" />
-        <circle
-          cx="12"
-          cy="9"
-          r="2.4"
-        /></svg
-    ></span>
+      ><b>{{ String(order).padStart(2, '0') }}</b></span
+    >
   </button>
 </template>
 
@@ -65,14 +49,12 @@ defineEmits<{ select: [] }>()
     transform 0.16s ease,
     box-shadow 0.16s ease;
 }
-.stop-marker svg {
-  width: 17px;
-  height: 17px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2.2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+.stop-marker b {
+  font-size: 0.66rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 1;
 }
 .stop-marker.visited span {
   color: #fff;
@@ -111,10 +93,8 @@ defineEmits<{ select: [] }>()
     0 0 0 3px rgba(255, 255, 255, 0.96),
     0 8px 24px rgba(0, 0, 0, 0.68);
 }
-.stop-marker.current svg {
-  width: 21px;
-  height: 21px;
-  stroke-width: 2.5;
+.stop-marker.current b {
+  font-size: 0.78rem;
 }
 .stop-marker.selected span {
   transform: scale(1.16);

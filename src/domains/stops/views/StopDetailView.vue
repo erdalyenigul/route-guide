@@ -48,9 +48,7 @@ const logisticsGroups = computed(() =>
     link: logisticsLinks.value[index]
   }))
 )
-const guideLinks = computed(() =>
-  resourceLinks.value.filter((link) => link.label !== 'navigation')
-)
+const guideLinks = computed(() => resourceLinks.value.filter((link) => link.label !== 'navigation'))
 const selectedPhotoIndex = ref<number | null>(null)
 const viewerPhotos = computed(
   () =>
@@ -114,8 +112,9 @@ function openNavigation(): void {
   mapService.openExternalUrl(navigationUrl.value)
 }
 const detailMapStops = computed(() =>
-  routeStops.value.map((item) => ({
+  routeStops.value.map((item, index) => ({
     id: item.id,
+    order: index + 1,
     label: t(item.title),
     status: item.status,
     coordinate: mapService.coordinate(item.coordinates)
@@ -202,13 +201,7 @@ const hasEssentials = computed(() =>
   )
 )
 type DetailSectionKey =
-  | 'road'
-  | 'logistics'
-  | 'camping'
-  | 'risks'
-  | 'essentials'
-  | 'explore'
-  | 'summary'
+  'road' | 'logistics' | 'camping' | 'risks' | 'essentials' | 'explore' | 'summary'
 interface DetailSection {
   key: DetailSectionKey
   icon: string

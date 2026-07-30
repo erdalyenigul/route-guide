@@ -13,8 +13,9 @@ const store = useTripStore()
 const mapRef = ref<InstanceType<typeof AppMap>>()
 const stops = computed(() => store.stopsForRoute(String(route.params.routeId)))
 const mapStops = computed(() =>
-  stops.value.map((stop) => ({
+  stops.value.map((stop, index) => ({
     id: stop.id,
+    order: index + 1,
     label: t(stop.title),
     status: stop.status,
     coordinate: mapService.coordinate(stop.coordinates)
