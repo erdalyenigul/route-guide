@@ -21,7 +21,7 @@ type ResearchedStop = {
 const researchedStops: Record<string, ResearchedStop> = {
   izmir: {
     contentName: 'izmir',
-    coordinates: { latitude: 38.4192, longitude: 27.1287 },
+    coordinates: { latitude: 38.4897894, longitude: 27.1649118 },
     recommendedNights: 1,
     minNights: 1,
     maxNights: 2,
