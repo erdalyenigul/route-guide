@@ -215,6 +215,17 @@ onUnmounted(() => {
             ><strong>{{ store.remainingNights }}</strong>
           </div>
         </div>
+        <router-link
+          class="full-route-action route-info-action"
+          :to="`/trips/${routeId}/summary`"
+        >
+          <span class="full-route-action__icon"><v-icon icon="mdi-format-list-numbered" /></span>
+          <span class="full-route-action__copy">
+            <strong>{{ t('routeSummary.action') }}</strong>
+            <small>{{ t('routeSummary.actionHint') }}</small>
+          </span>
+          <v-icon icon="mdi-chevron-right" />
+        </router-link>
         <button
           class="full-route-action"
           type="button"
@@ -590,6 +601,9 @@ onUnmounted(() => {
     border-color 0.2s,
     background 0.2s,
     transform 0.2s;
+}
+.route-info-action {
+  text-decoration: none;
 }
 .full-route-action:hover {
   border-color: rgba(var(--v-theme-primary), 0.58);

@@ -18,6 +18,12 @@ export const router = createRouter({
       meta: { titleKey: 'nav.timeline' }
     },
     {
+      path: '/trips/:routeId/summary',
+      name: 'route-summary',
+      component: () => import('@/domains/trips/views/RouteSummaryView.vue'),
+      meta: { titleKey: 'routeSummary.title' }
+    },
+    {
       path: '/trips/:routeId/map',
       name: 'map',
       component: () => import('@/domains/map/views/MapView.vue'),

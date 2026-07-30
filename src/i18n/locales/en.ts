@@ -102,6 +102,22 @@ export default {
     distance: 'Total distance',
     plannedNights: 'Planned nights'
   },
+  routeSummary: {
+    title: 'Route overview',
+    subtitle: 'Planned distance and driving time between every stop.',
+    action: 'Route overview',
+    actionHint: 'See every leg, distance and driving time',
+    legs: 'Route legs',
+    stage: 'Leg {number}',
+    totalDistance: 'Total distance',
+    totalDriveTime: 'Total driving',
+    totalStops: 'Total stops',
+    totalStages: 'Total legs',
+    routeTotal: 'Route total',
+    minutes: '{minutes} min',
+    hours: '{hours} hr',
+    hoursMinutes: '{hours} hr {minutes} min'
+  },
   stop: {
     overview: 'Overview',
     whyVisit: 'Why visit',

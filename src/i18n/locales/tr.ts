@@ -103,6 +103,22 @@ export default {
     distance: 'Toplam mesafe',
     plannedNights: 'Planlanan gece'
   },
+  routeSummary: {
+    title: 'Genel rota bilgisi',
+    subtitle: 'Duraklar arasındaki planlanan mesafe ve sürüş süreleri.',
+    action: 'Genel rota bilgisi',
+    actionHint: 'Tüm etapları, kilometreleri ve sürüş sürelerini gör',
+    legs: 'Rota etapları',
+    stage: 'Etap {number}',
+    totalDistance: 'Toplam mesafe',
+    totalDriveTime: 'Toplam sürüş',
+    totalStops: 'Toplam durak',
+    totalStages: 'Toplam etap',
+    routeTotal: 'Rota toplamı',
+    minutes: '{minutes} dk',
+    hours: '{hours} sa',
+    hoursMinutes: '{hours} sa {minutes} dk'
+  },
   stop: {
     overview: 'Genel bakış',
     whyVisit: 'Neden ziyaret edilmeli',
