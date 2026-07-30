@@ -2,7 +2,7 @@ export type StopLinkLabel = 'travelGuide' | 'thingsToDo' | 'beachesAndCoves'
 
 export interface StopResourceLink {
   label: StopLinkLabel
-  title: string
+  titleKey: `stopLinks.titles.${string}`
   url: string
 }
 
@@ -10,177 +10,185 @@ export const stopResourceLinks: Readonly<Record<string, readonly StopResourceLin
   izmir: [
     {
       label: 'travelGuide',
-      title: 'İzmir Gezi Rehberi',
+      titleKey: 'stopLinks.titles.izmirGuide',
       url: 'https://www.gezipedia.net/13-izmirde-gezilecek-yerler.html'
     },
     {
       label: 'thingsToDo',
-      title: 'İzmir’de 2 Günlük Gezi Rotası',
+      titleKey: 'stopLinks.titles.izmirTwoDayRoute',
       url: 'https://turkiyekesfet.com/izmirde-gezilecek-20-yer-2-gunluk-rota-ve-gezi-rehberi/'
     }
   ],
   guzelcamli: [
     {
       label: 'travelGuide',
-      title: 'Güzelçamlı Gezi Rehberi',
+      titleKey: 'stopLinks.titles.guzelcamliGuide',
       url: 'https://www.gezipedia.net/583-guzelcamlida-gezilecek-yerler.html'
     },
     {
       label: 'beachesAndCoves',
-      title: 'Milli Park, Zeus Mağarası ve Plajlar',
+      titleKey: 'stopLinks.titles.guzelcamliNature',
       url: 'https://www.turkiyedegezilecekyerler.com/guzelcamli-da-gezilecek-yerler-dilek-yarimadasi-zeus-magarasi-panionion-ve-plajlar'
     }
   ],
   'bafa-lake': [
     {
       label: 'travelGuide',
-      title: 'Bafa Gölü ve Kapıkırı Rehberi',
+      titleKey: 'stopLinks.titles.bafaGuide',
       url: 'https://www.bizevdeyokuz.com/bafa-golu/'
     },
     {
       label: 'thingsToDo',
-      title: 'Bafa Gölü’nde Gezilecek Yerler',
+      titleKey: 'stopLinks.titles.bafaThingsToDo',
       url: 'https://www.etstur.com/letsgo/bafa-golu-gezi-rehberi/'
     }
   ],
   'cesme-palmiye': [
     {
       label: 'beachesAndCoves',
-      title: 'Palmiye Beach Konumu',
+      titleKey: 'stopLinks.titles.palmiyeLocation',
       url: 'https://yandex.com.tr/maps/org/palmiye_beach/127540271706/'
     },
     {
       label: 'travelGuide',
-      title: 'Çeşme Plajları ve Gezi Rehberi',
+      titleKey: 'stopLinks.titles.cesmeBeaches',
       url: 'https://www.enuygun.com/bilgi/cesme-plajlari/'
     }
   ],
   torba: [
     {
       label: 'beachesAndCoves',
-      title: 'Torba Halk Plajı Bilgileri',
+      titleKey: 'stopLinks.titles.torbaBeach',
       url: 'https://ktbhalkplajlari.com/torba-bodrum/'
     },
     {
       label: 'travelGuide',
-      title: 'Torba Gezi Rehberi',
+      titleKey: 'stopLinks.titles.torbaGuide',
       url: 'https://www.flypgs.com/blog/torba-gezi-rehberi/'
     }
   ],
   gumusluk: [
     {
       label: 'travelGuide',
-      title: 'Gümüşlük Gezi Rehberi',
+      titleKey: 'stopLinks.titles.gumuslukGuide',
       url: 'https://www.flypgs.com/blog/gumusluk-gezilecek-yerler/'
     },
     {
       label: 'thingsToDo',
-      title: 'Gümüşlük’te Gezilecek Yerler',
+      titleKey: 'stopLinks.titles.gumuslukThingsToDo',
       url: 'https://www.bodrumdayasam.com.tr/rehber/bodrum-gumusluk-rehberi'
     }
   ],
   akyarlar: [
     {
       label: 'thingsToDo',
-      title: 'Akyarlar’da Yapılacaklar',
+      titleKey: 'stopLinks.titles.akyarlarThingsToDo',
       url: 'https://www.tripadvisor.com.tr/Attractions-g951437-Activities-Akyarlar_Turgutreis_Bodrum_District_Mugla_Province_Turkish_Aegean_Coast.html'
     },
     {
       label: 'beachesAndCoves',
-      title: 'Akyarlar Plajları ve Gezi Rehberi',
+      titleKey: 'stopLinks.titles.akyarlarBeaches',
       url: 'https://www.koycegiz-haber.com/bodrum/akyarlar-bodrum-2026-plajlari-ruzgr-sorfu-ve-gezi-rehberi/6601'
     }
   ],
   mazi: [
     {
       label: 'travelGuide',
-      title: 'Mazı Köyü ve Sekiz Koy Rehberi',
+      titleKey: 'stopLinks.titles.maziCoves',
       url: 'https://bodrumguru.com/mazikoy-rehberi/'
     },
     {
       label: 'thingsToDo',
-      title: 'Mazı Köyü Gezi Notları',
+      titleKey: 'stopLinks.titles.maziNotes',
       url: 'https://gezimanya.com/GeziNotlari/mazi-koyu'
     }
   ],
   'akbuk-bay-gokova': [
     {
       label: 'travelGuide',
-      title: 'Akbük Koyu Gezi Rehberi',
+      titleKey: 'stopLinks.titles.akbukGuide',
       url: 'https://www.gezgorbence.com/akbuk-koyu/'
     },
     {
       label: 'beachesAndCoves',
-      title: 'Muğla Tatil Bölgeleri Rehberi',
+      titleKey: 'stopLinks.titles.muglaCoastGuide',
       url: 'https://www.enuygun.com/bilgi/mugla-nin-populer-tatil-yerleri/'
     }
   ],
   dalyan: [
     {
       label: 'travelGuide',
-      title: 'Dalyan Gezi Rehberi',
+      titleKey: 'stopLinks.titles.dalyanGuide',
       url: 'https://www.flypgs.com/blog/dalyan-gezi-rehberi/'
     },
     {
       label: 'thingsToDo',
-      title: 'Dalyan’da Gezilecek Yerler',
+      titleKey: 'stopLinks.titles.dalyanThingsToDo',
       url: 'https://www.gezipgeliyorum.com/dalyan-gezilecek-yerler/'
     },
     {
       label: 'beachesAndCoves',
-      title: 'İztuzu, Kaunos ve Dalyan Rehberi',
+      titleKey: 'stopLinks.titles.dalyanHighlights',
       url: 'https://www.turna.com/blog/dalyan-gezi-rehberi'
     }
   ],
   'karaot-beach': [
     {
       label: 'beachesAndCoves',
-      title: 'Fethiye’de Denize Girilecek Yerler',
+      titleKey: 'stopLinks.titles.fethiyeSwimming',
       url: 'https://www.enuygun.com/bilgi/fethiye-de-denize-girilecek-yerler/'
     },
     {
       label: 'travelGuide',
-      title: 'Karaot ve Fethiye Plajları Rehberi',
+      titleKey: 'stopLinks.titles.karaotBeaches',
       url: 'https://www.enuygun.com/bilgi/fethiye-plajlari/'
     }
   ],
   faralya: [
-    { label: 'travelGuide', title: 'Faralya Gezi Rehberi', url: 'https://gezimanya.com/faralya' },
+    {
+      label: 'travelGuide',
+      titleKey: 'stopLinks.titles.faralyaGuide',
+      url: 'https://gezimanya.com/faralya'
+    },
     {
       label: 'thingsToDo',
-      title: 'Faralya, Kabak ve Kelebekler Vadisi',
+      titleKey: 'stopLinks.titles.faralyaHighlights',
       url: 'https://www.enuygun.com/bilgi/faralya-koyu/'
     }
   ],
   kas: [
-    { label: 'travelGuide', title: 'Kaş Gezi Rehberi', url: 'https://www.kasguide.de/' },
+    {
+      label: 'travelGuide',
+      titleKey: 'stopLinks.titles.kasGuide',
+      url: 'https://www.kasguide.de/'
+    },
     {
       label: 'beachesAndCoves',
-      title: 'Kaş Plajları, Koyları ve Gezilecek Yerler',
+      titleKey: 'stopLinks.titles.kasBeaches',
       url: 'https://www.gezire.com/kas-gezilecek-yerler/'
     }
   ],
   cirali: [
     {
       label: 'travelGuide',
-      title: 'Çıralı Gezi Rehberi',
+      titleKey: 'stopLinks.titles.ciraliGuide',
       url: 'https://kesfet.tv/cirali-gezisi.html'
     },
     {
       label: 'thingsToDo',
-      title: 'Çıralı, Olimpos ve Yanartaş Rehberi',
+      titleKey: 'stopLinks.titles.ciraliHighlights',
       url: 'https://www.olympostekneturu.com/cirali-gezi-rehberi'
     }
   ],
   'lara-antalya': [
     {
       label: 'travelGuide',
-      title: 'Lara Gezi Rehberi',
+      titleKey: 'stopLinks.titles.laraGuide',
       url: 'https://nerdenalinir.com/antalya-rehberi/antalya-larada-gezilecek-yerler/'
     },
     {
       label: 'beachesAndCoves',
-      title: 'Lara ve Antalya Plajları',
+      titleKey: 'stopLinks.titles.laraBeaches',
       url: 'https://www.enuygun.com/bilgi/antalya-plajlari/'
     }
   ]

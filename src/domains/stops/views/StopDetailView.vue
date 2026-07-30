@@ -726,7 +726,7 @@ onUnmounted(() => {
                   >
                     <span>
                       <small>{{ t(`stopLinks.${link.label}`) }}</small>
-                      <strong>{{ link.title }}</strong>
+                      <strong>{{ t(link.titleKey) }}</strong>
                       <em>{{ resourceHost(link.url) }}</em>
                     </span>
                     <v-icon icon="mdi-open-in-new" />

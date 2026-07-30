@@ -24,11 +24,13 @@ const content = {
   facilities: {
     electricity: 'Elektrik',
     freshWater: 'Temiz su',
+    market: 'Market',
     wc: 'WC',
     shower: 'Duş',
     wasteDisposal: 'Atık boşaltma',
     restaurant: 'Restoran',
     wasteBins: 'Yakında çöp kutusu',
+    waste_bins: 'Çöp kutuları',
     shade: 'Gölge',
     supermarkets: 'Yakında süpermarket'
   },
@@ -83,33 +85,33 @@ const content = {
   },
   stops: {
     izmir: {
-      title: 'İzmir',
-      region: 'İzmir',
-      overview:
-        'Kordon kıyısını merkez alan, şehir hizmetlerine ulaşılabilen kentsel rota başlangıcı.',
+      title: 'İzmir Home',
+      region: 'Bayraklı TOKİ 7. Etap, İzmir',
+      overview: 'Karavan rotasının başladığı Bayraklı TOKİ 7. Etap’taki ev noktası.',
       whyVisit:
-        'Güneye inmeden önce aracı hazırlamak ve Kordon’da yürümek için şehir durağını kullanın. Gece parkı ve servis erişimini yerinde doğrulayın.',
+        'Yola çıkmadan karavanı yüklemek, temiz suyu doldurmak, araç içini sabitlemek ve hareket kontrol listesini tamamlamak için.',
       luna: {
-        subject: 'Kordon vapurları ve sahil yansımaları',
+        subject: 'Yola çıkış sabahı ve karavan hazırlığı',
         lens: '24 mm ana kamera',
-        timing: 'Gün batımından yirmi dakika sonra',
-        settings: 'RAW, -0,7 EV, en az 1/60 sn',
-        note: 'Sahil ışıklarını kullanın; tanınabilir yakın portrelerden kaçının.'
+        timing: 'Hareket etmeden hemen önce',
+        settings: 'RAW veya standart fotoğraf modu',
+        note: 'Bu durağı yolculuğun başlangıcını belgelemek için kullanın.'
       },
-      municipality: 'Umumi tuvalet ve kutular yaygındır; karavan servisi bulunmaz.',
-      marketName: 'Konak süpermarketleri',
-      marketNotes: 'Büyük marketler ve yerel gıda pazarları.',
-      fuelName: 'Şehir içi akaryakıt istasyonları',
-      fuelNotes: 'D550 güneye çıkmadan depoyu doldurun.',
-      waterName: 'Doğrulanmış halka açık karavan musluğu yok',
-      waterNotes: 'Dolumdan önce kamp veya istasyondan izin alın.',
-      dumpName: 'Doğrulanmış belediye boşaltım noktası yok',
-      dumpNotes: 'Atığı lisanslı bir kampa kadar tutun.',
-      warning1: 'Merkez trafiği işe gidiş saatlerinde yoğundur.',
-      warning2: 'Yükseklik bariyerlerini ve geceleme levhalarını kontrol edin.',
-      sunrise: 'İç körfeze doğuya bakan İnciraltı kıyısı.',
-      sunset: 'Batı ufkundaki vapurlarla Kordon.',
-      photoAlt: 'Sıcak akşam ışığında İzmir sahili'
+      municipality:
+        'Burası özel ev ve rota başlangıç noktasıdır; halka açık karavan hizmet durağı değildir.',
+      marketName: 'İzmir marketleri',
+      marketNotes: 'Yiyecek ve ev alışverişini yola çıkmadan tamamlayın.',
+      fuelName: 'Ana yol üzerindeki akaryakıt istasyonları',
+      fuelNotes: 'Otoyola girmeden önce yakıt alın.',
+      waterName: 'Evde temiz su hazırlığı',
+      waterNotes: 'Temiz su tankını yola çıkmadan, bildiğiniz ev kaynağından doldurun.',
+      dumpName: 'Bu durak için atık noktası gerekmiyor',
+      dumpNotes: 'Atık ve tuvalet hazırlığını evden ayrılmadan tamamlayın.',
+      warning1: 'Yola çıkmadan dolapları, çekmeceleri ve serbest eşyaları sabitleyin.',
+      warning2: 'Otoyola çıkmadan normal hareket kontrol listesini tamamlayın.',
+      sunrise: 'İsterseniz hareket anını yolculuk günlüğü için fotoğraflayın.',
+      sunset: 'Bu nokta fotoğraf durağı olarak planlanmadı.',
+      photoAlt: 'İzmir Home’dan yola çıkmak için hazırlanan karavan'
     },
     guzelcamli: {
       title: 'Güzelçamlı',
@@ -236,7 +238,7 @@ const content = {
       }
     },
     izmirRestart: {
-      title: 'Eve Dönüş — Bayraklı TOKİ 7. Etap',
+      title: 'İzmir Home',
       region: 'Bayraklı TOKİ 7. Etap, İzmir',
       overview:
         'Bafa Gölü’nden teknik sorunlar nedeniyle İzmir Bayraklı TOKİ 7. Etap’taki eve dönüş noktası.',

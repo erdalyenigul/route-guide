@@ -19,11 +19,13 @@ export default {
   facilities: {
     electricity: 'Electricity',
     freshWater: 'Fresh water',
+    market: 'Market',
     wc: 'WC',
     shower: 'Shower',
     wasteDisposal: 'Waste disposal',
     restaurant: 'Restaurant',
     wasteBins: 'Waste bins nearby',
+    waste_bins: 'Waste bins',
     shade: 'Shade',
     supermarkets: 'Supermarkets nearby'
   },
@@ -78,42 +80,34 @@ export default {
   },
   stops: {
     izmir: {
-      title: 'İzmir',
-      region: 'Konak, İzmir',
+      title: 'İzmir Home',
+      region: 'Bayraklı TOKİ 7th Stage, İzmir',
       overview:
-        'A practical urban starting point around Konak and the Kordon, combining major-city provisioning with an easy waterfront walk before the coastal route begins.',
+        'The home base at Bayraklı TOKİ 7th Stage where the caravan route begins and preparations are completed.',
       whyVisit:
-        'Use the first day to stock the van, resolve vehicle errands and explore Kordon, Kemeraltı and the historic centre on foot. Treat it as a city base rather than a freecamp destination.',
+        'Use the home base to load the van, fill water, secure the interior and complete the departure checklist before joining the route.',
       luna: {
-        subject: 'Kordon ferries, promenade rhythm and blue-hour reflections',
-        lens: '24 mm main camera or 70 mm telephoto for layered ferries',
-        timing: 'Late golden hour through early blue hour',
-        settings: 'RAW, slight negative exposure compensation, stabilize for blue hour',
-        note: 'Work from public promenade space, keep moving cyclists and pedestrians clear, and avoid intrusive close portraits.'
+        subject: 'Departure morning and caravan preparation',
+        lens: '24 mm main camera',
+        timing: 'Before departure',
+        settings: 'RAW or standard photo mode',
+        note: 'Use this stop to document the beginning of the journey.'
       },
       municipality:
-        'General city services are available across Konak, but no dedicated municipal motorhome service point has been verified for this guide.',
-      marketName: 'Konak and Alsancak supermarkets',
-      marketNotes:
-        'Urban supermarkets and Kemeraltı food traders make this the strongest provisioning stop on the route; confirm vehicle-friendly parking before entering dense streets.',
-      fuelName: 'Urban fuel stations',
-      fuelNotes:
-        'Multiple city stations are expected, but select one on a main approach road and verify height and turning space.',
-      waterName: 'Potable refill not verified',
-      waterNotes:
-        'No dedicated public motorhome water point has been verified. Only fill from a clearly potable source with permission.',
-      dumpName: 'Dump station not verified',
-      dumpNotes:
-        'No licensed public dump point has been verified. Keep tanks closed until a confirmed service facility is available.',
-      warning1:
-        'Konak and Alsancak are dense urban areas; use major roads, avoid narrow centre streets and check parking restrictions before committing a Ducato.',
-      warning2:
-        'Do not interpret ordinary waterfront parking as permission to stay overnight; signs and enforcement can change.',
-      sunrise:
-        'No specific sunrise location has been verified; scout an unobstructed public section of the inner-gulf waterfront in daylight.',
-      sunset:
-        'The Kordon waterfront is the dependable evening subject: ferries, promenade activity and the western sky work well from public space.',
-      photoAlt: 'İzmir Kordon waterfront during evening light'
+        'This is the private home base and route starting point, not a public motorhome service destination.',
+      marketName: 'İzmir supermarkets',
+      marketNotes: 'Complete food and household shopping before departure.',
+      fuelName: 'Main-road fuel stations',
+      fuelNotes: 'Refuel before joining the motorway.',
+      waterName: 'Home water preparation',
+      waterNotes: 'Fill the potable-water tank from the known home supply before departure.',
+      dumpName: 'Dump point not applicable',
+      dumpNotes: 'Complete waste preparation before leaving home.',
+      warning1: 'Secure cupboards, drawers and loose items before leaving the home base.',
+      warning2: 'Complete the normal departure checklist before motorway driving.',
+      sunrise: 'Use the departure moment as a documentary frame if desired.',
+      sunset: 'This is not planned as a photography stop.',
+      photoAlt: 'The caravan prepared for departure from İzmir Home'
     },
     guzelcamli: {
       title: 'Güzelçamlı',
@@ -242,7 +236,7 @@ export default {
       }
     },
     izmirRestart: {
-      title: 'Home Return — Bayraklı TOKİ 7th Stage',
+      title: 'İzmir Home',
       region: 'Bayraklı TOKİ 7th Stage, İzmir',
       overview: 'The home return point after travelling back from Bafa Lake for technical reasons.',
       whyVisit:
