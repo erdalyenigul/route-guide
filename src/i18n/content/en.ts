@@ -444,7 +444,7 @@ export default {
       photoAlt: 'Gümüşlük waterfront in evening light',
       ops: {
         lastMile:
-          'Torba Public Beach to Gümüşlük waterfront is about 28 km / 40 min. Use the main peninsula road, leave the Ducato outside the compact waterfront lanes and walk down to the sea.',
+          'Yalıkavak waypoint to Gümüşlük waterfront is about 12 km / 20 min. Use the main road, leave the Ducato outside the compact waterfront lanes and walk down to the sea.',
         supply:
           'Shop and refuel on the main road before the waterfront. Do not rely on Gümüşlük shore facilities for water or waste; use Mandi only as a serviced fallback if needed.',
         decision:
@@ -452,60 +452,106 @@ export default {
       }
     },
     akyarlar: {
-      title: 'Akyarlar',
-      region: 'Bodrum, Muğla',
+      title: 'Karaincir Public Beach',
+      region: 'Akyarlar, Bodrum, Muğla',
       overview:
-        'A coastal stop at the southern end of the Bodrum Peninsula, associated in official tourism material with Akyarlar and Kefaluka Bay.',
+        'An optional sandy-beach break while travelling from Gümüşlük toward central Bodrum. The route does not force an overnight stay here: swim, then continue to the ferry base on the same day.',
       whyVisit:
-        'Pause for the open coastal setting and a slower beach day, subject to current beach access and weather. Official Muğla tourism also records a Thursday market.',
-      spots: {
-        cuce: {
-          title: 'Cüce Camping Akyarlar',
-          overview:
-            'A managed seafront caravan campground with pitch water, electricity and wastewater, plus showers, WC, laundry and security.',
-          price: 'Confirm the current 2026 rate and availability directly.',
-          access: 'Call ahead with the Ducato dimensions and use the signed main approach.'
-        },
-        fenerburnu: {
-          title: 'Fenerburnu arrival-check candidate',
-          overview:
-            'A community-reported seafront parking and overnight candidate with Kos views and mixed, slightly sloping ground.',
-          price: 'Reported free; legality and current signs must be checked on arrival.',
-          access: 'Approach in daylight and inspect wind, ground, signs and exit space.',
-          safety: 'Do not set up a long-stay camp; leave if overnight parking is prohibited.'
+        'Use the sandy, shallow-water Karaincir beach listed by Bodrum Municipality for the 2026 season. Skip the stop if a beach break is not useful that day.',
+      activities: {
+        swim: {
+          title: 'Karaincir swim break',
+          description:
+            'Swim from the sandy shore; if parking or crowds are poor, continue to central Bodrum without losing time.'
         }
       },
       luna: {
-        subject: 'Kos silhouette and windsurfers',
-        lens: '70 mm telephoto',
-        timing: 'Late afternoon',
-        settings: '1/1000 s, Auto ISO, burst mode',
-        note: 'Protect the phone from salt spray in strong wind.'
+        subject: 'Karaincir sand line, shallow water and the south coast',
+        lens: '24 mm main camera; 70 mm for shoreline details',
+        timing: 'Morning, before the busiest hours',
+        settings: 'RAW with slight negative exposure for bright sand',
+        note: 'This is primarily a short swim stop; park the Ducato with a clear exit.'
       },
-      municipality: 'Fenerburnu is a community candidate, not a guaranteed legal campsite.',
-      marketName: 'Akyarlar supplies',
-      marketNotes: 'Shop before entering crowded beach streets.',
-      fuelName: 'Fuel before Akyarlar',
-      fuelNotes: 'Refuel on the peninsula main road.',
-      waterName: 'Cüce guest water',
-      waterNotes: 'Water is available at caravan pitches for campsite guests.',
-      dumpName: 'Cüce wastewater service',
-      dumpNotes: 'Wastewater infrastructure is available at pitches; confirm cassette procedure.',
-      warning1: 'Fenerburnu is windy with mixed, slightly sloping ground; inspect it in daylight.',
+      municipality:
+        'Bodrum Municipality lists WC, showers, changing cabins, loungers, umbrellas, food service, lifeguards and an accessible platform for the 2026 season. These are seasonal beach services, not motorhome overnight infrastructure.',
+      marketName: 'Karaincir and Akyarlar shops',
+      marketNotes:
+        'Use this only for small missing items; do the main shop on the wider main road.',
+      fuelName: 'Main peninsula road fuel',
+      fuelNotes: 'Use a station with an easy entrance before entering beach streets.',
+      waterName: 'Beach showers are not a potable refill',
+      waterNotes: 'Do not fill the motorhome tank from the shower connection.',
+      dumpName: 'No waste stop planned',
+      dumpNotes: 'Do not empty grey water or the cassette at this daytime beach stop.',
+      warning1:
+        'Karaincir streets and parking can become congested in summer. Arrive early with the Ducato and keep the turning area clear.',
       warning2:
-        'The community record is not a legal guarantee. Check signs and avoid long-stay camp behaviour.',
-      sunrise:
-        'No exact sunrise position has been verified; scout legal public shoreline access first.',
-      sunset:
-        'Use an established public shoreline position only after checking access and wind conditions.',
-      photoAlt: 'Akyarlar coastline and open Aegean view',
+        'Public-beach services do not imply overnight permission. This route intentionally treats Akyarlar as an optional zero-night swim stop.',
+      sunrise: 'Early morning should be easier for both swimming and Ducato parking.',
+      sunset: 'Waiting for sunset may interfere with the central Bodrum ferry plan.',
+      photoAlt: 'The sandy shore of Karaincir Public Beach',
       ops: {
         lastMile:
-          'Akyarlar is reachable, but beach streets and summer parking require caution. Approach Fenerburnu in daylight and keep an exit route.',
+          'Gümüşlük waterfront to Karaincir Public Beach is about 17 km / 25 min. The navigation target is the municipal listing at 36.97115, 27.29979.',
         supply:
-          'Cüce Camping is the strong fallback for water, electricity, wastewater, WC and showers.',
+          'WC and showers are listed as seasonal public-beach services. Do not expect water refill, waste disposal or overnight facilities.',
         decision:
-          'Inspect Fenerburnu and verify signs, wind and ground. Treat it as an arrival-check candidate, not guaranteed freecamp; use Cüce if unsuitable.'
+          'Stop if a sandy swim is useful; otherwise skip it. Do not search for an overnight pitch here, and continue toward Bodrum Castle Port after the swim.'
+      }
+    },
+    bodrumCenter: {
+      title: 'Central Bodrum and Datça Ferry',
+      region: 'Çarşı, Bodrum, Muğla',
+      overview:
+        'The operational base for leaving the Ducato in a legal, secure car park and taking the passenger ferry from Bodrum Castle Port to Datça and back. Stay one night only if suitable parking is confirmed; otherwise complete it as a day stop.',
+      whyVisit:
+        'See Datça on foot without driving the motorhome around the peninsula, while handling central Bodrum tasks in the same stop.',
+      activities: {
+        datca: {
+          title: 'Pedestrian day trip to Datça',
+          description:
+            'Leave the Ducato in Bodrum and travel to Datça on foot after confirming the official outbound and return sailings.'
+        },
+        harbour: {
+          title: 'Castle and harbour walk',
+          description:
+            'After the return ferry, explore Bodrum Castle and the harbour on a short vehicle-free walk.'
+        }
+      },
+      luna: {
+        subject: 'Bodrum Castle, the harbour and blue hour after the return ferry',
+        lens: '24 mm main camera; 70 mm for castle details',
+        timing: 'Evening light after returning from Datça',
+        settings: 'RAW with slight negative exposure for boats and castle lights',
+        note: 'Respect port security boundaries and keep passenger routes clear.'
+      },
+      municipality:
+        'City and port services are available around Castle Port, but they are not motorhome camping, potable refill or waste-disposal facilities.',
+      marketName: 'Central Bodrum supermarkets',
+      marketNotes:
+        'Before Mazı, complete food, water and ice shopping at a store outside the tight centre with easy Ducato access.',
+      fuelName: 'Fuel on the way out of Bodrum',
+      fuelNotes:
+        'Use a main-road station before entering tight streets or while departing toward Mazı.',
+      waterName: 'No motorhome refill planned',
+      waterNotes: 'Do not treat a harbour or municipal tap as a potable source.',
+      dumpName: 'No motorhome waste point planned',
+      dumpNotes:
+        'Do not empty grey water or the cassette in a central car park or near the harbour.',
+      warning1:
+        'Streets around Bodrum Castle Port are tight and busy. Do not drive to the ferry gate; use a suitable open-air car park and ask staff about height, overnight rules and exit hours.',
+      warning2:
+        'Ferry times and weather operations can change. Recheck the official operator and arrive at least 30 minutes before departure as instructed.',
+      sunrise: 'If using a morning ferry, prioritise reaching the pedestrian check-in on time.',
+      sunset: 'After returning from Datça, the castle and harbour form a practical blue-hour walk.',
+      photoAlt: 'Bodrum Castle and the Datça ferry pier',
+      ops: {
+        lastMile:
+          'Allow about 23 km / 35 min from Karaincir to Bodrum Castle Port. Navigate to 37.0361912, 27.4271321, then leave the Ducato in a suitable open-air car park and walk to the pier.',
+        supply:
+          'Confirm the ticket, return sailing and weather through the official Bodrum Ferryboat channel. Resolve the Ducato parking location the day before.',
+        decision:
+          'Stay one night only if a legal and secure overnight parking arrangement is confirmed. Otherwise record zero nights; after returning from Datça, postpone the Mazı drive if tired.'
       }
     },
     mazi: {

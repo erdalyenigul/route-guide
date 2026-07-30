@@ -7,14 +7,14 @@ export const akyarlar = {
   order: 8,
   slug: 'akyarlar',
   ...stopCopy('akyarlar'),
-  coordinates: { latitude: 36.9729, longitude: 27.2986 },
-  recommendedNights: 2,
-  minNights: 1,
-  maxNights: 3,
-  drivingDistanceFromPreviousKm: 27,
-  estimatedDriveTimeMinutes: 40,
+  coordinates: { latitude: 36.97115, longitude: 27.29979 },
+  recommendedNights: 0,
+  minNights: 0,
+  maxNights: 1,
+  drivingDistanceFromPreviousKm: 17,
+  estimatedDriveTimeMinutes: 25,
   seaScore: 5,
-  silenceScore: 3,
+  silenceScore: 2,
   internetScore: 4,
   safetyScore: 4,
   solarSuitability: 'excellent',
@@ -30,12 +30,12 @@ export const akyarlar = {
     wasteBins: true,
     notes: municipalityNotes('akyarlar')
   },
-  nearbyMarket: servicePoint('akyarlar', 'market', true, 0.8),
-  fuelStation: servicePoint('akyarlar', 'fuel', true, 9),
+  nearbyMarket: servicePoint('akyarlar', 'market', true, 1),
+  fuelStation: servicePoint('akyarlar', 'fuel', true, 8),
   waterRefill: servicePoint('akyarlar', 'water', false, 0),
   dumpStation: servicePoint('akyarlar', 'dump', false, 0),
-  freecampSpotIds: ['akyarlar-inland-layby'],
-  paidAlternativeIds: ['akyarlar-coastal-camp'],
+  freecampSpotIds: [],
+  paidAlternativeIds: [],
   photos: [
     stopPhoto(
       'akyarlar-bay',
@@ -43,5 +43,9 @@ export const akyarlar = {
       'akyarlar'
     )
   ],
-  initialStatus: 'planned'
+  initialStatus: 'planned',
+  verificationStatus: 'verified',
+  sourceNote:
+    'Karaincir Public Beach and its seasonal facilities are listed by Bodrum Municipality. This stop is intentionally a zero-night swim stop; no public-beach overnight permission is inferred.',
+  lastVerifiedAt: '2026-07-30T00:00:00+03:00'
 } satisfies StopContent

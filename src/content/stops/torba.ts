@@ -9,7 +9,7 @@ export const torba = {
   ...stopCopy('torba'),
   coordinates: { latitude: 37.0682, longitude: 27.4597 },
   recommendedNights: 1,
-  minNights: 1,
+  minNights: 0,
   maxNights: 1,
   drivingDistanceFromPreviousKm: 320,
   estimatedDriveTimeMinutes: 250,

@@ -81,14 +81,26 @@ export const stopResourceLinks: Readonly<Record<string, readonly StopResourceLin
   ],
   akyarlar: [
     {
-      label: 'thingsToDo',
-      titleKey: 'stopLinks.titles.akyarlarThingsToDo',
-      url: 'https://www.tripadvisor.com.tr/Attractions-g951437-Activities-Akyarlar_Turgutreis_Bodrum_District_Mugla_Province_Turkish_Aegean_Coast.html'
+      label: 'beachesAndCoves',
+      titleKey: 'stopLinks.titles.karaincirBeach',
+      url: 'https://www.bodrum.bel.tr/halk_plajlari'
     },
     {
       label: 'beachesAndCoves',
       titleKey: 'stopLinks.titles.akyarlarBeaches',
-      url: 'https://www.koycegiz-haber.com/bodrum/akyarlar-bodrum-2026-plajlari-ruzgr-sorfu-ve-gezi-rehberi/6601'
+      url: 'https://bodrumguru.com/akyarlar-rehberi/'
+    }
+  ],
+  'bodrum-center': [
+    {
+      label: 'thingsToDo',
+      titleKey: 'stopLinks.titles.bodrumDatcaFerry',
+      url: 'https://bodrumferibot.com/seferler-bodrum-datca'
+    },
+    {
+      label: 'travelGuide',
+      titleKey: 'stopLinks.titles.bodrumCenterGuide',
+      url: 'https://www.flypgs.com/blog/bodrum-gezilecek-yerler/'
     }
   ],
   mazi: [

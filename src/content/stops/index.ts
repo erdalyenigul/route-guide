@@ -1,6 +1,7 @@
 import { akbuk } from './akbuk'
 import { akyarlar } from './akyarlar'
 import { bafaLake } from './bafaLake'
+import { bodrumCenter } from './bodrumCenter'
 import { cirali } from './cirali'
 import { dalyan } from './dalyan'
 import { faralya } from './faralya'
@@ -29,6 +30,7 @@ export const stops: StopContent[] = [
   yalikavak,
   gumusluk,
   akyarlar,
+  bodrumCenter,
   mazi,
   ilginKoyu,
   akbuk,

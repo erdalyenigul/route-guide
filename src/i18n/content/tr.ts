@@ -453,7 +453,7 @@ const content = {
       photoAlt: 'Gün batımında Gümüşlük sahili',
       ops: {
         lastMile:
-          'Torba Halk Plajı’ndan Gümüşlük sahiline yaklaşık 28 km / 40 dk. Ana yarımada yolunu kullanın; Ducato’yu dar sahil merkezinin dışında güvenli ve çıkışı açık bir noktada bırakıp kıyıya yürüyün.',
+          'Yalıkavak ara durağından Gümüşlük sahiline yaklaşık 12 km / 20 dk. Ana yolu kullanın; Ducato’yu dar sahil merkezinin dışında güvenli ve çıkışı açık bir noktada bırakıp kıyıya yürüyün.',
         supply:
           'Sahile inmeden önce market ve yakıt işini ana yol üzerinde çözün. Su ve atık için Gümüşlük sahiline güvenmeyin; gerekirse Mandi gibi servisli bir kampı yalnızca yedek olarak düşünün.',
         decision:
@@ -461,62 +461,106 @@ const content = {
       }
     },
     akyarlar: {
-      title: 'Akyarlar',
-      region: 'Bodrum, Muğla',
-      overview: 'Sığ denizi ve Kos manzarasıyla güneye bakan koy.',
-      whyVisit: 'Rahat bir yüzme günü geçirin, rüzgâr sörfçülerini fotoğraflayın.',
-      spots: {
-        cuce: {
-          title: 'Akyarlar Karavan Kampı (Cüce Camping)',
-          overview:
-            '“Cüce Camping” işletmenin adıdır. Deniz kıyısındaki karavan alanında su, elektrik, atık su gideri, duş, WC, çamaşırhane ve güvenlik hizmetleri bulunuyor.',
-          price: 'Güncel ücreti ve Ducato için boş yer olup olmadığını gitmeden sorun.',
-          access:
-            'Ducato’nun ölçülerini işletmeye bildirin ve tarif ettikleri ana giriş yolunu kullanın.'
-        },
-        fenerburnu: {
-          title: 'Fenerburnu ücretsiz geceleme seçeneği',
-          overview:
-            'Diğer karavancıların ücretsiz konakladığını bildirdiği, Kos manzaralı bir sahil noktası. Zemin yer yer bozuk ve hafif eğimli olabilir.',
-          price:
-            'Ücretsiz kullanıldığı bildiriliyor; güncel levhaları ve geceleme iznini vardığınızda kontrol edin.',
-          access:
-            'Hava kararmadan gidin; rüzgârı, zemini, levhaları ve rahat çıkış imkânını kontrol edin.',
-          safety: 'Uzun süreli kamp düzeni kurmayın; geceleme yasaksa ayrılın.'
+      title: 'Karaincir Halk Plajı',
+      region: 'Akyarlar, Bodrum, Muğla',
+      overview:
+        'Gümüşlük’ten Bodrum merkeze inerken yapılabilecek isteğe bağlı kum plajı molası. Rota burada gecelemeyi zorlamıyor; denize girip aynı gün feribot planının merkezi olan Bodrum’a devam ediyoruz.',
+      whyVisit:
+        'Bodrum Belediyesi’nin 2026 halk plajları listesinde yer alan Karaincir’de kumlu ve sığ denizi değerlendirmek için. Deniz molası istemezsek bu durağı pas geçebiliriz.',
+      activities: {
+        swim: {
+          title: 'Karaincir’de deniz molası',
+          description:
+            'Kumlu kıyıda yüzün; kalabalık veya park uygun değilse vakit kaybetmeden Bodrum merkeze devam edin.'
         }
       },
       luna: {
-        subject: 'Kos silüeti ve rüzgâr sörfçüleri',
-        lens: '70 mm telefoto',
-        timing: 'Öğleden sonra',
-        settings: '1/1000 sn, Otomatik ISO, seri çekim',
-        note: 'Sert rüzgârda telefonu tuzlu sudan koruyun.'
+        subject: 'Karaincir’in kum çizgisi, sığ suyu ve güney kıyısı',
+        lens: '24 mm ana kamera; kıyı detayları için 70 mm',
+        timing: 'Sabah veya kalabalık artmadan önce',
+        settings: 'RAW, parlak kum için hafif eksi pozlama',
+        note: 'Bu durak fotoğraf gezisinden çok kısa deniz molası; Ducato’yu çıkışı açık bir yere bırakın.'
       },
       municipality:
-        'Fenerburnu yalnızca diğer karavancıların kullandığını bildirdiği bir seçenek; resmî kamp alanı değil.',
-      marketName: 'Akyarlar’da alışveriş',
-      marketNotes: 'Dar plaj sokaklarına girmeden önce temel ihtiyaçları alın.',
-      fuelName: 'Yakıtı Akyarlar’a girmeden alın',
-      fuelNotes: 'Ana yarımada yolu üzerindeki geniş bir istasyonu kullanın.',
-      waterName: 'Akyarlar Cüce Camping’de su',
-      waterNotes: 'Kampta konaklayan misafirler su kullanabiliyor.',
-      dumpName: 'Akyarlar Cüce Camping’de atık su boşaltımı',
-      dumpNotes: 'Tuvalet kasetinin nereye ve nasıl boşaltılacağını işletmeye sorun.',
+        'Bodrum Belediyesi 2026 sezonu için Karaincir Halk Plajı’nda WC, duş, soyunma kabini, şezlong, şemsiye, yeme-içme, cankurtaran ve erişilebilir platform listeliyor. Bunlar sezonluk plaj hizmetidir; karavan geceleme altyapısı değildir.',
+      marketName: 'Karaincir ve Akyarlar marketleri',
+      marketNotes:
+        'Yalnızca eksik küçük alışverişi tamamlayın; büyük alışverişi ana yol üzerinde yapın.',
+      fuelName: 'Ana yarımada yolunda yakıt',
+      fuelNotes: 'Plaj sokaklarına girmeden önce geniş girişli bir istasyonda yakıt alın.',
+      waterName: 'Plaj duşu, temiz su dolum noktası değildir',
+      waterNotes: 'Duş bağlantısından karavan tankı doldurmayın.',
+      dumpName: 'Atık boşaltma planlanmıyor',
+      dumpNotes: 'Bu günübirlik plaj durağında gri su veya kaset boşaltmayın.',
       warning1:
-        'Fenerburnu rüzgârlı; zemin yer yer bozuk ve hafif eğimli. Hava kararmadan gidip park edeceğiniz yeri inceleyin.',
+        'Yazın Karaincir çevresi kalabalık ve plaj sokakları sıkışık olabilir. Ducato’yla sabah gidin, dönüş alanını kapatmayın.',
       warning2:
-        'Diğer karavancıların burada kalmış olması bugün de izin verildiği anlamına gelmez; levhaları kontrol edin.',
-      sunrise:
-        'Gün doğumu için özel bir nokta önermiyoruz; sahile erişimi ve park durumunu gündüz kontrol edin.',
-      sunset:
-        'Rüzgâr uygunsa ve aracı güvenle bırakabiliyorsanız halk sahilinden gün batımını izleyin.',
-      photoAlt: 'Akyarlar kıyısı ve açık Ege manzarası',
+        'Halk plajı hizmetleri geceleme izni anlamına gelmez. Bu rota Akyarlar’ı 0 gecelik, isteğe bağlı deniz molası olarak kullanır.',
+      sunrise: 'Sabah erken saatler hem deniz hem Ducato parkı için daha rahat olabilir.',
+      sunset: 'Gün batımını beklemek Bodrum merkez ve feribot hazırlığını geciktirebilir.',
+      photoAlt: 'Karaincir Halk Plajı’nın kumlu kıyısı',
       ops: {
-        lastMile: 'Akyarlar’a girilir; plaj sokakları ve yaz parkı dikkat gerektirir.',
+        lastMile:
+          'Gümüşlük sahilinden Karaincir Halk Plajı’na yaklaşık 17 km / 25 dk. Navigasyon hedefi belediyenin listelediği 36.97115, 27.29979 noktasıdır.',
         supply:
-          'Ücretsiz geceleme uygun değilse Akyarlar Cüce Camping; su, elektrik, atık su gideri, WC ve duş ihtiyacını tek yerde karşılayan ücretli seçenektir.',
+          'WC ve duş sezonluk halk plajı hizmeti olarak listeleniyor. Su dolumu, atık boşaltma veya geceleme hizmeti beklemeyin.',
         decision:
-          'Fenerburnu’na gündüz gidip levhaları, rüzgârı ve zemini kontrol edin. Gecelemeye izin verilmiyorsa veya zemin güvenli değilse Akyarlar Cüce Camping’e geçin.'
+          'Kumlu deniz istiyorsak uğrayalım; istemiyorsak pas geçelim. Geceleme aramayın ve yüzmeden sonra Bodrum Kale Limanı yönüne devam edin.'
+      }
+    },
+    bodrumCenter: {
+      title: 'Bodrum Merkez ve Datça Feribotu',
+      region: 'Çarşı, Bodrum, Muğla',
+      overview:
+        'Ducato’yu yasal ve güvenli bir otoparkta bırakıp Bodrum Kale Limanı’ndan Datça’ya yaya gidip döneceğimiz operasyon durağı. Merkezde uygun geceleme bulunursa 1 gece kalırız; bulunamazsa durak günübirlik tamamlanabilir.',
+      whyVisit:
+        'Datça’yı karavanla yarımadanın etrafından dolaşmadan günübirlik görmek ve Bodrum merkez işlerini tek durakta çözmek için.',
+      activities: {
+        datca: {
+          title: 'Datça’ya yaya günübirlik geçiş',
+          description:
+            'Ducato’yu Bodrum’da bırakın; resmî sefer ve dönüş saatini kontrol ederek Datça’ya yaya gidip dönün.'
+        },
+        harbour: {
+          title: 'Kale ve liman yürüyüşü',
+          description:
+            'Feribot dönüşünde Bodrum Kalesi ve liman çevresini araçsız, kısa bir yürüyüşle gezin.'
+        }
+      },
+      luna: {
+        subject: 'Bodrum Kalesi, liman ve dönüşte mavi saat',
+        lens: '24 mm ana kamera; kale detayları için 70 mm',
+        timing: 'Feribot dönüşü akşam ışığı',
+        settings: 'RAW, parlak tekne ve kale ışıkları için hafif eksi pozlama',
+        note: 'Limanda güvenlik sınırlarına uyun; fotoğraf için yolcu akışını ve iskeleyi kapatmayın.'
+      },
+      municipality:
+        'Kale Limanı çevresinde şehir ve liman hizmetleri bulunur; fakat bunlar karavan kampı, temiz su dolumu veya atık boşaltma hizmeti değildir.',
+      marketName: 'Bodrum merkez marketleri',
+      marketNotes:
+        'Mazı’ya geçmeden önce yiyecek, su ve buz alışverişini merkez dışındaki Ducato erişimi rahat markette tamamlayın.',
+      fuelName: 'Bodrum çıkışında yakıt',
+      fuelNotes:
+        'Dar merkez sokaklarına girmeden veya Mazı yönüne çıkarken ana yoldaki istasyonu kullanın.',
+      waterName: 'Karavan su dolumu planlanmıyor',
+      waterNotes: 'Liman veya belediye çeşmesini temiz su kaynağı kabul etmeyin.',
+      dumpName: 'Karavan atık noktası planlanmıyor',
+      dumpNotes: 'Gri su ve kaseti merkez otoparkında veya liman çevresinde boşaltmayın.',
+      warning1:
+        'Bodrum Kale Limanı çevresi dar ve yoğundur. Ducato’yla doğrudan iskele kapısına dayanmayın; açık hava otoparkının araç yüksekliği, geceleme kuralı ve çıkış saatini görevliye sorun.',
+      warning2:
+        'Feribot saati ve hava koşulları değişebilir. Bileti resmî işletmeden kontrol edin ve işletmenin istediği gibi kalkıştan en az 30 dakika önce iskelede olun.',
+      sunrise:
+        'Sabah feribotu varsa fotoğraf yerine zamanında yaya iskele girişine ulaşmayı önceliklendirin.',
+      sunset: 'Datça dönüşünde kale ve liman hattı mavi saat için iyi bir yürüyüş rotasıdır.',
+      photoAlt: 'Bodrum Kalesi ve Datça feribot iskelesi',
+      ops: {
+        lastMile:
+          'Karaincir’den Bodrum Kale Limanı’na yaklaşık 23 km / 35 dk ayırın. Navigasyon hedefi 37.0361912, 27.4271321; son bölümde aracı uygun açık hava otoparkına bırakıp iskeleye yürüyün.',
+        supply:
+          'Datça günü için bilet, dönüş seferi ve hava durumunu resmî Bodrum Ferryboat kanalından kontrol edin. Ducato’nun park edeceği yeri bir gün önce netleştirin.',
+        decision:
+          'Yasal ve güvenli gece parkı bulunursa 1 gece kalın. Bulunamazsa bu durağı 0 gece/günübirlik tamamlayın; Datça dönüşünde dinlenme durumuna göre Mazı’ya geçişi ertesi güne bırakın.'
       }
     },
     mazi: {

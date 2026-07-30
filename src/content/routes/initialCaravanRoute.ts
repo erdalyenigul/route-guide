@@ -17,6 +17,7 @@ export const initialCaravanRoute = {
     'yalikavak',
     'gumusluk',
     'akyarlar',
+    'bodrum-center',
     'mazi',
     'ilgin-koyu',
     'akbuk',
@@ -28,5 +29,5 @@ export const initialCaravanRoute = {
     'cirali',
     'lara'
   ],
-  totalDistanceKm: 1479
+  totalDistanceKm: 1480
 } satisfies RouteContent
