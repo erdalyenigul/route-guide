@@ -44,18 +44,31 @@ function clearMarkers(): void {
 function renderMarkers(): void {
   if (!map) return
   clearMarkers()
+  const groupedStops = new Map<string, MapStop[]>()
   for (const stop of mapService.validStops(props.stops)) {
+    const coordinateKey = `${stop.coordinate!.latitude.toFixed(5)},${stop.coordinate!.longitude.toFixed(5)}`
+    const group = groupedStops.get(coordinateKey) ?? []
+    group.push(stop)
+    groupedStops.set(coordinateKey, group)
+  }
+
+  for (const group of groupedStops.values()) {
+    const firstStop = group.reduce((first, stop) => (stop.order < first.order ? stop : first))
+    const activeStop =
+      group.find((stop) => stop.id === props.selectedId) ??
+      group.find((stop) => stop.status === 'current') ??
+      firstStop
     const element = document.createElement('div')
     const app = createApp(StopMarker, {
-      label: stop.label,
-      order: stop.order,
-      status: stop.status,
-      selected: stop.id === props.selectedId,
-      onSelect: () => emit('select', stop.id)
+      label: firstStop.label,
+      order: firstStop.order,
+      status: activeStop.status,
+      selected: group.some((stop) => stop.id === props.selectedId),
+      onSelect: () => emit('select', activeStop.id)
     })
     app.mount(element)
     const marker = new Marker({ element, anchor: 'center' })
-      .setLngLat([stop.coordinate!.longitude, stop.coordinate!.latitude])
+      .setLngLat([firstStop.coordinate!.longitude, firstStop.coordinate!.latitude])
       .addTo(map)
     markerEntries.push({ marker, app })
   }
