@@ -435,7 +435,8 @@ export default {
     experienceTitle: 'Notes',
     published: 'Published',
     experienceLabel: 'Description',
-    experienceHint: 'Write your notes about this stop.',
+    experienceHint:
+      'Write your notes about this stop. URLs, Google Maps links, coordinates and phone numbers become clickable automatically.',
     lastEditedBy: 'Last edited by {name} · {date}',
     sharedGallery: 'Photos',
     photoUploadTitle: 'Add photos',

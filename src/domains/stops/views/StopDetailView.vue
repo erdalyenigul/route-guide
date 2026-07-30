@@ -2,6 +2,7 @@
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
+import AutoLinkText from '@/components/base/AutoLinkText.vue'
 import PhotoViewer from '@/components/gallery/PhotoViewer.vue'
 import AppMap from '@/components/map/AppMap.vue'
 import { stopResourceLinks } from '@/content/stopLinks'
@@ -40,6 +41,12 @@ const exploreActivities = computed(() =>
 )
 const logisticsLinks = computed(() =>
   resourceLinks.value.filter((link) => link.label === 'navigation')
+)
+const logisticsGroups = computed(() =>
+  logisticsActivities.value.map((activity, index) => ({
+    activity,
+    link: logisticsLinks.value[index]
+  }))
 )
 const guideLinks = computed(() =>
   resourceLinks.value.filter((link) => link.label !== 'navigation')
@@ -433,7 +440,10 @@ onUnmounted(() => {
       </section>
 
       <section class="intro">
-        <p>{{ t(stop.overview) }}</p>
+        <AutoLinkText
+          tag="p"
+          :text="t(stop.overview)"
+        />
         <div class="van-summary">
           <div class="van-summary-heading">
             <span>{{ t('van.quickDecision') }}</span
@@ -492,7 +502,11 @@ onUnmounted(() => {
             <strong>{{ t(stop.title) }}</strong>
           </div>
         </header>
-        <p class="experience-copy">{{ publishedExperience.body }}</p>
+        <AutoLinkText
+          tag="p"
+          class="experience-copy"
+          :text="publishedExperience.body"
+        />
         <footer
           v-if="publishedExperience.authorName"
           class="experience-author"
@@ -583,7 +597,7 @@ onUnmounted(() => {
                   v-if="stop.lastMileNote"
                   class="operational-callout"
                 >
-                  <v-icon icon="mdi-road-variant" />{{ t(stop.lastMileNote) }}
+                  <v-icon icon="mdi-road-variant" /><AutoLinkText :text="t(stop.lastMileNote)" />
                 </p>
               </template>
               <template v-else-if="section.key === 'camping'">
@@ -621,8 +635,14 @@ onUnmounted(() => {
                           >{{ decision(spot.ducatoAccess) }}</v-chip
                         >
                       </div>
-                      <p>{{ t(spot.overview) }}</p>
-                      <small>{{ t(spot.accessNote) }}</small>
+                      <AutoLinkText
+                        tag="p"
+                        :text="t(spot.overview)"
+                      />
+                      <AutoLinkText
+                        tag="small"
+                        :text="t(spot.accessNote)"
+                      />
                       <div
                         v-if="
                           spot.waterAvailable !== null ||
@@ -662,9 +682,15 @@ onUnmounted(() => {
                         <v-chip size="x-small">{{ t(`common.${spot.type}`) }}</v-chip
                         ><strong>{{ t(spot.title) }}</strong>
                       </div>
-                      <p>{{ t(spot.overview) }}</p>
-                      <small>{{ t(spot.accessNote) }}</small
-                      ><v-btn
+                      <AutoLinkText
+                        tag="p"
+                        :text="t(spot.overview)"
+                      />
+                      <AutoLinkText
+                        tag="small"
+                        :text="t(spot.accessNote)"
+                      />
+                      <v-btn
                         block
                         variant="tonal"
                         prepend-icon="mdi-navigation-variant"
@@ -676,30 +702,37 @@ onUnmounted(() => {
                 >
               </template>
               <template v-else-if="section.key === 'logistics'">
-                <div class="stack-list logistics-list">
-                  <div
-                    v-for="item in logisticsActivities"
-                    :key="item.id"
+                <div class="logistics-groups">
+                  <section
+                    v-for="group in logisticsGroups"
+                    :key="group.activity.id"
+                    class="logistics-group"
                   >
-                    <strong>{{ t(item.title) }}</strong>
-                    <p>{{ t(item.description) }}</p>
-                  </div>
-                </div>
-                <div class="resource-links logistics-links">
-                  <a
-                    v-for="link in logisticsLinks"
-                    :key="link.url"
-                    :href="link.url"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <span>
-                      <small>{{ t(`stopLinks.${link.label}`) }}</small>
-                      <strong>{{ t(link.titleKey) }}</strong>
-                      <em>{{ resourceHost(link.url) }}</em>
-                    </span>
-                    <v-icon icon="mdi-navigation-variant" />
-                  </a>
+                    <div class="logistics-copy">
+                      <strong>{{ t(group.activity.title) }}</strong>
+                      <AutoLinkText
+                        tag="p"
+                        :text="t(group.activity.description)"
+                      />
+                    </div>
+                    <div
+                      v-if="group.link"
+                      class="resource-links logistics-link"
+                    >
+                      <a
+                        :href="group.link.url"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <span>
+                          <small>{{ t(`stopLinks.${group.link.label}`) }}</small>
+                          <strong>{{ t(group.link.titleKey) }}</strong>
+                          <em>{{ resourceHost(group.link.url) }}</em>
+                        </span>
+                        <v-icon icon="mdi-navigation-variant" />
+                      </a>
+                    </div>
+                  </section>
                 </div>
               </template>
               <div
@@ -725,7 +758,7 @@ onUnmounted(() => {
                   v-if="stop.supplyNote"
                   class="operational-callout supply"
                 >
-                  <v-icon icon="mdi-alert-outline" />{{ t(stop.supplyNote) }}
+                  <v-icon icon="mdi-alert-outline" /><AutoLinkText :text="t(stop.supplyNote)" />
                 </p>
                 <div class="facility-grid">
                   <template v-if="stop.municipalityFacilities.available">
@@ -762,7 +795,11 @@ onUnmounted(() => {
                 </p>
               </template>
               <template v-else-if="section.key === 'explore'">
-                <p class="body-copy">{{ t(stop.whyVisit) }}</p>
+                <AutoLinkText
+                  tag="p"
+                  class="body-copy"
+                  :text="t(stop.whyVisit)"
+                />
                 <div
                   v-if="exploreActivities.length"
                   class="stack-list"
@@ -772,7 +809,10 @@ onUnmounted(() => {
                     :key="item.id"
                   >
                     <strong>{{ t(item.title) }}</strong>
-                    <p>{{ t(item.description) }}</p>
+                    <AutoLinkText
+                      tag="p"
+                      :text="t(item.description)"
+                    />
                   </div>
                 </div>
                 <div
@@ -809,7 +849,11 @@ onUnmounted(() => {
                 </div>
               </template>
               <template v-else-if="section.key === 'summary'">
-                <p class="body-copy">{{ t(stop.decisionSummary ?? stop.overview) }}</p>
+                <AutoLinkText
+                  tag="p"
+                  class="body-copy"
+                  :text="t(stop.decisionSummary ?? stop.overview)"
+                />
                 <div
                   v-if="notes.length"
                   class="stack-list"
@@ -819,7 +863,10 @@ onUnmounted(() => {
                     :key="note.id"
                   >
                     <strong>{{ t(note.title) }}</strong>
-                    <p>{{ t(note.description) }}</p>
+                    <AutoLinkText
+                      tag="p"
+                      :text="t(note.description)"
+                    />
                   </div>
                 </div>
               </template>
@@ -2325,6 +2372,39 @@ onUnmounted(() => {
   display: grid;
   gap: 9px;
 }
+.logistics-groups {
+  display: grid;
+  gap: 28px;
+}
+.logistics-group {
+  display: grid;
+  gap: 8px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid rgba(var(--v-border-color), 0.1);
+}
+.logistics-group:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+.logistics-copy {
+  padding: 22px 24px;
+  border: 1px solid rgba(var(--v-border-color), 0.08);
+  border-radius: var(--app-radius-sm);
+  background: rgba(var(--v-theme-on-surface), 0.045);
+}
+.logistics-copy > strong {
+  display: block;
+  font-size: 1rem;
+}
+.logistics-copy > p {
+  margin-top: 9px;
+  color: rgba(var(--v-theme-on-surface), 0.7);
+  font-size: 0.94rem;
+  line-height: 1.65;
+}
+.logistics-link {
+  margin-inline: 8px;
+}
 .resource-links a {
   display: flex;
   min-width: 0;
@@ -2562,6 +2642,18 @@ onUnmounted(() => {
   background: rgba(var(--v-theme-error), 0.1);
 }
 @media (max-width: 760px) {
+  .logistics-groups {
+    gap: 22px;
+  }
+  .logistics-group {
+    padding-bottom: 22px;
+  }
+  .logistics-copy {
+    padding: 18px;
+  }
+  .logistics-link {
+    margin-inline: 4px;
+  }
   .van-summary-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }

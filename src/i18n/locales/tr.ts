@@ -434,7 +434,8 @@ export default {
     experienceTitle: 'Notlar',
     published: 'Yayında',
     experienceLabel: 'Açıklama',
-    experienceHint: 'Bu durakla ilgili notlarınızı yazın.',
+    experienceHint:
+      'Bu durakla ilgili notlarınızı yazın. URL, Google Maps bağlantısı, koordinat ve telefon numaraları kullanıcı tarafında otomatik olarak tıklanabilir olur.',
     lastEditedBy: 'Son düzenleyen: {name} · {date}',
     sharedGallery: 'Fotoğraflar',
     photoUploadTitle: 'Fotoğraf ekle',
