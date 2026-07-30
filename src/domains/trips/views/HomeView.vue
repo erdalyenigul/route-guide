@@ -2,6 +2,7 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { StopViewModel } from '@/content/types'
+import { mapService } from '@/services/mapService'
 import { useTripStore } from '@/stores/trip'
 import { terrainProfile } from '@/utils/terrainProfile'
 
@@ -11,6 +12,7 @@ const trip = computed(() => store.activeTrip)
 const routeId = computed(() => trip.value?.id ?? 'active')
 const openChapters = ref<string[]>([])
 const chapterColumnCount = ref(1)
+const fullRouteSheetOpen = ref(false)
 const chapterAccents = [
   '93, 125, 169',
   '191, 139, 79',
@@ -28,6 +30,31 @@ const chapterColumns = computed(() => {
     columns[index % chapterColumnCount.value]?.push({ stop, index })
   )
   return columns
+})
+const googleRouteSegments = computed(() => {
+  const validStops = store.activeStops.filter(
+    (stop) => mapService.coordinate(stop.coordinates) !== null
+  )
+  const maximumPoints = chapterColumnCount.value === 1 ? 5 : 11
+  const segments: Array<{
+    id: string
+    start: StopViewModel
+    end: StopViewModel
+    url: string
+  }> = []
+
+  for (let startIndex = 0; startIndex < validStops.length - 1; startIndex += maximumPoints - 1) {
+    const stops = validStops.slice(startIndex, startIndex + maximumPoints)
+    const start = stops[0]
+    const end = stops[stops.length - 1]
+    const url = mapService.externalRouteUrl(
+      stops.map((stop) => mapService.coordinate(stop.coordinates))
+    )
+    if (!start || !end || !url) continue
+    segments.push({ id: `${start.id}-${end.id}`, start, end, url })
+  }
+
+  return segments
 })
 function text(key?: string): string {
   return key ? t(key) : t('common.unknown')
@@ -55,6 +82,13 @@ function plannedStayLabel(stop: StopViewModel): string {
   return stop.recommendedNights === 0
     ? t('common.dayVisit')
     : `${stop.recommendedNights} ${t('common.nights')}`
+}
+function openFullRoute(): void {
+  if (googleRouteSegments.value.length === 1) {
+    mapService.openExternalUrl(googleRouteSegments.value[0]?.url)
+    return
+  }
+  fullRouteSheetOpen.value = true
 }
 function refreshVisibleTripState(): void {
   if (document.visibilityState === 'visible') void store.refreshTripState()
@@ -180,6 +214,25 @@ onUnmounted(() => {
             ><strong>{{ store.remainingNights }}</strong>
           </div>
         </div>
+        <button
+          class="full-route-action"
+          type="button"
+          @click="openFullRoute"
+        >
+          <span class="full-route-action__icon"><v-icon icon="mdi-map-marker-path" /></span>
+          <span class="full-route-action__copy">
+            <strong>{{ t('home.fullRoute') }}</strong>
+            <small>
+              {{
+                t('home.fullRouteSummary', {
+                  distance: store.totalDistance,
+                  stops: store.activeStops.length
+                })
+              }}
+            </small>
+          </span>
+          <v-icon icon="mdi-open-in-new" />
+        </button>
       </section>
 
       <section class="chapters">
@@ -322,6 +375,48 @@ onUnmounted(() => {
           </div>
         </div>
       </section>
+
+      <v-bottom-sheet v-model="fullRouteSheetOpen">
+        <v-card class="full-route-sheet">
+          <div class="full-route-sheet__handle" />
+          <div class="full-route-sheet__heading">
+            <div>
+              <p>{{ t('home.fullRoute') }}</p>
+              <h2>{{ text(trip.title) }}</h2>
+              <span>
+                {{
+                  t('home.fullRouteSummary', {
+                    distance: store.totalDistance,
+                    stops: store.activeStops.length
+                  })
+                }}
+              </span>
+            </div>
+            <v-btn
+              icon="mdi-close"
+              variant="text"
+              :aria-label="t('common.close')"
+              @click="fullRouteSheetOpen = false"
+            />
+          </div>
+          <p class="full-route-sheet__notice">{{ t('home.googleMapsRouteNotice') }}</p>
+          <div class="full-route-segments">
+            <v-btn
+              v-for="(segment, index) in googleRouteSegments"
+              :key="segment.id"
+              class="full-route-segment"
+              variant="tonal"
+              append-icon="mdi-open-in-new"
+              @click="mapService.openExternalUrl(segment.url)"
+            >
+              <span>
+                <small>{{ t('home.googleMapsPart', { part: index + 1 }) }}</small>
+                <strong>{{ text(segment.start.title) }} → {{ text(segment.end.title) }}</strong>
+              </span>
+            </v-btn>
+          </div>
+        </v-card>
+      </v-bottom-sheet>
     </template>
   </main>
 </template>
@@ -462,6 +557,133 @@ onUnmounted(() => {
 }
 .summary-grid .featured strong {
   font-size: 1.45rem;
+}
+.full-route-action {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: 100%;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  margin-top: 16px;
+  padding: 14px 16px;
+  border: 1px solid rgba(var(--v-theme-primary), 0.3);
+  border-radius: var(--app-radius-md);
+  color: rgb(var(--v-theme-on-surface));
+  text-align: left;
+  background: linear-gradient(
+    100deg,
+    rgba(var(--v-theme-primary), 0.16),
+    rgba(var(--v-theme-primary), 0.055)
+  );
+  cursor: pointer;
+  transition:
+    border-color 0.2s,
+    background 0.2s,
+    transform 0.2s;
+}
+.full-route-action:hover {
+  border-color: rgba(var(--v-theme-primary), 0.58);
+  background: rgba(var(--v-theme-primary), 0.18);
+  transform: translateY(-1px);
+}
+.full-route-action__icon {
+  display: grid;
+  width: 46px;
+  height: 46px;
+  place-items: center;
+  border-radius: 14px;
+  color: rgb(var(--v-theme-primary));
+  background: rgba(var(--v-theme-primary), 0.16);
+}
+.full-route-action__icon .v-icon {
+  font-size: 1.45rem;
+}
+.full-route-action__copy {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+.full-route-action__copy strong {
+  font-size: 1rem;
+  letter-spacing: -0.015em;
+}
+.full-route-action__copy small {
+  color: rgba(var(--v-theme-on-surface), 0.62);
+  font-size: 0.78rem;
+}
+.full-route-sheet {
+  width: min(100%, 720px);
+  margin-inline: auto;
+  padding: 12px clamp(18px, 4vw, 30px) calc(22px + env(safe-area-inset-bottom));
+  border: 1px solid rgba(var(--v-border-color), 0.18);
+  border-radius: 28px 28px 0 0 !important;
+  background: rgb(var(--v-theme-surface));
+}
+.full-route-sheet__handle {
+  width: 48px;
+  height: 5px;
+  margin: 0 auto 14px;
+  border-radius: 999px;
+  background: rgba(var(--v-theme-on-surface), 0.26);
+}
+.full-route-sheet__heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+.full-route-sheet__heading p {
+  color: rgb(var(--v-theme-primary));
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.full-route-sheet__heading h2 {
+  margin-top: 4px;
+  font-size: clamp(1.35rem, 4vw, 1.8rem);
+  letter-spacing: -0.04em;
+}
+.full-route-sheet__heading span,
+.full-route-sheet__notice {
+  color: rgba(var(--v-theme-on-surface), 0.62);
+  font-size: 0.85rem;
+}
+.full-route-sheet__notice {
+  margin-top: 18px;
+  line-height: 1.5;
+}
+.full-route-segments {
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+}
+.full-route-segment {
+  min-height: 62px;
+  justify-content: space-between;
+  padding-inline: 16px !important;
+}
+.full-route-segment :deep(.v-btn__content) {
+  width: 100%;
+  justify-content: flex-start;
+}
+.full-route-segment span {
+  display: grid;
+  gap: 3px;
+  text-align: left;
+}
+.full-route-segment small {
+  color: rgba(var(--v-theme-on-surface), 0.56);
+  font-size: 0.7rem;
+}
+.full-route-segment strong {
+  overflow: hidden;
+  max-width: 100%;
+  font-size: 0.86rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .chapters {
   margin-top: 42px;

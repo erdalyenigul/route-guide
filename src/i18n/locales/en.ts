@@ -72,6 +72,11 @@ export default {
     weatherPlaceholder: 'Weather will appear here',
     quickActions: 'Quick actions',
     openMap: 'Open map',
+    fullRoute: 'Complete route',
+    fullRouteSummary: '{distance} km · {stops} stops',
+    googleMapsRouteNotice:
+      'Google Maps limits intermediate stops, so the route is divided into consecutive sections. Open them in order to keep every stop.',
+    googleMapsPart: 'Google Maps · Part {part}',
     continueRoute: 'Continue route',
     openCurrentStop: 'Open current stop',
     noActiveRoute: 'No active route',

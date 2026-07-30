@@ -72,6 +72,11 @@ export default {
     weatherPlaceholder: 'Hava durumu burada görünecek',
     quickActions: 'Hızlı işlemler',
     openMap: 'Haritayı aç',
+    fullRoute: 'Rotanın tamamı',
+    fullRouteSummary: '{distance} km · {stops} durak',
+    googleMapsRouteNotice:
+      'Google Maps ara durak sınırı nedeniyle rota ardışık bölümlere ayrıldı. Bölümleri sırayla açtığınızda hiçbir durak atlanmaz.',
+    googleMapsPart: 'Google Maps · Bölüm {part}',
     continueRoute: 'Rotaya devam et',
     openCurrentStop: 'Mevcut durağı aç',
     noActiveRoute: 'Aktif rota yok',
