@@ -9,6 +9,7 @@ interface ResolvedRoute {
   routeId: string
   stopIdBySlug: Map<string, string>
   stopSlugById: Map<string, string>
+  initialStatusBySlug: Map<string, StopStatus>
 }
 
 const routeCache = new Map<string, ResolvedRoute>()
@@ -37,7 +38,7 @@ async function resolveRoute(routeSlug: string): Promise<ResolvedRoute> {
 
   const { data: routeStops, error: routeStopsError } = await client()
     .from('route_stops')
-    .select('stop_id')
+    .select('stop_id,initial_status')
     .eq('route_id', route.id)
   if (routeStopsError) throw routeStopsError
   const stopIds = (routeStops ?? []).map((item) => item.stop_id)
@@ -51,7 +52,13 @@ async function resolveRoute(routeSlug: string): Promise<ResolvedRoute> {
   const resolved = {
     routeId: route.id,
     stopIdBySlug: new Map((stops ?? []).map((stop) => [stop.slug, stop.id])),
-    stopSlugById: new Map((stops ?? []).map((stop) => [stop.id, stop.slug]))
+    stopSlugById: new Map((stops ?? []).map((stop) => [stop.id, stop.slug])),
+    initialStatusBySlug: new Map(
+      (routeStops ?? []).flatMap((routeStop) => {
+        const slug = (stops ?? []).find((stop) => stop.id === routeStop.stop_id)?.slug
+        return slug ? [[slug, routeStop.initial_status as StopStatus]] : []
+      })
+    )
   }
   routeCache.set(routeSlug, resolved)
   return resolved
@@ -99,31 +106,56 @@ export const supabaseTripStateRepository: TripStateRepository = {
 
   async setFavorite(routeSlug, stopSlug, favorite) {
     const [resolved, user] = await Promise.all([resolveRoute(routeSlug), currentUser()])
+    const resolvedStopId = stopId(resolved, stopSlug)
+    const updateResult = await client()
+      .from('trip_stop_states')
+      .update({ is_favorite: favorite, updated_by: user.id })
+      .eq('route_id', resolved.routeId)
+      .eq('stop_id', resolvedStopId)
+      .select('id')
+    await verifyWrite(updateResult)
+    if (updateResult.data?.length) return
+
     await verifyWrite(
-      await client()
-        .from('trip_stop_states')
-        .update({
-          is_favorite: favorite,
-          updated_by: user.id
-        })
-        .eq('route_id', resolved.routeId)
-        .eq('stop_id', stopId(resolved, stopSlug))
+      await client().from('trip_stop_states').insert({
+        route_id: resolved.routeId,
+        stop_id: resolvedStopId,
+        status: resolved.initialStatusBySlug.get(stopSlug) ?? 'planned',
+        is_favorite: favorite,
+        nights_stayed: null,
+        actual_distance_km: null,
+        updated_by: user.id
+      })
     )
   },
 
   async setStopProgress(routeSlug, stopSlug, status, nightsStayed, actualDistanceKm) {
     const [resolved, user] = await Promise.all([resolveRoute(routeSlug), currentUser()])
+    const resolvedStopId = stopId(resolved, stopSlug)
+    const updateResult = await client()
+      .from('trip_stop_states')
+      .update({
+        status,
+        nights_stayed: nightsStayed,
+        actual_distance_km: actualDistanceKm,
+        updated_by: user.id
+      })
+      .eq('route_id', resolved.routeId)
+      .eq('stop_id', resolvedStopId)
+      .select('id')
+    await verifyWrite(updateResult)
+    if (updateResult.data?.length) return
+
     await verifyWrite(
-      await client()
-        .from('trip_stop_states')
-        .update({
-          status,
-          nights_stayed: nightsStayed,
-          actual_distance_km: actualDistanceKm,
-          updated_by: user.id
-        })
-        .eq('route_id', resolved.routeId)
-        .eq('stop_id', stopId(resolved, stopSlug))
+      await client().from('trip_stop_states').insert({
+        route_id: resolved.routeId,
+        stop_id: resolvedStopId,
+        status,
+        is_favorite: false,
+        nights_stayed: nightsStayed,
+        actual_distance_km: actualDistanceKm,
+        updated_by: user.id
+      })
     )
   },
 

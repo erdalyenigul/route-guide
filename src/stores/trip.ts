@@ -102,9 +102,7 @@ export const useTripStore = defineStore('trip', () => {
   }
 
   const activeStops = computed(() => (activeTrip.value ? stopsForRoute(activeTrip.value.id) : []))
-  const accommodationStops = computed(() =>
-    activeStops.value.slice(1, -1).filter((stop) => stop.id !== 'izmir-restart')
-  )
+  const accommodationStops = computed(() => activeStops.value.slice(1, -1))
   const lastProgressedStopIndex = computed(() =>
     activeStops.value.reduce(
       (latest, stop, index) =>
@@ -125,11 +123,6 @@ export const useTripStore = defineStore('trip', () => {
       : -1
   )
   const nextStop = computed(() => activeStops.value[currentStopIndex.value + 1])
-  const remainingDistance = computed(() =>
-    activeStops.value
-      .slice(Math.max(currentStopIndex.value + 1, 0))
-      .reduce((total, stop) => total + (stop.drivingDistanceFromPreviousKm ?? 0), 0)
-  )
   const remainingNights = computed(() =>
     accommodationStops.value
       .filter((stop) => stop.status !== 'visited' && stop.status !== 'skipped')
@@ -150,6 +143,9 @@ export const useTripStore = defineStore('trip', () => {
         (total, stop) => total + (stop.actualDistanceKm ?? stop.drivingDistanceFromPreviousKm ?? 0),
         0
       )
+  )
+  const remainingDistance = computed(() =>
+    Math.max(totalDistance.value - completedDistance.value, 0)
   )
   const totalNights = computed(() =>
     accommodationStops.value.reduce((total, stop) => total + stop.recommendedNights, 0)
@@ -316,6 +312,7 @@ export const useTripStore = defineStore('trip', () => {
         )
       }
       await Promise.all(writes)
+      await refreshTripState(routeId)
     } catch (error) {
       userState.value.stopStatuses[stopId] = currentStatus
       if (followingStop && followingStatus)
