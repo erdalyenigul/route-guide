@@ -66,7 +66,15 @@ function renderRoute(): void {
       id: 'active-route-line',
       type: 'line',
       source: 'active-route',
-      paint: { 'line-color': '#9cc7b2', 'line-width': 4, 'line-opacity': 0.95 }
+      filter: ['==', ['get', 'completed'], false],
+      paint: { 'line-color': '#829990', 'line-width': 4, 'line-opacity': 0.82 }
+    })
+    map.addLayer({
+      id: 'completed-route-line',
+      type: 'line',
+      source: 'active-route',
+      filter: ['==', ['get', 'completed'], true],
+      paint: { 'line-color': '#f2b84b', 'line-width': 5, 'line-opacity': 1 }
     })
   }
 }

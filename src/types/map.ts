@@ -18,10 +18,13 @@ export interface MapBounds {
 }
 
 export interface MapRouteFeature {
-  type: 'Feature'
-  properties: Record<string, never>
-  geometry: {
-    type: 'LineString'
-    coordinates: [longitude: number, latitude: number][]
-  }
+  type: 'FeatureCollection'
+  features: Array<{
+    type: 'Feature'
+    properties: { completed: boolean }
+    geometry: {
+      type: 'LineString'
+      coordinates: [longitude: number, latitude: number][]
+    }
+  }>
 }

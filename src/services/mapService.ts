@@ -46,12 +46,28 @@ export const mapService = {
   },
 
   routeFeature(stops: MapStop[]): MapRouteFeature | null {
-    const coordinates = this.validStops(stops).map(
-      (stop) => [stop.coordinate!.longitude, stop.coordinate!.latitude] satisfies [number, number]
-    )
-    return coordinates.length >= 2
-      ? { type: 'Feature', properties: {}, geometry: { type: 'LineString', coordinates } }
-      : null
+    const validStops = this.validStops(stops)
+    if (validStops.length < 2) return null
+
+    return {
+      type: 'FeatureCollection',
+      features: validStops.slice(1).map((stop, index) => {
+        const previous = validStops[index]!
+        return {
+          type: 'Feature',
+          properties: {
+            completed: stop.status === 'visited' || stop.status === 'skipped'
+          },
+          geometry: {
+            type: 'LineString',
+            coordinates: [
+              [previous.coordinate!.longitude, previous.coordinate!.latitude],
+              [stop.coordinate!.longitude, stop.coordinate!.latitude]
+            ]
+          }
+        }
+      })
+    }
   },
 
   bounds(stops: MapStop[]): MapBounds | null {
