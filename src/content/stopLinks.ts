@@ -47,7 +47,7 @@ export const stopResourceLinks: Readonly<Record<string, readonly StopResourceLin
     {
       label: 'beachesAndCoves',
       titleKey: 'stopLinks.titles.palmiyeLocation',
-      url: 'https://yandex.com.tr/maps/org/palmiye_beach/127540271706/'
+      url: 'https://www.google.com/maps/search/?api=1&query=Palmiye%20Beach%20%C3%87e%C5%9Fme%20%C4%B0zmir'
     },
     {
       label: 'travelGuide',

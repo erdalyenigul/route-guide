@@ -7,7 +7,7 @@ export const mazi = {
   order: 8,
   slug: 'mazi',
   ...stopCopy('mazi'),
-  coordinates: { latitude: 37.0957, longitude: 27.6766 },
+  coordinates: { latitude: 37.0020527, longitude: 27.7333534 },
   recommendedNights: 2,
   minNights: 1,
   maxNights: 3,

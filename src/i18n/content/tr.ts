@@ -472,11 +472,12 @@ const content = {
       }
     },
     mazi: {
-      title: 'Mazı',
+      title: 'Mazı — İnceyalı Sahili',
       region: 'Bodrum, Muğla',
-      overview: 'Dik ve virajlı dağ yollarının sonunda, çamlarla çevrili sakin koylar.',
+      overview:
+        'Gökova Körfezi’ndeki sakin Mazı kıyısı; hedef artık iç bölgedeki köy yolu değil, doğrudan İnceyalı Sahili.',
       whyVisit:
-        'Bodrum’un kalabalığından uzaklaşıp berrak deniz, yıldızlı gökyüzü ve sessiz bir akşam geçirmek için.',
+        'İnceyalı’da denize girmek; yakındaki Çakıllıyalı ve Hurma sahillerini görmek için. Park ve geceleme iznini vardığınızda kontrol edin.',
       luna: {
         subject: 'Çam sırtları, koylar ve Samanyolu',
         lens: '24 mm ana kamera',

@@ -465,12 +465,12 @@ export default {
       }
     },
     mazi: {
-      title: 'Mazı',
+      title: 'Mazı — İnceyalı Beach',
       region: 'Bodrum, Muğla',
       overview:
-        'A rural coastal settlement on the less urbanised side of the Bodrum district, used here as a cautious gateway to the surrounding shoreline.',
+        'A quiet beach destination on the Gulf of Gökova, now pinned to the İnceyalı shoreline rather than the inland Mazı road.',
       whyVisit:
-        'Choose Mazı for a quieter coastal rhythm and landscape photography, while treating each cove road, parking area and overnight option as something to verify locally.',
+        'Swim at İnceyalı and explore the neighbouring Çakıllıyalı and Hurma shores. Parking and overnight permission still need to be checked on arrival.',
       luna: {
         subject: 'Pine ridges, coves and the Milky Way',
         lens: '24 mm main camera',
