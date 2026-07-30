@@ -43,6 +43,7 @@ function clearMarkers(): void {
 
 function renderMarkers(): void {
   if (!map) return
+  const activeMap = map
   clearMarkers()
   const groupedStops = new Map<string, MapStop[]>()
   for (const stop of mapService.validStops(props.stops)) {
@@ -53,24 +54,29 @@ function renderMarkers(): void {
   }
 
   for (const group of groupedStops.values()) {
-    const firstStop = group.reduce((first, stop) => (stop.order < first.order ? stop : first))
-    const activeStop =
-      group.find((stop) => stop.id === props.selectedId) ??
-      group.find((stop) => stop.status === 'current') ??
-      firstStop
-    const element = document.createElement('div')
-    const app = createApp(StopMarker, {
-      label: firstStop.label,
-      order: firstStop.order,
-      status: activeStop.status,
-      selected: group.some((stop) => stop.id === props.selectedId),
-      onSelect: () => emit('select', activeStop.id)
+    const orderedGroup = [...group].sort((left, right) => left.order - right.order)
+    const radius = orderedGroup.length > 1 ? 34 : 0
+    orderedGroup.forEach((stop, index) => {
+      const angle =
+        orderedGroup.length === 2 ? index * Math.PI : (index / orderedGroup.length) * 2 * Math.PI
+      const offset: [number, number] = [
+        Math.round(Math.cos(angle) * radius),
+        Math.round(Math.sin(angle) * radius)
+      ]
+      const element = document.createElement('div')
+      const app = createApp(StopMarker, {
+        label: stop.label,
+        order: stop.order,
+        status: stop.status,
+        selected: stop.id === props.selectedId,
+        onSelect: () => emit('select', stop.id)
+      })
+      app.mount(element)
+      const marker = new Marker({ element, anchor: 'center', offset })
+        .setLngLat([stop.coordinate!.longitude, stop.coordinate!.latitude])
+        .addTo(activeMap)
+      markerEntries.push({ marker, app })
     })
-    app.mount(element)
-    const marker = new Marker({ element, anchor: 'center' })
-      .setLngLat([firstStop.coordinate!.longitude, firstStop.coordinate!.latitude])
-      .addTo(map)
-    markerEntries.push({ marker, app })
   }
 }
 
