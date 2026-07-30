@@ -14,7 +14,7 @@ const content = {
     sunset: 'Gün batımı konumu eklenmedi.'
   },
   route: {
-    title: 'Caravan Route Guide',
+    title: 'Karavan Rota Rehberi',
     description: 'Ege–Akdeniz sahil yolu',
     firstLegTitle: 'İlk İzmir–Bafa rotası',
     firstLegDescription:
