@@ -16,7 +16,7 @@ const content = {
   route: {
     title: 'Caravan Route Guide',
     description: 'Ege–Akdeniz sahil yolu',
-    firstLegTitle: 'İlk İzmir–Bafa etabı',
+    firstLegTitle: 'İlk İzmir–Bafa rotası',
     firstLegDescription:
       'İzmir’e dönmeden önce Güzelçamlı ve Bafa Gölü üzerinden tamamlanan ilk yolculuk.'
   },
@@ -426,7 +426,7 @@ const content = {
         mandi: {
           title: 'Mandi Camping',
           overview:
-            'Bu etabın planlı ücretli servis ve geceleme noktası. Yalıkavak’tan sonra önce kamp alanına yerleşin; temiz su, duş, WC, gri su ve tuvalet kaseti boşaltma işlerini burada çözün. Gümüşlük akşamından sonra gece için buraya dönün.',
+            'Gümüşlük planının ücretli servis ve geceleme noktası. Yalıkavak’tan sonra önce kamp alanına yerleşin; temiz su, duş, WC, gri su ve tuvalet kaseti boşaltma işlerini burada çözün. Gümüşlük akşamından sonra gece için buraya dönün.',
           price: 'Gitmeden yer ayırtın ve güncel sezon ücretini işletmeden öğrenin.',
           access:
             '15 m³ Ducato için yer ayırtın ve işletmenin tarif ettiği ana yaklaşımı kullanın. Kampı Gümüşlük merkezindeki park arayışından ayrı düşünün.'
@@ -503,7 +503,7 @@ const content = {
       photoAlt: 'Geriş çevresinde deniz manzarası',
       ops: {
         lastMile:
-          'Gümüşlük etabından yaklaşık 10 km / 17 dk. Son yaklaşımı hava kararmadan yapın; zemini ve dönüş alanını aracı içeri almadan kontrol edin.',
+          'Gümüşlük’ten yaklaşık 10 km / 17 dk. Son yaklaşımı hava kararmadan yapın; zemini ve dönüş alanını aracı içeri almadan kontrol edin.',
         supply:
           'Su, WC, duş, elektrik veya atık hizmeti garanti değil. Tüm ihtiyaçları Mandi Camping’den çıkmadan tamamlayın.',
         decision:
@@ -1256,7 +1256,7 @@ const content = {
     gumuslukPaid: {
       title: 'Mandi Camping',
       overview:
-        'Gümüşlük etabının planlı ücretli geceleme ve servis üssü; su, duş, WC ve karavan atık hizmetleri burada çözülür.',
+        'Gümüşlük planının ücretli geceleme ve servis üssü; su, duş, WC ve karavan atık hizmetleri burada çözülür.',
       access: 'Ducato için yer ayırtın; sahil kestirmesi yerine ana girişi kullanın.'
     },
     gerisPiknikFree: {
@@ -1264,7 +1264,8 @@ const content = {
       overview:
         'Sakin deniz manzarası için topluluk listelerinde yer alan geceleme adayı; garantili kamp alanı veya yüzme plajı değildir.',
       access: 'İçeri girmeden önce levhaları, zemini ve dönüş alanını gündüz kontrol edin.',
-      safety: 'Hiçbir hizmet garanti değil. Kamp düzenini araç içinde tutun; yerel kısıtlamalar uygun değilse kalmayın.'
+      safety:
+        'Hiçbir hizmet garanti değil. Kamp düzenini araç içinde tutun; yerel kısıtlamalar uygun değilse kalmayın.'
     },
     akyarlarFree: {
       title: 'Akyarlar merkez dışında geceleme seçeneği',

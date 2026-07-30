@@ -83,9 +83,6 @@ function duration(minutes: number | null): string {
       >
         <span class="route-leg__order">{{ String(leg.order).padStart(2, '0') }}</span>
         <div class="route-leg__places">
-          <small class="route-leg__eyebrow">{{
-            t('routeSummary.stage', { number: leg.order })
-          }}</small>
           <div class="route-leg__journey">
             <div class="route-leg__point">
               <span>{{ t('routeSummary.from') }}</span>
@@ -132,8 +129,8 @@ function duration(minutes: number | null): string {
           <dd>{{ duration(totalDurationMinutes) }}</dd>
         </div>
         <div>
-          <dt>{{ t('routeSummary.totalStages') }}</dt>
-          <dd>{{ legs.length }}</dd>
+          <dt>{{ t('routeSummary.totalStops') }}</dt>
+          <dd>{{ stops.length }}</dd>
         </div>
       </dl>
     </section>
@@ -215,13 +212,6 @@ function duration(minutes: number | null): string {
   display: grid;
   min-width: 0;
   gap: 3px;
-}
-.route-leg__eyebrow {
-  color: rgba(var(--v-theme-on-surface), 0.48);
-  font-size: 0.7rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
 }
 .route-leg__journey {
   display: grid;
