@@ -92,6 +92,7 @@ function renderRoute(): void {
 
 function fitRoute(): void {
   if (!map) return
+  map.resize()
   const bounds = mapService.bounds(props.stops)
   if (!bounds) return
   if (bounds.southWest[0] === bounds.northEast[0] && bounds.southWest[1] === bounds.northEast[1])

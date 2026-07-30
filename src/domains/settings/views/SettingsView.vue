@@ -30,6 +30,26 @@ const themeStyles = computed(
     <v-card class="settings-card">
       <v-list lines="two">
         <v-list-item
+          prepend-icon="mdi-translate"
+          :title="t('settings.language')"
+        >
+          <template #append>
+            <v-select
+              v-model="preferences.language"
+              class="language-select"
+              :items="languageOptions"
+              item-title="title"
+              item-value="value"
+              variant="outlined"
+              density="comfortable"
+              hide-details
+              menu-icon="mdi-chevron-down"
+              :aria-label="t('settings.language')"
+            />
+          </template>
+        </v-list-item>
+        <v-divider />
+        <v-list-item
           prepend-icon="mdi-theme-light-dark"
           :title="t('settings.darkMode')"
           ><template #append
@@ -77,26 +97,6 @@ const themeStyles = computed(
             </button>
           </div>
         </div>
-        <v-divider />
-        <v-list-item
-          prepend-icon="mdi-translate"
-          :title="t('settings.language')"
-        >
-          <template #append>
-            <v-select
-              v-model="preferences.language"
-              class="language-select"
-              :items="languageOptions"
-              item-title="title"
-              item-value="value"
-              variant="outlined"
-              density="comfortable"
-              hide-details
-              menu-icon="mdi-chevron-down"
-              :aria-label="t('settings.language')"
-            />
-          </template>
-        </v-list-item>
         <v-divider />
         <v-list-item
           prepend-icon="mdi-shield-account-outline"

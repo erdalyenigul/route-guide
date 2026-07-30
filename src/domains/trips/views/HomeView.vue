@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import AppMap from '@/components/map/AppMap.vue'
 import type { StopViewModel } from '@/content/types'
 import { mapService } from '@/services/mapService'
 import { useTripStore } from '@/stores/trip'
@@ -15,6 +16,7 @@ const routeId = computed(() => trip.value?.id ?? 'active')
 const openChapters = ref<string[]>([])
 const chapterColumnCount = ref(1)
 const fullRouteSheetOpen = ref(false)
+const fullRouteMapRef = ref<InstanceType<typeof AppMap>>()
 const summaryExpanded = ref(false)
 const summaryDragging = ref(false)
 const summaryDragOffset = ref(0)
@@ -65,31 +67,14 @@ const chapterColumns = computed(() => {
   )
   return columns
 })
-const googleRouteSegments = computed(() => {
-  const validStops = store.activeStops.filter(
-    (stop) => mapService.coordinate(stop.coordinates) !== null
-  )
-  const maximumPoints = chapterColumnCount.value === 1 ? 5 : 11
-  const segments: Array<{
-    id: string
-    start: StopViewModel
-    end: StopViewModel
-    url: string
-  }> = []
-
-  for (let startIndex = 0; startIndex < validStops.length - 1; startIndex += maximumPoints - 1) {
-    const stops = validStops.slice(startIndex, startIndex + maximumPoints)
-    const start = stops[0]
-    const end = stops[stops.length - 1]
-    const url = mapService.externalRouteUrl(
-      stops.map((stop) => mapService.coordinate(stop.coordinates))
-    )
-    if (!start || !end || !url) continue
-    segments.push({ id: `${start.id}-${end.id}`, start, end, url })
-  }
-
-  return segments
-})
+const fullRouteMapStops = computed(() =>
+  store.activeStops.map((stop) => ({
+    id: stop.id,
+    label: t(stop.title),
+    status: stop.status,
+    coordinate: mapService.coordinate(stop.coordinates)
+  }))
+)
 function text(key?: string): string {
   return key ? t(key) : t('common.unknown')
 }
@@ -118,10 +103,6 @@ function plannedStayLabel(stop: StopViewModel): string {
     : `${stop.recommendedNights} ${t('common.nights')}`
 }
 function openFullRoute(): void {
-  if (googleRouteSegments.value.length === 1) {
-    mapService.openExternalUrl(googleRouteSegments.value[0]?.url)
-    return
-  }
   fullRouteSheetOpen.value = true
 }
 function toggleSummary(): void {
@@ -480,9 +461,12 @@ onUnmounted(() => {
         </div>
       </section>
 
-      <v-bottom-sheet v-model="fullRouteSheetOpen">
-        <v-card class="full-route-sheet">
-          <div class="full-route-sheet__handle" />
+      <v-dialog
+        v-model="fullRouteSheetOpen"
+        max-width="1180"
+        @after-enter="fullRouteMapRef?.fitRoute()"
+      >
+        <v-card class="full-route-dialog">
           <div class="full-route-sheet__heading">
             <div>
               <p>{{ t('home.fullRoute') }}</p>
@@ -503,24 +487,16 @@ onUnmounted(() => {
               @click="fullRouteSheetOpen = false"
             />
           </div>
-          <p class="full-route-sheet__notice">{{ t('home.googleMapsRouteNotice') }}</p>
-          <div class="full-route-segments">
-            <v-btn
-              v-for="(segment, index) in googleRouteSegments"
-              :key="segment.id"
-              class="full-route-segment"
-              variant="tonal"
-              append-icon="mdi-open-in-new"
-              @click="mapService.openExternalUrl(segment.url)"
-            >
-              <span>
-                <small>{{ t('home.googleMapsPart', { part: index + 1 }) }}</small>
-                <strong>{{ text(segment.start.title) }} → {{ text(segment.end.title) }}</strong>
-              </span>
-            </v-btn>
+          <div class="full-route-map">
+            <AppMap
+              ref="fullRouteMapRef"
+              :stops="fullRouteMapStops"
+              :selected-id="store.currentStop?.id"
+              compact
+            />
           </div>
         </v-card>
-      </v-bottom-sheet>
+      </v-dialog>
     </template>
   </main>
 </template>
@@ -765,26 +741,19 @@ onUnmounted(() => {
   color: rgba(var(--v-theme-on-surface), 0.62);
   font-size: 0.78rem;
 }
-.full-route-sheet {
-  width: min(100%, 720px);
-  margin-inline: auto;
-  padding: 12px clamp(18px, 4vw, 30px) calc(22px + env(safe-area-inset-bottom));
+.full-route-dialog {
+  width: 100%;
+  overflow: hidden;
   border: 1px solid rgba(var(--v-border-color), 0.18);
-  border-radius: 28px 28px 0 0 !important;
+  border-radius: var(--app-radius-lg) !important;
   background: rgb(var(--v-theme-surface));
-}
-.full-route-sheet__handle {
-  width: 48px;
-  height: 5px;
-  margin: 0 auto 14px;
-  border-radius: 999px;
-  background: rgba(var(--v-theme-on-surface), 0.26);
 }
 .full-route-sheet__heading {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
+  padding: 20px clamp(18px, 3vw, 28px);
 }
 .full-route-sheet__heading p {
   color: rgb(var(--v-theme-primary));
@@ -798,44 +767,24 @@ onUnmounted(() => {
   font-size: clamp(1.35rem, 4vw, 1.8rem);
   letter-spacing: -0.04em;
 }
-.full-route-sheet__heading span,
-.full-route-sheet__notice {
+.full-route-sheet__heading span {
   color: rgba(var(--v-theme-on-surface), 0.62);
   font-size: 0.85rem;
 }
-.full-route-sheet__notice {
-  margin-top: 18px;
-  line-height: 1.5;
-}
-.full-route-segments {
-  display: grid;
-  gap: 10px;
-  margin-top: 16px;
-}
-.full-route-segment {
-  min-height: 62px;
-  justify-content: space-between;
-  padding-inline: 16px !important;
-}
-.full-route-segment :deep(.v-btn__content) {
-  width: 100%;
-  justify-content: flex-start;
-}
-.full-route-segment span {
-  display: grid;
-  gap: 3px;
-  text-align: left;
-}
-.full-route-segment small {
-  color: rgba(var(--v-theme-on-surface), 0.56);
-  font-size: 0.7rem;
-}
-.full-route-segment strong {
+.full-route-map {
+  position: relative;
+  height: clamp(430px, 68dvh, 720px);
   overflow: hidden;
-  max-width: 100%;
-  font-size: 0.86rem;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  border-top: 1px solid rgba(var(--v-border-color), 0.14);
+  background: #101216;
+}
+@media (max-width: 600px) {
+  .full-route-dialog {
+    border-radius: var(--app-radius-md) !important;
+  }
+  .full-route-map {
+    height: 66dvh;
+  }
 }
 .chapters {
   margin-top: 42px;
