@@ -392,6 +392,26 @@ export default {
     subtitle: 'Make Route Guide feel like yours',
     appearance: 'Appearance',
     darkMode: 'Dark mode',
+    themeStyle: 'Theme character',
+    themeStyleHint: 'Choose the colors, surfaces and overall mood of the app.',
+    themes: {
+      default: {
+        title: 'Default',
+        description: 'The current balanced Route Guide look.'
+      },
+      obsidian: {
+        title: 'Obsidian',
+        description: 'Deep anthracite with a refined premium finish.'
+      },
+      woodstock: {
+        title: 'Woodstock',
+        description: 'Burnt orange, burgundy and warm bohemian spirit.'
+      },
+      nomad: {
+        title: 'Nomad',
+        description: 'Forest green, earth tones and calm caravan mood.'
+      }
+    },
     language: 'Language',
     english: 'English',
     turkish: 'Turkish',

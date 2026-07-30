@@ -38,6 +38,96 @@ export const vuetify = createVuetify({
           success: '#7DA993',
           error: '#E17C76'
         }
+      },
+      obsidianLight: {
+        dark: false,
+        colors: {
+          background: '#ECEDEF',
+          surface: '#F8F8F9',
+          primary: '#293746',
+          secondary: '#936E45',
+          'on-background': '#15181C',
+          'on-surface': '#15181C',
+          info: '#536B86',
+          warning: '#A66E32',
+          success: '#426C5A',
+          error: '#A84D4D'
+        }
+      },
+      obsidianDark: {
+        dark: true,
+        colors: {
+          background: '#07080A',
+          surface: '#111318',
+          primary: '#C2CDDA',
+          secondary: '#B58A59',
+          'on-background': '#F4F5F7',
+          'on-surface': '#F4F5F7',
+          info: '#8299B5',
+          warning: '#D4A05F',
+          success: '#72A38D',
+          error: '#E07872'
+        }
+      },
+      woodstockLight: {
+        dark: false,
+        colors: {
+          background: '#F2E7D3',
+          surface: '#FFF7E8',
+          primary: '#8A3F2D',
+          secondary: '#C47D26',
+          'on-background': '#34261F',
+          'on-surface': '#34261F',
+          info: '#527278',
+          warning: '#B66A21',
+          success: '#617A42',
+          error: '#A74436'
+        }
+      },
+      woodstockDark: {
+        dark: true,
+        colors: {
+          background: '#17100D',
+          surface: '#251A16',
+          primary: '#E3A45D',
+          secondary: '#C85F42',
+          'on-background': '#F7E8D1',
+          'on-surface': '#F7E8D1',
+          info: '#78A1A0',
+          warning: '#E0A04B',
+          success: '#8EA66A',
+          error: '#E07962'
+        }
+      },
+      nomadLight: {
+        dark: false,
+        colors: {
+          background: '#EAE4D7',
+          surface: '#F7F2E7',
+          primary: '#4F6656',
+          secondary: '#9A6845',
+          'on-background': '#252923',
+          'on-surface': '#252923',
+          info: '#637D7C',
+          warning: '#A46D31',
+          success: '#58765D',
+          error: '#A75549'
+        }
+      },
+      nomadDark: {
+        dark: true,
+        colors: {
+          background: '#10130F',
+          surface: '#1B201A',
+          primary: '#A9B99E',
+          secondary: '#C18A5D',
+          'on-background': '#EDF0E7',
+          'on-surface': '#EDF0E7',
+          info: '#829A98',
+          warning: '#D4A35D',
+          success: '#83A27F',
+          error: '#D97868'
+        }
       }
     }
   },

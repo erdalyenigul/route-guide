@@ -393,6 +393,26 @@ export default {
     subtitle: 'Route Guide sana uyum sağlasın',
     appearance: 'Görünüm',
     darkMode: 'Karanlık mod',
+    themeStyle: 'Tema karakteri',
+    themeStyleHint: 'Renkleri, yüzeyleri ve uygulamanın genel havasını seç.',
+    themes: {
+      default: {
+        title: 'Default',
+        description: 'Mevcut dengeli Route Guide görünümü.'
+      },
+      obsidian: {
+        title: 'Obsidian',
+        description: 'Derin antrasit, metalik ve rafine premium.'
+      },
+      woodstock: {
+        title: 'Woodstock',
+        description: 'Yanık turuncu, bordo ve sıcak bohem ruh.'
+      },
+      nomad: {
+        title: 'Nomad',
+        description: 'Orman yeşili, toprak ve sakin karavan havası.'
+      }
+    },
     language: 'Dil',
     english: 'İngilizce',
     turkish: 'Türkçe',

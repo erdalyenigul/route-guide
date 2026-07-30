@@ -22,10 +22,19 @@ const navItems = computed(() => [
   { key: 'settings', icon: 'mdi-cog-outline', to: '/settings' }
 ])
 
+const vuetifyThemeNames = {
+  default: { light: 'routeLight', dark: 'routeDark' },
+  obsidian: { light: 'obsidianLight', dark: 'obsidianDark' },
+  woodstock: { light: 'woodstockLight', dark: 'woodstockDark' },
+  nomad: { light: 'nomadLight', dark: 'nomadDark' }
+} as const
+
 watch(
-  () => preferences.theme,
-  (value) => {
-    theme.change(value === 'dark' ? 'routeDark' : 'routeLight')
+  [() => preferences.theme, () => preferences.themeStyle],
+  ([mode, style]) => {
+    theme.change(vuetifyThemeNames[style][mode])
+    document.documentElement.dataset.themeStyle = style
+    document.documentElement.dataset.colorMode = mode
   },
   { immediate: true }
 )

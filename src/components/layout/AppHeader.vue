@@ -200,10 +200,10 @@ onUnmounted(() => {
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08) !important;
 }
 .app-header.theme-dark {
-  background: #1f1f1f !important;
+  background: var(--app-header-bg-dark, #1f1f1f) !important;
 }
 .app-header.theme-light {
-  background: #f9f8f4 !important;
+  background: var(--app-header-bg-light, #f9f8f4) !important;
 }
 .app-header :deep(.v-toolbar__content) {
   box-sizing: border-box;
