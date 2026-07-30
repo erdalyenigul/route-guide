@@ -74,6 +74,8 @@ export default {
     openMap: 'Haritayı aç',
     fullRoute: 'Rotanın tamamı',
     fullRouteSummary: '{distance} km · {stops} durak',
+    expandRouteSummary: 'Rota ayrıntılarını aç',
+    collapseRouteSummary: 'Rota ayrıntılarını kapat',
     googleMapsRouteNotice:
       'Google Maps ara durak sınırı nedeniyle rota ardışık bölümlere ayrıldı. Bölümleri sırayla açtığınızda hiçbir durak atlanmaz.',
     googleMapsPart: 'Google Maps · Bölüm {part}',

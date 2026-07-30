@@ -74,6 +74,8 @@ export default {
     openMap: 'Open map',
     fullRoute: 'Complete route',
     fullRouteSummary: '{distance} km · {stops} stops',
+    expandRouteSummary: 'Expand route details',
+    collapseRouteSummary: 'Collapse route details',
     googleMapsRouteNotice:
       'Google Maps limits intermediate stops, so the route is divided into consecutive sections. Open them in order to keep every stop.',
     googleMapsPart: 'Google Maps · Part {part}',

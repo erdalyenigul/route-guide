@@ -15,6 +15,11 @@ const routeId = computed(() => trip.value?.id ?? 'active')
 const openChapters = ref<string[]>([])
 const chapterColumnCount = ref(1)
 const fullRouteSheetOpen = ref(false)
+const summaryExpanded = ref(false)
+const summaryDragging = ref(false)
+const summaryDragOffset = ref(0)
+let summaryDragStartY = 0
+let suppressSummaryClick = false
 const chapterAccentPalettes = {
   default: [
     '93, 125, 169',
@@ -119,6 +124,37 @@ function openFullRoute(): void {
   }
   fullRouteSheetOpen.value = true
 }
+function toggleSummary(): void {
+  if (suppressSummaryClick) return
+  summaryExpanded.value = !summaryExpanded.value
+}
+function startSummaryDrag(event: PointerEvent): void {
+  if (event.pointerType !== 'touch') return
+  summaryDragStartY = event.clientY
+  summaryDragOffset.value = 0
+  summaryDragging.value = true
+  if (event.currentTarget instanceof HTMLElement)
+    event.currentTarget.setPointerCapture(event.pointerId)
+}
+function moveSummaryDrag(event: PointerEvent): void {
+  if (!summaryDragging.value) return
+  const distance = event.clientY - summaryDragStartY
+  summaryDragOffset.value = summaryExpanded.value ? Math.min(0, distance) : Math.max(0, distance)
+}
+function finishSummaryDrag(): void {
+  if (!summaryDragging.value) return
+  const shouldToggle = summaryExpanded.value
+    ? summaryDragOffset.value < -48
+    : summaryDragOffset.value > 48
+  summaryDragging.value = false
+  summaryDragOffset.value = 0
+  if (!shouldToggle) return
+  summaryExpanded.value = !summaryExpanded.value
+  suppressSummaryClick = true
+  window.setTimeout(() => {
+    suppressSummaryClick = false
+  }, 0)
+}
 function refreshVisibleTripState(): void {
   if (document.visibilityState === 'visible') void store.refreshTripState()
 }
@@ -199,7 +235,7 @@ onUnmounted(() => {
             rounded
           />
         </div>
-        <div class="summary-grid">
+        <div class="summary-grid summary-primary">
           <div class="featured current">
             <span>{{ t('home.currentStop') }}</span
             ><strong>{{ text(store.currentStop?.title) }}</strong
@@ -213,67 +249,94 @@ onUnmounted(() => {
               {{ t('common.km') }}</small
             >
           </div>
-          <div>
-            <span>{{ t('home.totalDistance') }}</span
-            ><strong
-              >{{ store.totalDistance }} <small>{{ t('common.km') }}</small></strong
-            >
-          </div>
-          <div>
-            <span>{{ t('home.completedDistance') }}</span
-            ><strong
-              >{{ store.completedDistance }} <small>{{ t('common.km') }}</small></strong
-            >
-          </div>
-          <div>
-            <span>{{ t('home.remainingDistance') }}</span
-            ><strong
-              >{{ store.remainingDistance }} <small>{{ t('common.km') }}</small></strong
-            >
-          </div>
-          <div>
-            <span>{{ t('home.totalNights') }}</span
-            ><strong>{{ store.totalNights }}</strong>
-          </div>
-          <div>
-            <span>{{ t('home.nightsStayed') }}</span
-            ><strong>{{ store.nightsStayed }}</strong>
-          </div>
-          <div>
-            <span>{{ t('home.remainingNights') }}</span
-            ><strong>{{ store.remainingNights }}</strong>
-          </div>
         </div>
-        <router-link
-          class="full-route-action route-info-action"
-          :to="`/trips/${routeId}/summary`"
-        >
-          <span class="full-route-action__icon"><v-icon icon="mdi-format-list-numbered" /></span>
-          <span class="full-route-action__copy">
-            <strong>{{ t('routeSummary.action') }}</strong>
-            <small>{{ t('routeSummary.actionHint') }}</small>
-          </span>
-          <v-icon icon="mdi-chevron-right" />
-        </router-link>
         <button
-          class="full-route-action"
+          class="summary-handle"
+          :class="{ dragging: summaryDragging }"
           type="button"
-          @click="openFullRoute"
+          :aria-expanded="summaryExpanded"
+          :aria-label="t(summaryExpanded ? 'home.collapseRouteSummary' : 'home.expandRouteSummary')"
+          :style="{ '--summary-drag': `${summaryDragOffset}px` }"
+          @click="toggleSummary"
+          @pointerdown="startSummaryDrag"
+          @pointermove="moveSummaryDrag"
+          @pointerup="finishSummaryDrag"
+          @pointercancel="finishSummaryDrag"
         >
-          <span class="full-route-action__icon"><v-icon icon="mdi-map-marker-path" /></span>
-          <span class="full-route-action__copy">
-            <strong>{{ t('home.fullRoute') }}</strong>
-            <small>
-              {{
-                t('home.fullRouteSummary', {
-                  distance: store.totalDistance,
-                  stops: store.activeStops.length
-                })
-              }}
-            </small>
-          </span>
-          <v-icon icon="mdi-open-in-new" />
+          <span />
+          <v-icon :icon="summaryExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down'" />
         </button>
+        <v-expand-transition>
+          <div
+            v-show="summaryExpanded"
+            class="summary-details"
+          >
+            <div class="summary-grid summary-metrics">
+              <div>
+                <span>{{ t('home.totalDistance') }}</span
+                ><strong
+                  >{{ store.totalDistance }} <small>{{ t('common.km') }}</small></strong
+                >
+              </div>
+              <div>
+                <span>{{ t('home.completedDistance') }}</span
+                ><strong
+                  >{{ store.completedDistance }} <small>{{ t('common.km') }}</small></strong
+                >
+              </div>
+              <div>
+                <span>{{ t('home.remainingDistance') }}</span
+                ><strong
+                  >{{ store.remainingDistance }} <small>{{ t('common.km') }}</small></strong
+                >
+              </div>
+              <div>
+                <span>{{ t('home.totalNights') }}</span
+                ><strong>{{ store.totalNights }}</strong>
+              </div>
+              <div>
+                <span>{{ t('home.nightsStayed') }}</span
+                ><strong>{{ store.nightsStayed }}</strong>
+              </div>
+              <div>
+                <span>{{ t('home.remainingNights') }}</span
+                ><strong>{{ store.remainingNights }}</strong>
+              </div>
+            </div>
+            <router-link
+              class="full-route-action route-info-action"
+              :to="`/trips/${routeId}/summary`"
+            >
+              <span class="full-route-action__icon"
+                ><v-icon icon="mdi-format-list-numbered"
+              /></span>
+              <span class="full-route-action__copy">
+                <strong>{{ t('routeSummary.action') }}</strong>
+                <small>{{ t('routeSummary.actionHint') }}</small>
+              </span>
+              <v-icon icon="mdi-chevron-right" />
+            </router-link>
+            <button
+              class="full-route-action"
+              type="button"
+              @click="openFullRoute"
+            >
+              <span class="full-route-action__icon"><v-icon icon="mdi-map-marker-path" /></span>
+              <span class="full-route-action__copy">
+                <strong>{{ t('home.fullRoute') }}</strong>
+                <small>
+                  {{
+                    t('home.fullRouteSummary', {
+                      distance: store.totalDistance,
+                      stops: store.activeStops.length
+                    })
+                  }}
+                </small>
+              </span>
+              <v-icon icon="mdi-open-in-new" />
+            </button>
+          </div>
+        </v-expand-transition>
       </section>
 
       <section class="chapters">
@@ -605,6 +668,44 @@ onUnmounted(() => {
 }
 .summary-grid .featured strong {
   font-size: 1.45rem;
+}
+.summary-handle {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  width: 96px;
+  height: 34px;
+  margin: 9px auto -7px;
+  padding: 3px 0 0;
+  place-items: center;
+  border: 0;
+  color: rgba(var(--v-theme-on-surface), 0.52);
+  background: transparent;
+  cursor: pointer;
+  touch-action: none;
+  transform: translateY(var(--summary-drag));
+  transition: transform 0.2s ease;
+}
+.summary-handle.dragging {
+  transition: none;
+}
+.summary-handle span {
+  display: block;
+  width: 48px;
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(var(--v-theme-on-surface), 0.24);
+}
+.summary-handle .v-icon {
+  margin-top: -5px;
+  font-size: 0.95rem;
+}
+.summary-details {
+  position: relative;
+  z-index: 1;
+}
+.summary-metrics {
+  margin-top: 12px;
 }
 .full-route-action {
   position: relative;
