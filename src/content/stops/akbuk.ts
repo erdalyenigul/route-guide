@@ -4,7 +4,7 @@ import type { StopContent } from '../types'
 export const akbuk = {
   id: 'akbuk',
   routeId: 'izmir-to-lara',
-  order: 10,
+  order: 11,
   slug: 'akbuk-bay-gokova',
   ...stopCopy('akbuk'),
   coordinates: { latitude: 37.0318, longitude: 28.1017 },

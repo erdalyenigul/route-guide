@@ -67,6 +67,12 @@ const completionSummary = computed(() => {
     distance: stop.value.actualDistanceKm ?? 0
   })
 })
+const plannedStayValue = computed(() => {
+  if (!stop.value) return ''
+  return stop.value.recommendedNights === 0
+    ? t('common.dayVisit')
+    : t('stop.plannedNightsValue', { count: stop.value.recommendedNights })
+})
 const previousDetailStop = computed(() =>
   stopIndex.value > 0 ? routeStops.value[stopIndex.value - 1] : undefined
 )
@@ -841,9 +847,7 @@ onUnmounted(() => {
               />
               <div class="completion-dialog-copy">
                 <h2>{{ t('stop.completeStopTitle') }}</h2>
-                <p v-if="isAccommodationStop">
-                  {{ t('stop.plannedNightsValue', { count: stop.recommendedNights }) }}
-                </p>
+                <p v-if="isAccommodationStop">{{ plannedStayValue }}</p>
               </div>
             </div>
             <v-text-field

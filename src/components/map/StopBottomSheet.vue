@@ -36,6 +36,14 @@ function openRoute(): void {
   mapService.openExternalUrl(routeUrl.value)
 }
 
+function stayLabel(): string {
+  if (props.stop.status === 'visited' && (props.stop.nightsStayed ?? 0) === 0) {
+    return t('common.dayVisit')
+  }
+  if (props.stop.recommendedNights === 0) return t('common.dayVisit')
+  return `${props.stop.recommendedNights} ${t('common.nights')}`
+}
+
 function toggleFromClick(): void {
   if (suppressClick) return
   isOpen.value = !isOpen.value
@@ -117,12 +125,7 @@ function finishDrag(): void {
         >
       </div>
       <div class="sheet-facts">
-        <span v-if="isAccommodationStop"
-          ><v-icon icon="mdi-weather-night" /><template
-            v-if="stop.status === 'visited' && (stop.nightsStayed ?? 0) === 0"
-            >{{ t('common.dayVisit') }}</template
-          ><template v-else>{{ stop.recommendedNights }} {{ t('common.nights') }}</template></span
-        >
+        <span v-if="isAccommodationStop"><v-icon icon="mdi-weather-night" />{{ stayLabel() }}</span>
         <span v-if="stop.ducatoAccessibility"
           ><v-icon icon="mdi-van-utility" />{{ t(`common.${stop.ducatoAccessibility}`) }}</span
         >

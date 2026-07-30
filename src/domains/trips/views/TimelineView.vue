@@ -9,6 +9,11 @@ const { t } = useI18n()
 const route = useRoute()
 const store = useTripStore()
 const stops = computed(() => store.stopsForRoute(String(route.params.routeId)))
+function plannedStay(stop: { recommendedNights: number }): string {
+  return stop.recommendedNights === 0
+    ? t('common.dayVisit')
+    : t('timeline.stay', { nights: stop.recommendedNights })
+}
 </script>
 
 <template>
@@ -59,9 +64,7 @@ const stops = computed(() => store.stopsForRoute(String(route.params.routeId)))
           </div>
           <div class="route-meta">
             <span v-if="index > 0 && index < stops.length - 1"
-              ><v-icon icon="mdi-weather-night" />{{
-                t('timeline.stay', { nights: stop.recommendedNights })
-              }}</span
+              ><v-icon icon="mdi-weather-night" />{{ plannedStay(stop) }}</span
             ><span v-if="index > 0 && stop.drivingDistanceFromPreviousKm !== null"
               ><v-icon icon="mdi-steering" />{{
                 t('timeline.drive', {

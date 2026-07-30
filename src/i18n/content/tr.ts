@@ -361,6 +361,49 @@ const content = {
           'Torba’yı Gümüşlük öncesi tek gecelik mola olarak kullanın. Varışta tabela ve güncel karavan kurallarını kontrol edin; geceleme açıkça kabul edilmiyorsa doğrulanmış yasal bir tesise geçin.'
       }
     },
+    yalikavak: {
+      title: 'Yalıkavak Ara Durağı',
+      region: 'Yalıkavak, Bodrum, Muğla',
+      overview:
+        'Torba Halk Plajı’ndan Gümüşlük’e geçerken kullanılabilecek kısa lojistik ve akşam yemeği durağı. Geceleme hedefi değil; kargo teslimatı, yemek ve kısa sahil yürüyüşü için rota arası mola.',
+      whyVisit:
+        'Hepsiburada teslimat noktasını Yalıkavak tarafında seçmek istersek paketi almak, merkezde yemek yemek ve sonra Gümüşlük sahiline devam etmek için.',
+      luna: {
+        subject: 'Yalıkavak marina ışıkları, akşam sokakları ve kısa sahil yürüyüşü',
+        lens: '24 mm ana kamera',
+        timing: 'Akşam yemeği öncesi veya sonrası mavi saat',
+        settings: 'Gece modu veya RAW; parlak vitrinleri patlatmamak için hafif eksi pozlama',
+        note: 'Kalabalık yeme-içme alanlarında insanları rahatsız etmeyecek sade kadrajlar alın.'
+      },
+      municipality:
+        'Yalıkavak ara durağı karavan servis noktası değildir. WC restoran/işletme kullanımına bağlı olabilir; su ve atık işi burada planlanmamalı.',
+      marketName: 'Yalıkavak merkez marketleri',
+      marketNotes:
+        'Kısa alışveriş için merkez çevresi kullanılabilir; Ducato ile dar sokaklara girmeden ana yol üzerindeki parkı kolay noktaları tercih edin.',
+      fuelName: 'Yalıkavak ana yol yakıt noktaları',
+      fuelNotes:
+        'Gümüşlük’e geçmeden önce gerekiyorsa ana yoldaki istasyonları kullanın; sahil içine yakıt için girmeyin.',
+      waterName: 'Su dolumu planlanmıyor',
+      waterNotes: 'Bu ara durakta temiz su doldurmayı planlamayın.',
+      dumpName: 'Atık boşaltma yok',
+      dumpNotes: 'Gri su ve kaset atığını burada boşaltmayın.',
+      warning1:
+        'Yalıkavak merkezi ve marina çevresi akşam saatlerinde kalabalık olabilir. Ducato ile dar restoran/marina sokaklarına girmeyin.',
+      warning2:
+        'Hepsiburada teslimat noktası sipariş sırasında değişebilir. Noktayı uygulamada seçip açık adresi ve çalışma saatini aynı gün kontrol edin.',
+      sunrise: 'Bu durak gün doğumu için planlanmıyor.',
+      sunset:
+        'Akşam yemeği öncesi kısa sahil yürüyüşünde marina ve batı ışığı değerlendirilebilir.',
+      photoAlt: 'Yalıkavak sahili ve akşam ışıkları',
+      ops: {
+        lastMile:
+          'Torba’dan Yalıkavak merkeze yaklaşık 20 km / 30 dk. Ana yolu kullanın; teslimat veya restoran noktasına son 300–500 metreyi gerekirse yürüyün.',
+        supply:
+          'Kargo teslimatı, market ve yemek için iyi ara durak; fakat su, duş veya atık boşaltma durağı olarak kullanmayın.',
+        decision:
+          'Yalıkavak’ı 0 gece ara durak olarak kullanın. Kargo teslim noktası uygunsa paketi alın, yemek yiyin ve aynı akşam Gümüşlük sahiline yaklaşık 12 km / 20 dk devam edin.'
+      }
+    },
     gumusluk: {
       title: 'Gümüşlük Sahili',
       region: 'Gümüşlük, Bodrum, Muğla',

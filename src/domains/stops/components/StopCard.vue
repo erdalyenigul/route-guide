@@ -22,6 +22,13 @@ const isAccommodationStop = computed(
 function level(value: string | null): string {
   return value ? t(`common.${value}`) : t('common.unknown')
 }
+function stayLabel(): string {
+  if (props.stop.status === 'visited' && (props.stop.nightsStayed ?? 0) === 0) {
+    return t('common.dayVisit')
+  }
+  if (props.stop.recommendedNights === 0) return t('common.dayVisit')
+  return `${props.stop.recommendedNights} ${t('common.nights')}`
+}
 </script>
 
 <template>
@@ -62,11 +69,7 @@ function level(value: string | null): string {
         />
       </div>
       <div class="compact-facts">
-        <span v-if="isAccommodationStop"
-          ><v-icon icon="mdi-weather-night" /><template
-            v-if="stop.status === 'visited' && (stop.nightsStayed ?? 0) === 0"
-            >{{ t('common.dayVisit') }}</template
-          ><template v-else>{{ stop.recommendedNights }} {{ t('common.nights') }}</template></span
+        <span v-if="isAccommodationStop"><v-icon icon="mdi-weather-night" />{{ stayLabel() }}</span
         ><span
           ><v-icon icon="mdi-wifi" />{{
             stop.internetScore === null ? '—' : `${stop.internetScore}/5`

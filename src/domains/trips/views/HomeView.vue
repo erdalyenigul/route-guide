@@ -51,6 +51,11 @@ function toggleChapter(stopId: string): void {
     ? openChapters.value.filter((id) => id !== stopId)
     : [...openChapters.value, stopId]
 }
+function plannedStayLabel(stop: StopViewModel): string {
+  return stop.recommendedNights === 0
+    ? t('common.dayVisit')
+    : `${stop.recommendedNights} ${t('common.nights')}`
+}
 function refreshVisibleTripState(): void {
   if (document.visibilityState === 'visible') void store.refreshTripState()
 }
@@ -273,7 +278,7 @@ onUnmounted(() => {
                   <div class="chapter-data">
                     <div v-if="index > 0 && index < store.activeStops.length - 1">
                       <span>{{ t('home.planned') }}</span
-                      ><strong>{{ stop.recommendedNights }} {{ t('common.nights') }}</strong>
+                      ><strong>{{ plannedStayLabel(stop) }}</strong>
                     </div>
                     <div v-if="index > 0 && index < store.activeStops.length - 1">
                       <span>{{ t('home.stayed') }}</span>

@@ -68,6 +68,9 @@ const viewerPhotos = computed(
       caption: photo.caption
     })) ?? []
 )
+function plannedStayLabel(nights: number): string {
+  return nights === 0 ? t('common.dayVisit') : `${nights} ${t('common.nights')}`
+}
 
 async function load(): Promise<void> {
   isLoading.value = true
@@ -334,7 +337,7 @@ onMounted(() => {
                   <v-icon icon="mdi-calendar-range-outline" /><span>{{
                     t('admin.plannedStay')
                   }}</span
-                  ><strong>{{ tripStop.recommendedNights }} {{ t('common.nights') }}</strong>
+                  ><strong>{{ plannedStayLabel(tripStop.recommendedNights) }}</strong>
                 </div>
                 <div v-if="!isRouteOrigin">
                   <v-icon icon="mdi-map-marker-distance" /><span>{{

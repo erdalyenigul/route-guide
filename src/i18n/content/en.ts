@@ -355,6 +355,48 @@ export default {
           'Use Torba as a one-night break before Gümüşlük. Inspect signs and current caravan rules on arrival; if overnight use is not explicitly accepted, move to a confirmed legal facility.'
       }
     },
+    yalikavak: {
+      title: 'Yalıkavak Waypoint',
+      region: 'Yalıkavak, Bodrum, Muğla',
+      overview:
+        'A short logistics and dinner waypoint between Torba Public Beach and Gümüşlük. It is not an overnight target; use it for parcel pickup, dinner and a brief waterfront walk.',
+      whyVisit:
+        'If a Hepsiburada pickup point around Yalıkavak is practical, stop here to collect the parcel, eat in town and then continue to the Gümüşlük waterfront.',
+      luna: {
+        subject: 'Yalıkavak marina lights, evening streets and a short waterfront walk',
+        lens: '24 mm main camera',
+        timing: 'Blue hour before or after dinner',
+        settings: 'Night mode or RAW; slight negative exposure for bright storefronts',
+        note: 'Keep frames simple and avoid intrusive shots in crowded restaurant areas.'
+      },
+      municipality:
+        'Yalıkavak is not used as a motorhome service stop. WC access depends on businesses; water and waste should not be planned here.',
+      marketName: 'Yalıkavak centre markets',
+      marketNotes:
+        'Useful for a small top-up shop. Avoid tight centre streets with the Ducato and prefer easy main-road parking.',
+      fuelName: 'Yalıkavak main-road fuel',
+      fuelNotes:
+        'Use a main-road station before continuing to Gümüşlük if needed; do not enter the waterfront for fuel.',
+      waterName: 'No planned water refill',
+      waterNotes: 'Do not plan to refill potable water at this waypoint.',
+      dumpName: 'No dump point',
+      dumpNotes: 'Do not empty grey water or cassette waste here.',
+      warning1:
+        'Yalıkavak centre and marina streets can be busy in the evening. Do not drive the Ducato into tight restaurant or marina lanes.',
+      warning2:
+        'Hepsiburada pickup locations can change during ordering. Select the point in the app and check address and opening hours on the same day.',
+      sunrise: 'This waypoint is not planned for sunrise.',
+      sunset: 'Use the waterfront and marina light during a short pre-dinner or post-dinner walk.',
+      photoAlt: 'Yalıkavak waterfront and evening lights',
+      ops: {
+        lastMile:
+          'Torba to Yalıkavak centre is about 20 km / 30 min. Use the main road; walk the final 300–500 m to the pickup or restaurant if the street gets tight.',
+        supply:
+          'Good for parcel pickup, a small shop and dinner; not a water, shower or waste stop.',
+        decision:
+          'Use Yalıkavak as a zero-night waypoint. If the pickup point is convenient, collect the parcel, eat dinner and continue the same evening about 12 km / 20 min to Gümüşlük.'
+      }
+    },
     gumusluk: {
       title: 'Gümüşlük Waterfront',
       region: 'Gümüşlük, Bodrum, Muğla',
