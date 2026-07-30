@@ -27,5 +27,5 @@ export const initialCaravanRoute = {
     'cirali',
     'lara'
   ],
-  totalDistanceKm: 1487
+  totalDistanceKm: 1475
 } satisfies RouteContent

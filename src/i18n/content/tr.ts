@@ -362,18 +362,20 @@ const content = {
       }
     },
     gumusluk: {
-      title: 'Gümüşlük',
-      region: 'Bodrum, Muğla',
-      overview: 'Antik Myndos çevresinde, batı manzaralı sakin kıyı yerleşimi.',
-      whyVisit: 'Taş sokakları, kıyıyı ve Tavşan Adası gün batımını yaşayın.',
+      title: 'Gümüşlük Sahili',
+      region: 'Gümüşlük, Bodrum, Muğla',
+      overview:
+        'Bodrum Yarımadası’nın batı ucunda, Tavşan Adası ve Myndos çevresindeki sahil durağı. Torba’dan sonra hedef merkez içi değil, doğrudan deniz kenarı ve gün batımı hattı.',
+      whyVisit:
+        'Torba Halk Plajı’ndan sonra yarımadanın batısına geçip deniz kenarında yürümek, Tavşan Adası manzarasını görmek ve Gümüşlük akşamını yaşamak için.',
       spots: {
         mandi: {
           title: 'Mandi Camping',
           overview:
-            'Gümüşlük’e dört kilometre, denize kısa yürüyüş mesafesinde; temiz su, gri su gideri, elektrik ve kaset boşaltım terminalleri bulunan güvenlikli karavan kampı.',
+            'Gümüşlük sahiline inmek için değil, bölgede servisli ve güvenli geceleme gerekiyorsa değerlendirilecek ücretli yedek. Temiz su, gri su gideri, elektrik ve kaset boşaltım terminalleri listeleniyor.',
           price: 'Gitmeden yer ayırtın ve güncel sezon ücretini işletmeden öğrenin.',
           access:
-            'Sahil içindeki kestirmeler yerine işletmenin tarif ettiği ana giriş yolunu kullanın. Son iniş dardır; 15 m³ Ducato için yer ve manevra durumunu önceden sorun.'
+            'Mandi ana sahil hedefi değildir. Gitmek gerekirse işletmenin tarif ettiği ana giriş yolunu kullanın ve 15 m³ Ducato için yer/manzara durumunu önceden sorun.'
         }
       },
       luna: {
@@ -383,7 +385,8 @@ const content = {
         settings: 'RAW, -0,7 EV, telefonu sabitleyin',
         note: '70 mm kamerayla Tavşan Adası’nı sahile daha yakın görünüyormuş gibi kadrajlayın.'
       },
-      municipality: 'Gümüşlük’te karavanlara özel bir belediye hizmet noktası bulunmuyor.',
+      municipality:
+        'Gümüşlük sahil durağı karavan servis noktası değildir. WC/duş/su/atık hizmetini sahilde çözmeyi planlamayın.',
       marketName: 'Gümüşlük Çarşamba Pazarı',
       marketNotes:
         'Yerel pazar çarşamba günleri kuruluyor. Güncel yerini ve saatini kontrol edin; Ducato’yu pazar yoğunluğunun dışında bırakın.',
@@ -397,8 +400,9 @@ const content = {
       dumpNotes:
         'Gri suyu ve tuvalet kasetini yalnızca bu hizmeti açıkça sunan bir tesiste boşaltın.',
       warning1:
-        'Gümüşlük merkezindeki sahil sokakları dar, yazın park yeri bulmak zor. Ducato ile sahil içindeki kestirmelere girmeyin.',
-      warning2: 'Gümüşlük’te güvenle önerebildiğimiz yasal bir ücretsiz geceleme noktası yok.',
+        'Torba’dan Gümüşlük’e yarımadanın doğusundan batı ucuna geçiyorsunuz. Sahil sokakları dar, yazın park yeri zor; Ducato ile merkezin içine dalmayın.',
+      warning2:
+        'Bu durak sahil ve gün batımı hedefi. Gümüşlük merkezde güvenle önerebildiğimiz net bir ücretsiz geceleme noktası yok; geceleme kararını sahilde zorlamayın.',
       sunrise:
         'Gün doğumu için özel bir nokta önermiyoruz; aracı güvenli bir yere bıraktıktan sonra açık kıyı alanlarını yürüyerek keşfedin.',
       sunset:
@@ -406,11 +410,11 @@ const content = {
       photoAlt: 'Gün batımında Gümüşlük sahili',
       ops: {
         lastMile:
-          'Ana yarımada yolunu kullanın; Ducato’yu dar sahil merkezinin dışında bırakıp kıyıya yürüyün.',
+          'Torba Halk Plajı’ndan Gümüşlük sahiline yaklaşık 28 km / 40 dk. Ana yarımada yolunu kullanın; Ducato’yu dar sahil merkezinin dışında güvenli ve çıkışı açık bir noktada bırakıp kıyıya yürüyün.',
         supply:
-          'Mandi Camping; temiz su, elektrik, gri su ve tuvalet kaseti boşaltımı için kullanılabilecek en pratik seçenek.',
+          'Sahile inmeden önce market ve yakıt işini ana yol üzerinde çözün. Su ve atık için Gümüşlük sahiline güvenmeyin; gerekirse Mandi gibi servisli bir kampı yalnızca yedek olarak düşünün.',
         decision:
-          'Merkezin dışında park edip sahile yürüyün. Güvenilir bir ücretsiz geceleme noktası olmadığı için geceyi Mandi gibi karavan kabul eden bir kampta geçirin.'
+          'Navigasyon hedefi Gümüşlük sahili/Tavşan Adası çevresi olsun. Sahilde vakit geçirin, ama Ducato ile merkez içi dar sokaklara girmeyin. Gecelemek için sahil parkını otomatik kabul etmeyin; uygun değilse yarımadadaki bir sonraki pratik karavan noktasına geçin.'
       }
     },
     akyarlar: {
@@ -1112,16 +1116,10 @@ const content = {
       access:
         'Köye girmeden önce Ducato için yeterli alan ve dönüş imkânı bulunduğunu işletmeye sorun.'
     },
-    gumuslukFree: {
-      title: 'Gümüşlük merkez dışında geceleme seçeneği',
-      overview:
-        'Sahil kalabalığından uzakta, ancak arazi sahibinden açık izin alınmadan kullanılmaması gereken olası park yeri.',
-      access: 'Özel arazi yaygındır; açık izin alın.'
-    },
     gumuslukPaid: {
       title: 'Gümüşlük Karavan Kampı',
       overview:
-        'Gümüşlük’e yakın, su ve elektrik gibi karavan ihtiyaçlarının karşılanabildiği kamp alanı.',
+        'Gümüşlük sahili hedefi uygun geceleme vermezse değerlendirilecek servisli yedek kamp alanı.',
       access: 'Sahil kestirmesi yerine ana girişi kullanın.'
     },
     akyarlarFree: {

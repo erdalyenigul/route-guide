@@ -356,20 +356,20 @@ export default {
       }
     },
     gumusluk: {
-      title: 'Gümüşlük',
-      region: 'Bodrum, Muğla',
+      title: 'Gümüşlük Waterfront',
+      region: 'Gümüşlük, Bodrum, Muğla',
       overview:
-        'A compact west-coast Bodrum settlement where the waterfront and evening light create a slower counterpoint to the peninsula’s larger resort centres.',
+        'A west-tip Bodrum Peninsula waterfront stop around Rabbit Island and ancient Myndos. After Torba, the target is the seaside and sunset line, not the tight inner streets.',
       whyVisit:
-        'Use Gümüşlük for a waterfront walk and an unhurried evening. The official Muğla tourism calendar also records a Wednesday local market; confirm its current location and hours before setting out.',
+        'Drive across the peninsula from Torba Public Beach, walk the waterfront, see Rabbit Island and use the stop for an unhurried Gümüşlük evening by the sea.',
       spots: {
         mandi: {
           title: 'Mandi Camping',
           overview:
-            'A secure caravan campground four kilometres from Gümüşlük and a short walk from the sea, with fresh water, grey-water drainage, electricity and cassette-disposal terminals.',
+            'A paid fallback only if a serviced overnight base is needed in the area. It lists fresh water, grey-water drainage, electricity and cassette-disposal terminals.',
           price: 'Reservation and the current seasonal price should be confirmed directly.',
           access:
-            'Use the operator’s main-road approach rather than a waterfront shortcut. The final descent is narrow; confirm space for the 15 m³ Ducato.'
+            'Mandi is not the waterfront target. Use the operator’s main-road approach if needed and confirm space for the 15 m³ Ducato before arrival.'
         }
       },
       luna: {
@@ -379,7 +379,8 @@ export default {
         settings: 'RAW, -0.7 EV, stabilize the phone',
         note: 'Compress the island and waterfront layers.'
       },
-      municipality: 'No dedicated municipal motorhome service point has been verified.',
+      municipality:
+        'The Gümüşlük waterfront is not a motorhome service stop. Do not plan to solve WC, shower, water or waste on the shore.',
       marketName: 'Wednesday local market',
       marketNotes:
         'The market day is listed by official Muğla tourism; current location, hours, vehicle access and nearby supermarket options need direct confirmation.',
@@ -391,9 +392,9 @@ export default {
       dumpName: 'Dump station not verified',
       dumpNotes: 'Keep tanks closed until a licensed disposal point is confirmed.',
       warning1:
-        'Gümüşlük centre and waterfront streets are narrow and summer parking pressure is high; do not follow shortcuts into the centre with the Ducato.',
+        'From Torba, you cross from the eastern peninsula entrance to the western end. Waterfront streets are narrow and summer parking is difficult; do not push the Ducato into the centre.',
       warning2:
-        'No correctly located legal freecamp is verified for Gümüşlük; ordinary parking is not overnight permission.',
+        'This is a waterfront and sunset stop. No clearly suitable free overnight point is endorsed in central Gümüşlük; do not treat ordinary shore parking as permission.',
       sunrise:
         'No exact sunrise position has been verified; scout a legal public viewpoint in daylight.',
       sunset:
@@ -401,11 +402,11 @@ export default {
       photoAlt: 'Gümüşlük waterfront in evening light',
       ops: {
         lastMile:
-          'Use the main peninsula road and leave the Ducato outside the compact waterfront lanes. The town is reachable, but central parking and turning are unreliable in summer.',
+          'Torba Public Beach to Gümüşlük waterfront is about 28 km / 40 min. Use the main peninsula road, leave the Ducato outside the compact waterfront lanes and walk down to the sea.',
         supply:
-          'Mandi Camping is the fallback for fresh water, electricity, grey water and cassette disposal. Shop and refuel before the waterfront.',
+          'Shop and refuel on the main road before the waterfront. Do not rely on Gümüşlük shore facilities for water or waste; use Mandi only as a serviced fallback if needed.',
         decision:
-          'Park outside the narrow centre and walk to the waterfront. No legal Gümüşlük freecamp is verified; use Mandi or another confirmed campsite for overnight and servicing.'
+          'Navigate to the Gümüşlük waterfront/Rabbit Island area. Spend time by the sea, but avoid the tight centre with the Ducato. If overnight parking does not feel clearly appropriate, move on instead of forcing a shore stay.'
       }
     },
     akyarlar: {
@@ -1116,14 +1117,10 @@ export default {
       overview: 'A small hosted option with basic village facilities.',
       access: 'Confirm pitch dimensions before entering the village.'
     },
-    gumuslukFree: {
-      title: 'Gümüşlük Inland Stopover',
-      overview: 'An inland candidate away from waterfront congestion.',
-      access: 'Private land is common; obtain explicit permission.'
-    },
     gumuslukPaid: {
       title: 'Gümüşlük Caravan Camp',
-      overview: 'A serviced base within reach of the village.',
+      overview:
+        'A serviced fallback if the Gümüşlük waterfront does not provide a suitable overnight decision.',
       access: 'Use the main approach, not waterfront shortcuts.'
     },
     akyarlarFree: {

@@ -11,8 +11,8 @@ export const gumusluk = {
   recommendedNights: 2,
   minNights: 1,
   maxNights: 3,
-  drivingDistanceFromPreviousKm: 40,
-  estimatedDriveTimeMinutes: 50,
+  drivingDistanceFromPreviousKm: 28,
+  estimatedDriveTimeMinutes: 40,
   seaScore: 4,
   silenceScore: 2,
   internetScore: 5,
@@ -34,7 +34,7 @@ export const gumusluk = {
   fuelStation: servicePoint('gumusluk', 'fuel', true, 4.5),
   waterRefill: servicePoint('gumusluk', 'water', false, 0),
   dumpStation: servicePoint('gumusluk', 'dump', false, 0),
-  freecampSpotIds: ['gumusluk-inland-olive'],
+  freecampSpotIds: [],
   paidAlternativeIds: ['gumusluk-caravan-camp'],
   photos: [
     stopPhoto(

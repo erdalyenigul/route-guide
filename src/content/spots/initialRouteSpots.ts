@@ -111,27 +111,15 @@ export const initialRouteSpots: SpotContent[] = [
     ['freshWater', 'wc', 'shower', 'restaurant']
   ),
   createSpot(
-    'gumusluk-inland-olive',
-    'gumusluk',
-    'gumuslukFree',
-    'freecamp',
-    37.062,
-    27.247,
-    'permission',
-    3.5,
-    false,
-    []
-  ),
-  createSpot(
     'gumusluk-caravan-camp',
     'gumusluk',
     'gumuslukPaid',
     'paid',
-    37.058,
-    27.238,
+    37.079,
+    27.249,
     'reserve',
     4.3,
-    true,
+    false,
     ['electricity', 'freshWater', 'wc', 'shower']
   ),
   createSpot(
