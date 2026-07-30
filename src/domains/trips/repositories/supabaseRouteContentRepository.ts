@@ -173,9 +173,11 @@ export const supabaseRouteContentRepository: RouteContentRepository = {
       totalDistanceKm: route.total_distance_km
     }))
 
-    const stops = stopRows.map((row) => {
+    const stops = stopRows.flatMap((row) => {
       const routeStop = routeStopRows.find((item) => item.stop_id === row.id)
-      if (!routeStop) throw new Error(`Stop ${row.slug} is not assigned to a route`)
+      // Stops may remain in the content library after being removed from the
+      // active itinerary. They must not make the complete trip unavailable.
+      if (!routeStop) return []
       const stopFacilities = facilityRows.filter((facility) => facility.stop_id === row.id)
       const municipality = stopFacilities.find(
         (facility) => facility.facility_type === 'municipality' && !facility.camping_spot_id
@@ -194,7 +196,7 @@ export const supabaseRouteContentRepository: RouteContentRepository = {
           }
         : undefined
       const legacyDucatoAccess = accessibility(row.ducato_accessibility)
-      return {
+      return [{
         id: row.slug,
         routeId: routeSlugById.get(routeStop.route_id) ?? routeStop.route_id,
         order: routeStop.position,
@@ -278,7 +280,7 @@ export const supabaseRouteContentRepository: RouteContentRepository = {
         verificationStatus: row.verification_status as VerificationStatus,
         sourceNote: row.source_note,
         lastVerifiedAt: row.last_verified_at
-      }
+      }]
     })
 
     const spots = spotRows.map((row) => ({
