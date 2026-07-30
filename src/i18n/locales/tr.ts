@@ -110,6 +110,8 @@ export default {
     actionHint: 'Tüm etapları, kilometreleri ve sürüş sürelerini gör',
     legs: 'Rota etapları',
     stage: 'Etap {number}',
+    from: 'Başlangıç',
+    to: 'Varış',
     totalDistance: 'Toplam mesafe',
     totalDriveTime: 'Toplam sürüş',
     totalStops: 'Toplam durak',

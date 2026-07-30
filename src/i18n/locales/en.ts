@@ -109,6 +109,8 @@ export default {
     actionHint: 'See every leg, distance and driving time',
     legs: 'Route legs',
     stage: 'Leg {number}',
+    from: 'From',
+    to: 'To',
     totalDistance: 'Total distance',
     totalDriveTime: 'Total driving',
     totalStops: 'Total stops',

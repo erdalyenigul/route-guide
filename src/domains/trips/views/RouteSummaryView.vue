@@ -83,9 +83,23 @@ function duration(minutes: number | null): string {
       >
         <span class="route-leg__order">{{ String(leg.order).padStart(2, '0') }}</span>
         <div class="route-leg__places">
-          <small>{{ t('routeSummary.stage', { number: leg.order }) }}</small>
-          <strong>{{ text(leg.from?.title) }}</strong>
-          <span><v-icon icon="mdi-arrow-down" />{{ text(leg.to.title) }}</span>
+          <small class="route-leg__eyebrow">{{
+            t('routeSummary.stage', { number: leg.order })
+          }}</small>
+          <div class="route-leg__journey">
+            <div class="route-leg__point">
+              <span>{{ t('routeSummary.from') }}</span>
+              <strong>{{ text(leg.from?.title) }}</strong>
+            </div>
+            <v-icon
+              class="route-leg__direction"
+              icon="mdi-arrow-right"
+            />
+            <div class="route-leg__point destination">
+              <span>{{ t('routeSummary.to') }}</span>
+              <strong>{{ text(leg.to.title) }}</strong>
+            </div>
+          </div>
         </div>
         <div class="route-leg__metrics">
           <span>
@@ -202,28 +216,41 @@ function duration(minutes: number | null): string {
   min-width: 0;
   gap: 3px;
 }
-.route-leg__places small {
+.route-leg__eyebrow {
   color: rgba(var(--v-theme-on-surface), 0.48);
   font-size: 0.7rem;
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
-.route-leg__places strong {
+.route-leg__journey {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 34px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+}
+.route-leg__point {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+.route-leg__point span {
+  color: rgba(var(--v-theme-on-surface), 0.48);
+  font-size: 0.7rem;
+}
+.route-leg__point strong {
   overflow: hidden;
   font-size: 1rem;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.route-leg__places span {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  color: rgba(var(--v-theme-on-surface), 0.7);
-  font-size: 0.9rem;
+.route-leg__point.destination strong {
+  color: rgb(var(--v-theme-primary));
 }
-.route-leg__places .v-icon {
-  font-size: 0.9rem;
+.route-leg__direction {
+  justify-self: center;
+  color: rgba(var(--v-theme-on-surface), 0.46);
+  font-size: 1.25rem;
 }
 .route-leg__metrics {
   display: grid;
@@ -288,7 +315,7 @@ function duration(minutes: number | null): string {
   min-height: 280px;
   place-items: center;
 }
-@media (max-width: 760px) {
+@media (max-width: 900px) {
   .route-overview {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -312,6 +339,9 @@ function duration(minutes: number | null): string {
     justify-content: center;
     padding-inline: 10px;
   }
+  .route-leg__journey {
+    grid-template-columns: minmax(0, 1fr) 28px minmax(0, 1fr);
+  }
   .route-total {
     grid-template-columns: 1fr;
     gap: 20px;
@@ -327,6 +357,13 @@ function duration(minutes: number | null): string {
   }
   .route-leg__metrics {
     grid-template-columns: 1fr;
+  }
+  .route-leg__journey {
+    grid-template-columns: minmax(0, 1fr) 24px minmax(0, 1fr);
+    gap: 4px;
+  }
+  .route-leg__point strong {
+    font-size: 0.9rem;
   }
 }
 </style>
