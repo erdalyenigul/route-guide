@@ -124,6 +124,7 @@ watch(
   left: 0;
   display: grid !important;
   grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 6px;
   width: 100%;
   padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
   border-top: 1px solid rgba(var(--v-border-color), 0.1);
