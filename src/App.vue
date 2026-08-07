@@ -149,9 +149,11 @@ watch(
 }
 .intro-screen img {
   display: block;
-  width: min(600px, calc(100vw - 32px), calc(100dvh - 32px));
-  aspect-ratio: 1;
-  object-fit: cover;
+  width: auto;
+  max-width: calc(100vw - 32px);
+  max-height: calc(100dvh - 32px);
+  height: auto;
+  object-fit: contain;
 }
 .app-content {
   width: 100%;
