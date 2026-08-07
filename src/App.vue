@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import { useTheme } from 'vuetify'
@@ -13,6 +13,7 @@ const { t, locale } = useI18n()
 const theme = useTheme()
 const preferences = usePreferencesStore()
 const trip = useTripStore()
+const introVisible = ref(true)
 const routeId = computed(() => trip.activeTrip?.id ?? 'active')
 const navItems = computed(() => [
   { key: 'map', icon: 'mdi-map-outline', to: `/trips/${routeId.value}/map` },
@@ -57,59 +58,92 @@ watch(
 
 <template>
   <v-app>
-    <AppHeader />
-    <v-main>
-      <div class="app-content">
-        <router-view v-slot="{ Component }"
-          ><transition
-            name="page"
-            mode="out-in"
-            ><component :is="Component" /></transition
-        ></router-view>
-      </div>
-    </v-main>
-    <nav
-      v-if="!route.meta.hideNavigation"
-      class="mobile-nav"
-      :aria-label="t('app.name')"
+    <button
+      v-if="introVisible"
+      class="intro-screen"
+      type="button"
+      :aria-label="t('intro.enter')"
+      @click="introVisible = false"
     >
-      <v-btn
-        v-for="item in navItems"
-        :key="item.key"
-        :to="item.to"
-        :value="item.key"
-        ><v-icon :icon="item.icon" /><span>{{ t(`nav.${item.key}`) }}</span></v-btn
+      <img
+        src="/route-intro.jpg"
+        alt=""
+      />
+    </button>
+    <template v-else>
+      <AppHeader />
+      <v-main>
+        <div class="app-content">
+          <router-view v-slot="{ Component }"
+            ><transition
+              name="page"
+              mode="out-in"
+              ><component :is="Component" /></transition
+          ></router-view>
+        </div>
+      </v-main>
+      <nav
+        v-if="!route.meta.hideNavigation"
+        class="mobile-nav"
+        :aria-label="t('app.name')"
       >
-    </nav>
-    <v-snackbar
-      :model-value="Boolean(trip.stateSyncError)"
-      location="top"
-      color="surface"
-      :timeout="-1"
-      @update:model-value="!$event && trip.clearStateSyncError()"
-    >
-      {{ t(trip.stateSyncError === 'auth' ? 'sync.authRequired' : 'sync.saveError') }}
-      <template #actions>
         <v-btn
-          v-if="trip.stateSyncError === 'auth'"
-          color="primary"
-          variant="text"
-          to="/manage/login"
-          @click="trip.clearStateSyncError()"
-          >{{ t('sync.signIn') }}</v-btn
+          v-for="item in navItems"
+          :key="item.key"
+          :to="item.to"
+          :value="item.key"
+          ><v-icon :icon="item.icon" /><span>{{ t(`nav.${item.key}`) }}</span></v-btn
         >
-        <v-btn
-          icon="mdi-close"
-          variant="text"
-          :aria-label="t('common.close')"
-          @click="trip.clearStateSyncError()"
-        />
-      </template>
-    </v-snackbar>
+      </nav>
+      <v-snackbar
+        :model-value="Boolean(trip.stateSyncError)"
+        location="top"
+        color="surface"
+        :timeout="-1"
+        @update:model-value="!$event && trip.clearStateSyncError()"
+      >
+        {{ t(trip.stateSyncError === 'auth' ? 'sync.authRequired' : 'sync.saveError') }}
+        <template #actions>
+          <v-btn
+            v-if="trip.stateSyncError === 'auth'"
+            color="primary"
+            variant="text"
+            to="/manage/login"
+            @click="trip.clearStateSyncError()"
+            >{{ t('sync.signIn') }}</v-btn
+          >
+          <v-btn
+            icon="mdi-close"
+            variant="text"
+            :aria-label="t('common.close')"
+            @click="trip.clearStateSyncError()"
+          />
+        </template>
+      </v-snackbar>
+    </template>
   </v-app>
 </template>
 
 <style scoped>
+.intro-screen {
+  position: fixed;
+  z-index: 10000;
+  inset: 0;
+  display: grid;
+  width: 100%;
+  height: 100dvh;
+  padding: 16px;
+  place-items: center;
+  border: 0;
+  background: #050706;
+  cursor: pointer;
+}
+.intro-screen img {
+  display: block;
+  width: min(600px, calc(100vw - 32px), calc(100dvh - 32px));
+  aspect-ratio: 1;
+  object-fit: cover;
+}
 .app-content {
   width: 100%;
   min-height: calc(100dvh - 64px);

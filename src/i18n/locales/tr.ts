@@ -1,6 +1,9 @@
 import content from '../content/tr'
 
 export default {
+  intro: {
+    enter: 'Uygulamayı aç'
+  },
   content,
   app: { name: 'Route Guide', tagline: 'Sakin yerini bul' },
   nav: {

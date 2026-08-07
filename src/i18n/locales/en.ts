@@ -1,6 +1,9 @@
 import content from '../content/en'
 
 export default {
+  intro: {
+    enter: 'Open the app'
+  },
   content,
   app: { name: 'Route Guide', tagline: 'Find your quiet place' },
   nav: {
