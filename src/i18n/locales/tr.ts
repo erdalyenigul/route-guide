@@ -3,7 +3,7 @@ import content from '../content/tr'
 export default {
   intro: {
     enter: 'Hayallerimiz',
-    return: 'Bir zamanlar mutluyduk'
+    return: 'Anılarımız'
   },
   content,
   app: { name: 'Route Guide', tagline: 'Sakin yerini bul' },

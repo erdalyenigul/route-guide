@@ -3,7 +3,7 @@ import content from '../content/en'
 export default {
   intro: {
     enter: 'Our dreams',
-    return: 'Once we were happy'
+    return: 'Our memories'
   },
   content,
   app: { name: 'Route Guide', tagline: 'Find your quiet place' },

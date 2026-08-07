@@ -353,12 +353,13 @@ onUnmounted(() => {
     width: 92px;
   }
   .memory-entry {
-    width: 118px;
-    max-width: 118px;
+    width: auto;
+    min-width: 92px;
+    max-width: 108px;
     min-height: 40px;
-    padding-inline: 7px !important;
-    font-size: 0.64rem;
-    white-space: normal;
+    padding-inline: 12px !important;
+    font-size: 0.72rem;
+    white-space: nowrap;
   }
   .sync-state {
     display: none;
