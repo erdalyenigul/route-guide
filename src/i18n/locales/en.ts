@@ -2,7 +2,8 @@ import content from '../content/en'
 
 export default {
   intro: {
-    enter: 'Open the app'
+    enter: 'Our dreams',
+    return: 'Once we were happy'
   },
   content,
   app: { name: 'Route Guide', tagline: 'Find your quiet place' },

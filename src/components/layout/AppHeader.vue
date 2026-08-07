@@ -8,6 +8,7 @@ import type { AdminUser } from '@/domains/admin/types'
 import { usePreferencesStore } from '@/stores/preferences'
 
 defineOptions({ name: 'AppHeader' })
+const emit = defineEmits<{ showIntro: [] }>()
 
 const { t } = useI18n()
 const route = useRoute()
@@ -102,6 +103,13 @@ onUnmounted(() => {
     </div>
 
     <template #append>
+      <v-btn
+        class="memory-entry"
+        variant="tonal"
+        @click="emit('showIntro')"
+      >
+        {{ t('intro.return') }}
+      </v-btn>
       <span
         v-if="!isOnline"
         class="sync-state"
@@ -204,6 +212,16 @@ onUnmounted(() => {
 }
 .app-header.theme-light {
   background: var(--app-header-bg-light, #f9f8f4) !important;
+}
+.memory-entry {
+  min-height: 42px;
+  margin-right: 10px;
+  padding-inline: 16px !important;
+  white-space: nowrap;
+}
+.memory-entry :deep(.v-btn__content) {
+  line-height: 1.12;
+  text-align: center;
 }
 .app-header :deep(.v-toolbar__content) {
   box-sizing: border-box;
@@ -321,6 +339,27 @@ onUnmounted(() => {
   }
 }
 @media (max-width: 600px) {
+  .home-entry {
+    width: 38px !important;
+    min-width: 38px !important;
+    height: 38px !important;
+    margin-right: 6px;
+  }
+  .app-brand {
+    width: 100px;
+    padding-left: 6px;
+  }
+  .app-brand img {
+    width: 92px;
+  }
+  .memory-entry {
+    width: 118px;
+    max-width: 118px;
+    min-height: 40px;
+    padding-inline: 7px !important;
+    font-size: 0.64rem;
+    white-space: normal;
+  }
   .sync-state {
     display: none;
   }

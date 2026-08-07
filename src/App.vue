@@ -58,20 +58,25 @@ watch(
 
 <template>
   <v-app>
-    <button
+    <div
       v-if="introVisible"
       class="intro-screen"
-      type="button"
-      :aria-label="t('intro.enter')"
-      @click="introVisible = false"
     >
+      <v-btn
+        class="intro-entry"
+        color="primary"
+        size="large"
+        @click="introVisible = false"
+      >
+        {{ t('intro.enter') }}
+      </v-btn>
       <img
         src="/route-intro.jpg"
         alt=""
       />
-    </button>
+    </div>
     <template v-else>
-      <AppHeader />
+      <AppHeader @show-intro="introVisible = true" />
       <v-main>
         <div class="app-content">
           <router-view v-slot="{ Component }"
@@ -134,9 +139,13 @@ watch(
   height: 100dvh;
   padding: 16px;
   place-items: center;
-  border: 0;
   background: #050706;
-  cursor: pointer;
+}
+.intro-entry {
+  position: absolute;
+  z-index: 1;
+  top: calc(18px + env(safe-area-inset-top));
+  right: 18px;
 }
 .intro-screen img {
   display: block;

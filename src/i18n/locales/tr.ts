@@ -2,7 +2,8 @@ import content from '../content/tr'
 
 export default {
   intro: {
-    enter: 'Uygulamayı aç'
+    enter: 'Hayallerimiz',
+    return: 'Bir zamanlar mutluyduk'
   },
   content,
   app: { name: 'Route Guide', tagline: 'Sakin yerini bul' },
