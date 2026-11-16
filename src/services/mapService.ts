@@ -2,22 +2,6 @@ import type { StyleSpecification } from 'maplibre-gl'
 import type { Coordinates } from '@/content/types'
 import type { MapBounds, MapCoordinate, MapRouteFeature, MapStop } from '@/types/map'
 
-const darkRasterStyle: StyleSpecification = {
-  version: 8,
-  sources: {
-    osm: {
-      type: 'raster',
-      tiles: [
-        'https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
-        'https://b.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png'
-      ],
-      tileSize: 256,
-      attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
-    }
-  },
-  layers: [{ id: 'osm-dark', type: 'raster', source: 'osm', minzoom: 0, maxzoom: 20 }]
-}
-
 function isFiniteCoordinate(latitude: number | null, longitude: number | null): latitude is number {
   return (
     latitude !== null &&
@@ -33,7 +17,20 @@ function isFiniteCoordinate(latitude: number | null, longitude: number | null): 
 
 export const mapService = {
   style(): StyleSpecification {
-    return darkRasterStyle
+    return {
+      version: 8,
+      sources: {
+        osm: {
+          type: 'raster',
+          tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
+          tileSize: 256,
+          maxzoom: 19,
+          attribution:
+            '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors'
+        }
+      },
+      layers: [{ id: 'osm-basemap', type: 'raster', source: 'osm' }]
+    }
   },
 
   coordinate(value: Coordinates): MapCoordinate | null {

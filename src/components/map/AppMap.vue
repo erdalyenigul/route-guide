@@ -113,17 +113,31 @@ function renderRoute(): void {
 
 function fitRoute(): void {
   if (!map) return
+  const { clientWidth: width, clientHeight: height } = map.getContainer()
+  if (width <= 0 || height <= 0) return
   map.resize()
   const bounds = mapService.bounds(props.stops)
   if (!bounds) return
   if (bounds.southWest[0] === bounds.northEast[0] && bounds.southWest[1] === bounds.northEast[1])
     map.flyTo({ center: bounds.southWest, zoom: 11 })
-  else
+  else {
+    const desired = props.compact
+      ? { top: 36, right: 36, bottom: 36, left: 36 }
+      : { top: 86, right: 42, bottom: 230, left: 42 }
+    // Leave at least half the canvas for the route, even with DevTools open.
+    const horizontalScale = Math.min(1, width / (2 * (desired.left + desired.right)))
+    const verticalScale = Math.min(1, height / (2 * (desired.top + desired.bottom)))
     map.fitBounds([bounds.southWest, bounds.northEast], {
-      padding: props.compact ? 36 : { top: 86, right: 42, bottom: 230, left: 42 },
+      padding: {
+        top: desired.top * verticalScale,
+        right: desired.right * horizontalScale,
+        bottom: desired.bottom * verticalScale,
+        left: desired.left * horizontalScale
+      },
       maxZoom: 11,
       duration: 700
     })
+  }
 }
 
 onMounted(async () => {
